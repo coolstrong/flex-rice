@@ -21,7 +21,6 @@ const settings = {
     },
     audio: {
       cold_weather: `${getAssets('audio')}/cold-weather.mp3`,
-      prayer_time: `${getAssets('audio')}/prayer-notification.ogg`,
     },
   },
   scripts: {
@@ -41,12 +40,6 @@ const settings = {
     location: 'sanaa',
     format: 'j1',
   },
-  prayerTimes: {
-    // provider is 'api.aladhan.com'
-    city: 'sanaa',
-    country: 'yemen',
-  },
 };
 
 export default settings;
-

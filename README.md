@@ -124,7 +124,7 @@ yay -S base-devel strawberry brightnessctl network-manager-applet telegram-deskt
     VISUAL=/usr/bin/nano crontab -e
     * * * * * ~/.config/hypr/scripts/battery.sh
 
-### Change weather & prayer times location
+### Change weather location
 
 -   From the settings file in `.configs/ags/modules/settings.js`
 
@@ -134,12 +134,7 @@ weather:{
 	language: 'ar', // Not implemented yot - only arabic is supported
 	location: 'sanaa',
 	format: 'j1',
-},
-prayerTimes:{
-	// provider is 'api.aladhan.com'
-	city: 'sanaa',
-	country: 'yemen',
-},
+}
 ```
 
 ### Setting up Material 3 theme

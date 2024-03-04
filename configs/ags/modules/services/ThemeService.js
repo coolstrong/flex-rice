@@ -1,15 +1,14 @@
-import ThemesDictionary, { WIN_20, UNICAT_THEME } from '../theme/themes.js';
+import App from 'resource:///com/github/Aylur/ags/app.js';
+import Service from 'resource:///com/github/Aylur/ags/service.js';
 import {
-  timeout,
   USER,
   exec,
   execAsync,
+  timeout,
 } from 'resource:///com/github/Aylur/ags/utils.js';
-import App from 'resource:///com/github/Aylur/ags/app.js';
-import Service from 'resource:///com/github/Aylur/ags/service.js';
-import prayerService from './PrayerTimesService.js';
-import { Utils } from '../utils/imports.js';
 import settings from '../settings.js';
+import ThemesDictionary, { UNICAT_THEME } from '../theme/themes.js';
+import { Utils } from '../utils/imports.js';
 
 class ThemeService extends Service {
   static {
@@ -83,7 +82,6 @@ class ThemeService extends Service {
 
     this.selectedTheme = selectedTheme;
     this.emit('changed');
-    prayerService.emit('changed');
 
     this.cacheVariables();
   }
@@ -289,7 +287,9 @@ class ThemeService extends Service {
             `hyprctl keyword general:col.inactive_border ${inactive_border}`
           );
           execAsync(
-            `hyprctl keyword decoration:drop_shadow ${drop_shadow ? 'yes' : 'no'}`
+            `hyprctl keyword decoration:drop_shadow ${
+              drop_shadow ? 'yes' : 'no'
+            }`
           );
           execAsync(`hyprctl keyword decoration:rounding ${rounding}`);
           // execAsync(`hyprctl setcursor material_light_cursors 24 `);

@@ -12,7 +12,6 @@ import {
   Label,
   Window,
 } from 'resource:///com/github/Aylur/ags/widget.js';
-import prayerService from './services/PrayerTimesService.js';
 import themeService from './services/ThemeService.js';
 import weatherService from './services/WeatherService.js';
 import { Widget } from './utils/imports.js';
@@ -58,42 +57,6 @@ const Weather = () => {
   return button;
 };
 
-const PrayerTimes = () => {
-  const iconButton = Widget.Button({
-    className: 'unset un-hover unset',
-    onClicked: () => showPrayerTimesMenu(),
-    child: Label({
-      className: 'bar-prayer-times-icon unset',
-      label: '',
-    }),
-  });
-
-  let text = Widget.Button({
-    className: 'unset un-hover unset',
-    onClicked: () => showPrayerTimesMenu(),
-    child: Label({
-      truncate: 'end',
-      xalign: 0,
-      maxWidthChars: 24,
-    }),
-  });
-
-  return Box({
-    className: 'bar-prayer-times-box small-shadow unset',
-    children: [iconButton, text],
-  }).hook(prayerService, (box) => {
-    if (prayerService.nextPrayerName != '') {
-      if (!prayerService.prayerNow) {
-        text.child.label = `${prayerService.nextPrayerName} (${prayerService.nextPrayerTime})`;
-      } else {
-        text.child.label = `Now is the time for prayer ${prayerService.prayerNow}`;
-      }
-    } else {
-      text.child.label = `unavailable`;
-    }
-  });
-};
-
 const DynamicWallpaper = () =>
   Widget.Button({
     className: 'unset dynamic-wallpaper',
@@ -117,7 +80,6 @@ const Right = () =>
     children: [
       Workspaces(),
       HardwareBox(),
-      PrayerTimes(),
       DynamicWallpaper(),
       // NotificationIndicator(),
       // ClientTitle(),
