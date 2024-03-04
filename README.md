@@ -2,8 +2,6 @@
 
 <details>
 
-<summary>English</summary>
-
 **Note:** This configuration is a work in progress, and I will continue to add more features as time permits.
 
 ### Required dependencies:
@@ -26,9 +24,7 @@
 -   kitty
 -   sassc
 -   systemsettings
--   ttf-font-awesome-5
 -   acpi
--   fish
 -   [KDE Material You Colors](https://github.com/luisbocanegra/kde-material-you-colors)
 
 ### Optional dependencies:
@@ -165,71 +161,3 @@ const dynamicM3Light = {
 ```
 
 </details>
-
-# Screenshots - لقطات
-
-<p align='center'>
-	<img alt='screenshot 1' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/1.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 10' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/10.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 2' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/2.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 3' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/3.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 4' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/4.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 5' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/5.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 6' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/6.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 11' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/11.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 7' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/7.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 8' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/8.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 9' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/9.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 12' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/12.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 13' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/13.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 14' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/14.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 15' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/15.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 16' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/16.png'/>
-</p>
-<p align='center'>
-	<img alt='screenshot 17' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/17.png'/>
-</p>
-
-### Material 3
-
-#### Dark
-
-<p align='center'>
-	<img alt='M3 Dark screenshot' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/18.png'/>
-</p>
-
-#### Light
-
-<p align='center'>
-	<img alt='M3 Light screenshot' src='https://github.com/AhmedSaadi0/my-hyprland-config/blob/main/screenshots/19.png'/>
-</p>
