@@ -1,10 +1,10 @@
-import MusicPlayer from '../MusicPLayer.js';
 import WeatherService from '../../services/WeatherService.js';
-import FuzzyClock from '../FuzzyClock.js';
-import Saying from '../Saying.js';
-import { TitleText, local } from '../../utils/helpers.js';
-import { Utils, Widget } from '../../utils/imports.js';
 import settings from '../../settings.js';
+import { TitleText, local } from '../../utils/helpers.js';
+import { Widget } from '../../utils/imports.js';
+import FuzzyClock from '../FuzzyClock.js';
+import MusicPlayer from '../MusicPLayer.js';
+import Saying from '../Saying.js';
 
 const iconImage = Widget.Icon({
   icon: `${settings.assets.wallpapers}/image.png`,
@@ -23,7 +23,7 @@ const RowOne = () =>
     children: [],
   }).hook(WeatherService, (self) => {
     const tt = TitleText({
-      title: 'اليوم',
+      title: 'today',
       // titleClass: "weather-wd-title",
       text: WeatherService.arValue,
       textClass: 'my-weather-wd-text',
@@ -69,22 +69,22 @@ const RowTwo = () => {
     self.children = [
       Insider({
         icon: WeatherService.weatherCode1,
-        title: 'اليوم',
+        title: 'today',
         text: WeatherService.avgTempC1,
       }),
       Insider({
         icon: WeatherService.weatherCode2,
-        title: 'غدا',
+        title: 'tomorrow',
         text: WeatherService.avgTempC2,
       }),
       Insider({
         icon: WeatherService.weatherCode3,
-        title: 'ب غدا',
+        title: 'After tomorrow',
         text: WeatherService.avgTempC3,
       }),
       // Insider({
       //     icon: WeatherService.weatherCode4,
-      //     title: "ب يومين",
+      //     title: "In two days",
       //     text: WeatherService.avgTempC4,
       // }),
     ];
@@ -150,4 +150,3 @@ globalThis.HideDeerWidget = () => {
 };
 
 export default deerWidget;
-

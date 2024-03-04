@@ -1,5 +1,5 @@
 import { local } from '../utils/helpers.js';
-import { Widget, Utils, Battery } from '../utils/imports.js';
+import { Battery, Utils, Widget } from '../utils/imports.js';
 
 var menuIsOpen = null;
 var cpuIsInitialized = false;
@@ -21,7 +21,7 @@ const cpuProgress = Widget.CircularProgress({
     Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`)
       .then((val) => {
         cpuProgress.value = val / 100;
-        self.child.tooltipMarkup = `<span weight='bold'>مستهلك من المعالج(${val}%)</span>`;
+        self.child.tooltipMarkup = `<span weight='bold'>CPU usage (${val}%)</span>`;
         cpuUsage = val;
       })
       .catch(print);
@@ -41,7 +41,7 @@ const ramProgress = Widget.CircularProgress({
     Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`)
       .then((val) => {
         self.value = val / 100;
-        self.child.tooltipMarkup = `<span weight='bold'>مستهلك من الرام (${val}%)</span>`;
+        self.child.tooltipMarkup = `<span weight='bold'>RAM usage (${val}%)</span>`;
         ramUsage = val;
       })
       .catch(print);
@@ -85,7 +85,7 @@ const batteryProgress = Widget.CircularProgress({
   }
   self.child.label = label;
 
-  self.child.tooltipMarkup = `<span weight='bold'>نسبة البطارية (${percentage}%)</span>`;
+  self.child.tooltipMarkup = `<span weight='bold'>Battery percentage (${percentage}%)</span>`;
 });
 
 const tempProgress = Widget.CircularProgress({
@@ -108,7 +108,7 @@ const tempProgress = Widget.CircularProgress({
       total = parseInt(total / temps.length);
       self.value = total / 100;
 
-      self.child.tooltipMarkup = `<span weight='bold'>اجمالي درجة حرارة الاجهزة (${total}%)</span>`;
+      self.child.tooltipMarkup = `<span weight='bold'>Total temperature of the devices (${total}%)</span>`;
     })
     .catch(print);
 });
@@ -164,7 +164,7 @@ const hardwareUsageTable = ({
   scriptPath,
   deviceName,
   interval = 2000,
-  headerRightText = 'العملية',
+  headerRightText = 'Operation',
   headerLeftText = '%',
 }) => {
   const table = Widget.Box({
@@ -234,7 +234,7 @@ const tablesBox = () => {
         let children = [
           // Header
           tableRow({
-            appName: 'البطارية',
+            appName: 'the battery',
             percentage: '',
             header: true,
             deviceName: batDeviceName,
@@ -242,27 +242,27 @@ const tablesBox = () => {
           }),
           // Body
           tableRow({
-            appName: 'النسبة  ',
+            appName: 'The ratio  ',
             percentage: `${Battery.percent}%`,
             deviceName: batDeviceName,
           }),
           tableRow({
-            appName: local === 'RTL' ? 'الصحة   ' : 'Health   ',
+            appName: local === 'RTL' ? 'the health   ' : 'Health   ',
             percentage: data['Capacity'] + '%',
             deviceName: batDeviceName,
           }),
           tableRow({
-            appName: local === 'RTL' ? 'الفولتية  ' : 'Voltage  ',
+            appName: local === 'RTL' ? 'Voltages  ' : 'Voltage  ',
             percentage: data['Voltage'],
             deviceName: batDeviceName,
           }),
           tableRow({
-            appName: local === 'RTL' ? 'الطاقة  ' : 'Energy  ',
+            appName: local === 'RTL' ? 'energy  ' : 'Energy  ',
             percentage: `${Battery.energy}`,
             deviceName: batDeviceName,
           }),
           tableRow({
-            appName: local === 'RTL' ? 'الدورات  ' : 'Cycles  ',
+            appName: local === 'RTL' ? 'Courses  ' : 'Cycles  ',
             percentage: data['Charge_Cycles'],
             deviceName: batDeviceName,
           }),
@@ -284,7 +284,7 @@ const tablesBox = () => {
         let children = [
           // Header
           tableRow({
-            appName: 'النظام',
+            appName: 'System',
             percentage: '',
             header: true,
             rightTextXalign: 1,

@@ -44,7 +44,7 @@ const NotificationsBox = () => {
         }),
         Label({
           className: 'no-notification-text',
-          label: 'لا توجد اي اشعارات جديدة',
+          label: 'There are no new notifications',
         }),
       ],
     });
@@ -77,7 +77,7 @@ const NotificationHeader = () => {
       }),
       Label({
         className: 'notification-center-header-text',
-        label: 'مركز الاشعارات',
+        label: 'Notification Center',
       }),
       Button({
         className: 'unset notification-center-header-mute',

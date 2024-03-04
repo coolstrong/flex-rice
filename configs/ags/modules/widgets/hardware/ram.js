@@ -1,10 +1,10 @@
+import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
 import {
   Box,
   Button,
-  Label,
   CircularProgress,
+  Label,
 } from 'resource:///com/github/Aylur/ags/widget.js';
-import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
 import { Utils } from '../../utils/imports.js';
 
 export const RamWidget = () => {
@@ -33,7 +33,7 @@ export const RamWidget = () => {
     execAsync(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`)
       .then((val) => {
         progress.value = val / 100;
-        label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>نسبة الرام المستهلكة (${val}%)</span>`;
+        label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
       })
       .catch(print);
 
@@ -41,4 +41,3 @@ export const RamWidget = () => {
     box.show_all();
   });
 };
-

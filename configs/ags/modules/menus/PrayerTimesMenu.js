@@ -4,7 +4,7 @@ import { Widget } from '../utils/imports.js';
 
 const MenuRevealer = () => {
   const header = TitleText({
-    title: 'اوقات الصلوات',
+    title: 'Prayer times',
     text: '',
     titleClass: 'prayer-times-menu-header-title',
     textClass: 'prayer-times-menu-header-icon',
@@ -14,7 +14,7 @@ const MenuRevealer = () => {
   });
 
   const fajr = TitleText({
-    title: 'صلاة الفجر',
+    title: 'Al-fajr prayer',
     text: '',
     vertical: false,
     boxClass: 'prayer-time-item-box-class',
@@ -23,7 +23,7 @@ const MenuRevealer = () => {
   });
 
   const dhuhr = TitleText({
-    title: 'صلاة الظهر',
+    title: 'Salat Aduher',
     text: '',
     vertical: false,
     boxClass: 'prayer-time-item-box-class',
@@ -32,7 +32,7 @@ const MenuRevealer = () => {
   });
 
   const asr = TitleText({
-    title: 'صلاة العصر',
+    title: 'Asr prayer',
     text: '',
     vertical: false,
     boxClass: 'prayer-time-item-box-class',
@@ -41,7 +41,7 @@ const MenuRevealer = () => {
   });
 
   const maghrib = TitleText({
-    title: 'صلاة المغرب',
+    title: 'Maghrebs prayer',
     text: '',
     vertical: false,
     boxClass: 'prayer-time-item-box-class',
@@ -50,7 +50,7 @@ const MenuRevealer = () => {
   });
 
   const isha = TitleText({
-    title: 'صلاة العشاء',
+    title: 'eshaa pray',
     text: '',
     vertical: false,
     boxClass: 'prayer-time-item-box-class isha-item',
@@ -73,15 +73,15 @@ const MenuRevealer = () => {
       box.children[4].children[1].label = `${prayerService.maghrib}`;
       box.children[5].children[1].label = `${prayerService.isha}`;
 
-      if (nextPrayer === 'الفجر') {
+      if (nextPrayer === 'Daybreak') {
         updateClasses(box, 1);
-      } else if (nextPrayer === 'الظهر') {
+      } else if (nextPrayer === 'noon') {
         updateClasses(box, 2);
-      } else if (nextPrayer === 'العصر') {
+      } else if (nextPrayer === 'age') {
         updateClasses(box, 3);
-      } else if (nextPrayer === 'المغرب') {
+      } else if (nextPrayer === 'Morocco') {
         updateClasses(box, 4);
-      } else if (nextPrayer === 'العشاء') {
+      } else if (nextPrayer === 'dinner') {
         updateClasses(box, 5);
       }
     }),
@@ -100,8 +100,9 @@ function updateClasses(box, selected) {
     isha = 'isha-item';
   }
 
-  box.children[selected].className =
-    `prayer-time-item-box-class next-prayer ${isha}`;
+  box.children[
+    selected
+  ].className = `prayer-time-item-box-class next-prayer ${isha}`;
 }
 
 const menuRevealer = MenuRevealer();

@@ -30,7 +30,7 @@ export const BatteryWidget = () => {
       label.className = 'battery-inner';
     }
     batteryProgress.value = Battery.percent / 100;
-    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>نسبة البطارية (${Battery.percent}%)</span>`;
+    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
   });
 };
 

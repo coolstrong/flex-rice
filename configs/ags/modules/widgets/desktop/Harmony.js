@@ -39,8 +39,8 @@ const DesktopWidget = Widget.Box({
         box.children[1].label =
           Mpris?.getPlayer(selectedMusicPlayer)?.trackArtists[0];
       } else {
-        box.children[0].label = 'لا توجد موسيقى قيد التشغبل';
-        box.children[1].label = 'لا توجد موسيقى قيد التشغبل';
+        box.children[0].label = 'No music playing';
+        box.children[1].label = 'No music playing';
       }
     }),
     Widget.Box({

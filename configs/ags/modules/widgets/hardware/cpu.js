@@ -1,10 +1,10 @@
+import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
 import {
   Box,
   Button,
-  Label,
   CircularProgress,
+  Label,
 } from 'resource:///com/github/Aylur/ags/widget.js';
-import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
 import { Utils } from '../../utils/imports.js';
 
 export const CpuWidget = () => {
@@ -33,7 +33,7 @@ export const CpuWidget = () => {
     execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`)
       .then((val) => {
         progress.value = val / 100;
-        label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>يتم استخدام (${val}%) من المعالج</span>`;
+        label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
       })
       .catch(print);
     box.children = [progress];

@@ -92,8 +92,8 @@ class WeatherService extends Service {
     if (parseInt(this.minTempC) <= 7 && !this.coldWeatherWarned) {
       notify({
         tonePath: settings.assets.audio.cold_weather,
-        title: 'طقس بارد !',
-        message: `درجة الحرارة الصغرى اليوم ${this.minTempC}°`,
+        title: 'Cold weather',
+        message: `Lowest temperature today ${this.minTempC}°`,
         icon: settings.assets.icons.cold_weather,
         priority: 'critical',
       });
@@ -101,8 +101,8 @@ class WeatherService extends Service {
     } else if (parseInt(this.maxTempC) > 30 && !this.hotWeatherWarned) {
       notify({
         tonePath: settings.assets.audio.cold_weather,
-        title: 'طقس حار !',
-        message: `درجة الحرارة الكبرى اليوم ${this.maxTempC}°`,
+        title: 'Hot weather',
+        message: `High temperature today ${this.maxTempC}°`,
         icon: settings.assets.icons.hot_weather,
       });
       this.hotWeatherWarned = true;
@@ -229,7 +229,7 @@ class WeatherService extends Service {
   }
 
   get weatherTime1() {
-    return 'اليوم';
+    return 'today';
   }
 
   // -------------------------------------------
@@ -247,7 +247,7 @@ class WeatherService extends Service {
   }
 
   get weatherTime2() {
-    return 'غداً';
+    return 'tomorrow';
   }
 
   // -------------------------------------------
@@ -265,7 +265,7 @@ class WeatherService extends Service {
   }
 
   get weatherTime3() {
-    return 'بعد غداً';
+    return 'after tomorrow';
   }
 
   // -------------------------------------------

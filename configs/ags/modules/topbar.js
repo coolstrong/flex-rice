@@ -1,21 +1,21 @@
-import { NetworkInformation } from './widgets/internet.js';
-import { Workspaces } from './widgets/workspace.js';
-import { HardwareBox } from './widgets/hardware/all.js';
-import { SysTrayBox } from './widgets/systray.js';
-import { NotificationCenterButton } from './menus/notification_center.js';
 import { MenuButton } from './menus/left_menu.js';
+import { NotificationCenterButton } from './menus/notification_center.js';
+import { HardwareBox } from './widgets/hardware/all.js';
+import { NetworkInformation } from './widgets/internet.js';
+import { SysTrayBox } from './widgets/systray.js';
+import { Workspaces } from './widgets/workspace.js';
 
-import {
-  Window,
-  CenterBox,
-  Box,
-  Label,
-} from 'resource:///com/github/Aylur/ags/widget.js';
 import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
-import weatherService from './services/WeatherService.js';
+import {
+  Box,
+  CenterBox,
+  Label,
+  Window,
+} from 'resource:///com/github/Aylur/ags/widget.js';
 import prayerService from './services/PrayerTimesService.js';
-import { Widget } from './utils/imports.js';
 import themeService from './services/ThemeService.js';
+import weatherService from './services/WeatherService.js';
+import { Widget } from './utils/imports.js';
 
 const Clock = () =>
   Label({
@@ -50,7 +50,7 @@ const Weather = () => {
         text.label = `(${min} - ${max}) ${weatherService.feelsLike} ${weatherService.arValue}`;
         icon.label = `${weatherService.weatherCode}`;
       } else {
-        text.label = `خدمة الطقس غير متاحة`;
+        text.label = `Weather service is not available`;
       }
     }),
   });
@@ -86,10 +86,10 @@ const PrayerTimes = () => {
       if (!prayerService.prayerNow) {
         text.child.label = `${prayerService.nextPrayerName} (${prayerService.nextPrayerTime})`;
       } else {
-        text.child.label = `حان الان وقت صلاة ${prayerService.prayerNow}`;
+        text.child.label = `Now is the time for prayer ${prayerService.prayerNow}`;
       }
     } else {
-      text.child.label = `غير متاحة`;
+      text.child.label = `unavailable`;
     }
   });
 };
@@ -156,4 +156,3 @@ export const Bar = ({ monitor } = {}) =>
       endWidget: Left(),
     }),
   });
-

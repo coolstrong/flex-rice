@@ -1,35 +1,35 @@
+import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
+import {
+  Box,
+  Button,
+  Icon,
+  Label,
+  Revealer,
+  Window,
+} from 'resource:///com/github/Aylur/ags/widget.js';
 import themeService from '../services/ThemeService.js';
+import settings from '../settings.js';
 import ThemesDictionary, {
-  CIRCLES_THEME,
-  GOLDEN_THEME,
-  HARMONY_THEME,
-  NEW_CAT_THEME,
-  UNICAT_THEME,
-  DARK_THEME,
-  GAME_THEME,
-  WIN_20,
   BLACK_HOLE_THEME,
-  DEER_THEME,
+  CIRCLES_THEME,
   COLOR_THEME,
-  SIBERIAN_THEME,
-  MATERIAL_YOU,
-  WHITE_FLOWER,
+  DARK_THEME,
+  DEER_THEME,
   DYNAMIC_M3_DARK,
   DYNAMIC_M3_LIGHT,
+  GAME_THEME,
+  GOLDEN_THEME,
+  HARMONY_THEME,
+  MATERIAL_YOU,
+  NEW_CAT_THEME,
+  SIBERIAN_THEME,
+  UNICAT_THEME,
+  WHITE_FLOWER,
+  WIN_20,
 } from '../theme/themes.js';
-import {
-  Label,
-  Box,
-  Icon,
-  Window,
-  Button,
-  Revealer,
-} from 'resource:///com/github/Aylur/ags/widget.js';
-import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
-import MusicPLayer from '../widgets/MusicPLayer.js';
 import { local } from '../utils/helpers.js';
-import settings from '../settings.js';
 import { Widget } from '../utils/imports.js';
+import MusicPLayer from '../widgets/MusicPLayer.js';
 
 const Profile = () => {
   const userImage = Icon({
@@ -40,7 +40,7 @@ const Profile = () => {
 
   const myName = Label({
     className: 'profile-label',
-    label: 'احمد الصعدي',
+    label: 'Ahmed Al-Saadi',
   });
 
   return Box({
@@ -112,89 +112,89 @@ const ThemesButtonsRowOne = () => {
   // ---------- Theme Buttons ----------
   // -----------------------------------
   const blackHoleTheme = ThemeButton({
-    label: 'ثقب',
+    label: 'Black hole',
     icon: '󰇩',
     theme: BLACK_HOLE_THEME,
   });
 
   const deerTheme = ThemeButton({
-    label: 'غزال',
+    label: 'Deer',
     icon: '',
     theme: DEER_THEME,
   });
 
   const colorTheme = ThemeButton({
-    label: 'جمالي',
+    label: 'Color',
     icon: '',
     theme: COLOR_THEME,
     end: '',
   });
 
   const siberianTheme = ThemeButton({
-    label: 'تدرج',
+    label: 'Gradient',
     icon: '',
     theme: SIBERIAN_THEME,
   });
 
   const materialYouTheme = ThemeButton({
-    label: 'مادي',
+    label: 'Material',
     icon: '',
     theme: MATERIAL_YOU,
   });
 
   const win20Theme = ThemeButton({
-    label: 'ويندوز',
+    label: 'Windows',
     icon: '',
     theme: WIN_20,
     end: '',
   });
 
   const gameTheme = ThemeButton({
-    label: 'لعبة',
+    label: 'Game',
     icon: '',
     theme: GAME_THEME,
   });
 
   const darkTheme = ThemeButton({
-    label: 'مظلم',
+    label: 'dark',
     icon: '󱀝',
     theme: DARK_THEME,
   });
 
   const unicatTheme = ThemeButton({
-    label: 'قط',
+    label: 'Unicat',
     icon: '',
     theme: UNICAT_THEME,
     end: '',
   });
 
   const newCatTheme = ThemeButton({
-    label: 'قط',
+    label: 'New cat',
     icon: '',
     theme: NEW_CAT_THEME,
   });
 
   const goldenTheme = ThemeButton({
-    label: 'ذهبي',
+    label: 'Golden',
     icon: '󰉊',
     theme: GOLDEN_THEME,
   });
 
   const harmonyTheme = ThemeButton({
-    label: 'تناغم',
+    label: 'Harmony',
     icon: '󰔉',
     theme: HARMONY_THEME,
     end: '',
   });
 
   const circlesTheme = ThemeButton({
-    label: 'دوائر',
+    label: 'Circles',
     icon: '',
     theme: CIRCLES_THEME,
   });
 
   const whiteFlower = ThemeButton({
-    label: 'ابيض',
+    label: 'White',
     icon: '',
     theme: WHITE_FLOWER,
   });

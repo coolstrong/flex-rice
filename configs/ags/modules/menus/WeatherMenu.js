@@ -143,12 +143,12 @@ const MenuRevealer = () => {
 
       latestUpdate.label = ` ${weatherService.observation_time}`;
 
-      feelsLike.label = `شعور وكانة : ${weatherService.feelsLike} C°`;
-      humidity.label = `الرطوبة : ${weatherService.humidity}%`;
-      pressure.label = `الضغط : ${weatherService.pressure}`;
-      wind.label = `الرياح : ${weatherService.windspeedKmph}`;
-      clouds.label = `السحب : ${weatherService.cloudcover}`;
-      minAndMax.label = `الصغرى والعلياء : ${weatherService.minTempC} - ${weatherService.maxTempC}`;
+      feelsLike.label = `Feels like : ${weatherService.feelsLike} C°`;
+      humidity.label = `Humidity : ${weatherService.humidity}%`;
+      pressure.label = `Pressure : ${weatherService.pressure}`;
+      wind.label = `Wind : ${weatherService.windspeedKmph}`;
+      clouds.label = `Clouds : ${weatherService.cloudcover}`;
+      minAndMax.label = `Min and max : ${weatherService.minTempC} - ${weatherService.maxTempC}`;
 
       today1.children[0].label = weatherService.hourly.hour1.time;
       today1.children[1].label = `${weatherService.hourly.hour1.weatherCode} ${weatherService.hourly.hour1.tempC} C°`;

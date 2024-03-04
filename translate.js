@@ -6,7 +6,7 @@ const scanDir = async (path, callback) => {
         const fullPath = `${path}/${dirEntry.name}`;
 
         if (dirEntry.isDirectory) {
-            await scanDir(fullPath);
+            await scanDir(fullPath, callback);
         } else {
             if (!EXTS.some($ => fullPath.endsWith($))) continue;
 
@@ -38,5 +38,4 @@ const translateFile = async path => {
         );
 };
 
-scanDir(".", translateFile);
-// translateFile("./scripts/battery.sh");
+await scanDir(".", translateFile);

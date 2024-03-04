@@ -1,10 +1,10 @@
+import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
 import {
   Box,
   Button,
-  Label,
   CircularProgress,
+  Label,
 } from 'resource:///com/github/Aylur/ags/widget.js';
-import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js';
 import { Utils } from '../../utils/imports.js';
 
 export const TempWidget = () => {
@@ -39,11 +39,10 @@ export const TempWidget = () => {
         }
         total = parseInt(total / temps.length);
         progress.value = total / 100;
-        label.tooltipMarkup = `<span weight='bold' foreground='#C78DF2'>اجمالي درجة حرارة الاجهزة (${total}%)</span>`;
+        label.tooltipMarkup = `<span weight='bold' foreground='#C78DF2'>Total temperature of the devices (${total}%)</span>`;
       })
       .catch(print);
     box.children = [progress];
     box.show_all();
   });
 };
-

@@ -1,5 +1,5 @@
-import { TitleText, local } from '../utils/helpers.js';
-import { Widget, Utils } from '../utils/imports.js';
+import { TitleText } from '../utils/helpers.js';
+import { Utils, Widget } from '../utils/imports.js';
 
 const SATURDAY = 6;
 const SUNDAY = 7;
@@ -56,65 +56,67 @@ export default (className) =>
         let usedFuzzyTime = box.children[2];
 
         if (day == SATURDAY) {
-          usedFuzzyDay.children[0].label = 'مرحبًا بك في يوم جديد،';
+          usedFuzzyDay.children[0].label = 'Welcome to a new day,';
           usedFuzzyDay.children[1].label = '';
-          usedTimeNow.label = 'السبت هو بداية لمغامرات جديدة.';
+          usedTimeNow.label = 'Saturday is the beginning of new adventures.';
         } else if (day == SUNDAY) {
-          usedFuzzyDay.children[0].label = 'الأحد هو فرصة جديدة';
+          usedFuzzyDay.children[0].label = 'Sunday is a new opportunity';
           usedFuzzyDay.children[1].label = '';
-          usedTimeNow.label = 'استمر في السعي نحو أهدافك.';
+          usedTimeNow.label = 'Keep striving towards your goals.';
         } else if (day == MONDAY) {
-          usedFuzzyDay.children[0].label = 'جلسة خفيفة اليوم';
+          usedFuzzyDay.children[0].label = 'Light session today';
           usedFuzzyDay.children[1].label = '';
-          usedTimeNow.label = 'استمتع بلحظة الاستراحة واستعد للأيام القادمة.';
+          usedTimeNow.label =
+            'Enjoy the moment of rest and prepare for the days ahead.';
         } else if (day == TUESDAY) {
-          usedFuzzyDay.children[0].label = 'نصف الأسبوع قد حان';
+          usedFuzzyDay.children[0].label = 'Half the week has come';
           usedFuzzyDay.children[1].label = '';
-          usedTimeNow.label = 'حافظ على الزخم والإيجابية.';
+          usedTimeNow.label = 'Maintain the momentum and positivity.';
         } else if (day == WEDNESDAY) {
-          usedFuzzyDay.children[0].label = 'باقي يومين فقط';
+          usedFuzzyDay.children[0].label = 'Only two days left';
           usedFuzzyDay.children[1].label = '';
-          usedTimeNow.label = 'استمتع بالتحديات وابذل جهدك.';
+          usedTimeNow.label = 'Enjoy challenges and do your best.';
         } else if (day == THURSDAY) {
-          usedFuzzyDay.children[0].label = 'أرحب يا الخميس';
+          usedFuzzyDay.children[0].label = 'Welcome, Thursday';
           usedFuzzyDay.children[1].label = '';
-          usedTimeNow.label = 'الوقت للاستمتاع بالجهود المبذولة.';
+          usedTimeNow.label = 'Time to enjoy the efforts.';
         } else if (day == FRIDAY) {
-          usedFuzzyDay.children[0].label = 'يوم الجمعة';
+          usedFuzzyDay.children[0].label = 'Friday';
           usedFuzzyDay.children[1].label = '';
-          usedTimeNow.label = 'متعة واستراحة، استمتع بلحظات الهدوء.';
+          usedTimeNow.label = 'Fun and relaxation, enjoy the quiet moments.';
         }
 
         if (hour >= 0 && hour < 4) {
-          usedFuzzyTime.children[0].label = 'وقت البرمجة، حان وقت الإبداع';
+          usedFuzzyTime.children[0].label = 'Time to code, time to create';
           // usedFuzzyTime.children[1].label = "";
           usedFuzzyTime.children[1].label = '';
         } else if (hour >= 4 && hour < 9) {
           usedFuzzyTime.children[0].label =
-            'صباح الخير! بداية جديدة ليوم مليء بالفرص';
+            'Good morning! A fresh start to a day full of opportunities';
           usedFuzzyTime.children[1].label = '';
         } else if (hour >= 9 && hour < 12) {
-          usedFuzzyTime.children[0].label = 'الصبوح قد حان، دع الإنجازات تبدأ';
+          usedFuzzyTime.children[0].label =
+            'The morning has come, let the achievements begin';
           usedFuzzyTime.children[1].label = '';
         } else if (hour >= 12 && hour < 15) {
           usedFuzzyTime.children[0].label =
-            'حان وقت الغداء، استرح واستعد للجولة الثانية';
+            'Its lunch time, rest up and get ready for round two';
           usedFuzzyTime.children[1].label = '';
         } else if (hour >= 15 && hour < 16) {
           usedFuzzyTime.children[0].label =
-            'استمتع بكوب من الشاي واسترخِ مع كتاب خفيف';
+            'Enjoy a cup of tea and relax with a light book';
           usedFuzzyTime.children[1].label = '';
         } else if (hour >= 16 && hour < 18) {
           usedFuzzyTime.children[0].label =
-            'حان وقت الإبداع، شغف وعمل خفيف ينتظرك';
+            'Its time for creativity, passion and light work awaits you';
           usedFuzzyTime.children[1].label = '';
         } else if (hour >= 18 && hour < 21) {
           usedFuzzyTime.children[0].label =
-            'العشاء جاهز، استمتع بوقتك مع أحبائك';
+            'Dinner is ready, enjoy your time with your loved ones';
           usedFuzzyTime.children[1].label = '';
         } else if (hour >= 21) {
           usedFuzzyTime.children[0].label =
-            'ليلة سعيدة! استرخِ واستعد لغد جديد';
+            'Good night! Relax and prepare for a new tomorrow';
           usedFuzzyTime.children[1].label = '';
         }
 
@@ -128,42 +130,42 @@ export default (className) =>
 function createFuzzyHour() {
   const now = new Date();
   const hours = now.getHours();
-  // const timeOfDay = hours >= 12 ? "مساءً" : "صباحًا";
+  // const timeOfDay = hours >= 12 ? "evening" : "A.M";
   let timeOfDay = '';
 
   if (hours >= 15) {
-    timeOfDay = 'مساءً';
+    timeOfDay = 'evening';
   } else if (hours >= 12) {
-    timeOfDay = 'ظهرا';
+    timeOfDay = 'Noon';
   } else if (hours >= 6) {
-    timeOfDay = 'صباحًا';
+    timeOfDay = 'A.M';
   } else if (hours >= 4) {
-    timeOfDay = 'فجرا';
+    timeOfDay = 'At dawn';
   } else if (hours > 0) {
-    timeOfDay = 'بعد منتصف الليل';
+    timeOfDay = 'After midnight';
   }
 
   const arabicNumbers = [
-    'الواحدة',
-    'الثانية',
-    'الثالثة',
-    'الرابعة',
-    'الخامسة',
-    'السادسة',
-    'السابعة',
-    'الثامنة',
-    'التاسعة',
-    'العاشرة',
-    'الحادية عشر',
-    'الثانية عشر',
+    'One',
+    'the second',
+    'Third',
+    'Fourth',
+    'Fifth',
+    'Six',
+    'Seven',
+    'Eight',
+    'Nine',
+    'tenth',
+    'eleventh',
+    'Twelfth',
   ];
 
-  let timeInArabicWords = 'الساعة الآن ';
+  let timeInArabicWords = 'The time is now ';
 
   if (hours === 0) {
-    timeInArabicWords += 'الثانية عشر ليلاً';
+    timeInArabicWords += 'Twelve oclock at night';
   } else if (hours === 12) {
-    timeInArabicWords += 'الثانية عشر ظهرًا';
+    timeInArabicWords += 'Twelve noon';
   } else {
     timeInArabicWords += arabicNumbers[(hours % 12) - 1] + ' ' + timeOfDay;
   }
