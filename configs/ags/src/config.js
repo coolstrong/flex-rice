@@ -7,7 +7,6 @@ import { NotificationCenter } from "./menus/notification_center.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
 import { VolumeOSD } from "./on-screen/volume.js";
 import { Bar } from "./topbar.js";
-import { Utils } from "./utils/imports.js";
 import blackHoleWidget from "./widgets/desktop/BlackHole.js";
 import circlesMusicWidget from "./widgets/desktop/Circles.js";
 import ColorWidget from "./widgets/desktop/ColorsWidget.js";

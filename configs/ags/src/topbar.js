@@ -14,7 +14,6 @@ import {
 } from "resource:///com/github/Aylur/ags/widget.js";
 import themeService from "./services/ThemeService.js";
 import weatherService from "./services/WeatherService.js";
-import { Widget } from "./utils/imports.js";
 
 const Clock = () =>
     Label({
