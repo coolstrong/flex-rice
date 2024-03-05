@@ -2,7 +2,6 @@ import { Mpris } from "resource:///com/github/Aylur/ags/service/mpris.js";
 import NestedCircles from "../../components/NestedCircles";
 import FuzzyClock from "../FuzzyClock.js";
 import { selectedMusicPlayer } from "../MusicPLayer.js";
-import Saying from "../Saying.js";
 
 let cpuNestedCircles1 = NestedCircles({
     child: Widget.Label({
@@ -125,16 +124,16 @@ const CircleMusicWidget = () =>
         child: MusicWidget,
     });
 
-const SayingWidget = () =>
-    Widget.Window({
-        name: `desktop_circles_saying_widget`,
-        margins: [920, 30],
-        layer: "background",
-        visible: false,
-        focusable: false,
-        anchor: ["top", "right"],
-        child: Saying(),
-    });
+// const SayingWidget = () =>
+//     Widget.Window({
+//         name: `desktop_circles_saying_widget`,
+//         margins: [920, 30],
+//         layer: "background",
+//         visible: false,
+//         focusable: false,
+//         anchor: ["top", "right"],
+//         child: Saying(),
+//     });
 
 const FuzzyClockWidget = () =>
     Widget.Window({
@@ -170,7 +169,7 @@ function createCoreWindow(name, margins, child) {
 }
 
 const circlesMusicWidget = CircleMusicWidget();
-const circlesSayingWidget = SayingWidget();
+// const circlesSayingWidget = SayingWidget();
 const fuzzyClockWidget = FuzzyClockWidget();
 
 const core1Widget = createCoreWindow(
@@ -287,7 +286,7 @@ const temp8Widget = createCoreWindow(
 
 globalThis.ShowCirclesWidget = () => {
     circlesMusicWidget.visible = true;
-    circlesSayingWidget.visible = true;
+    // circlesSayingWidget.visible = true;
     fuzzyClockWidget.visible = true;
     core1Widget.visible = true;
     core2Widget.visible = true;
@@ -313,7 +312,7 @@ globalThis.ShowCirclesWidget = () => {
 
 globalThis.HideCirclesWidget = () => {
     circlesMusicWidget.visible = false;
-    circlesSayingWidget.visible = false;
+    // circlesSayingWidget.visible = false;
     fuzzyClockWidget.visible = false;
     core1Widget.visible = false;
     core2Widget.visible = false;

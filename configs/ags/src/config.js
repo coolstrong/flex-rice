@@ -1,6 +1,6 @@
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
-import { HardwareMenu } from "./menus/HardwareMenu.js";
+import { HardwareMenu } from "./menus/HardwareMenu";
 import { WeatherMenu } from "./menus/WeatherMenu.js";
 import { LeftMenu } from "./menus/left_menu.js";
 import { NotificationCenter } from "./menus/notification_center.js";

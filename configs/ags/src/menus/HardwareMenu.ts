@@ -1,7 +1,8 @@
 import { local } from "@/utils/helpers";
+import Gtk from "gi://Gtk";
 const Battery = await Service.import("battery");
 
-var menuIsOpen = null;
+var menuIsOpen: boolean | null = null;
 var cpuIsInitialized = false;
 var ramIsInitialized = false;
 
@@ -174,7 +175,7 @@ const hardwareUsageTable = ({
     const table = Widget.Box({
         className: `hardware-${deviceName}-box`,
         vertical: true,
-        children: [],
+        children: [] as Gtk.Widget[],
     });
 
     if (scriptPath) {

@@ -1,6 +1,5 @@
 import FuzzyClock from "../FuzzyClock.js";
 import { selectedMusicPlayer } from "../MusicPLayer.js";
-import Saying from "../Saying.js";
 const Mpris = await Service.import("mpris");
 
 const DesktopWidget = Widget.Box({
@@ -48,7 +47,6 @@ const DesktopWidget = Widget.Box({
         Widget.Box({
             className: "desktop-wd-separator",
         }),
-        Saying(),
     ],
 });
 

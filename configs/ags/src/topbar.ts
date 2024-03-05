@@ -103,7 +103,7 @@ const Left = () =>
         ],
     });
 
-export const Bar = ({ monitor } = {}) =>
+export const Bar = ({ monitor }: { monitor?: number } | undef = {}) =>
     Window({
         name: `bar${monitor || ""}`, // name has to be unique
         className: "bar-bg unset",

@@ -1,7 +1,9 @@
+import { undef } from "./common";
+
 export const TitleText = ({
-    title,
+    title = undef,
     titleClass = "",
-    text,
+    text = undef,
     textClass = "",
     boxClass = "",
     homogeneous = false,

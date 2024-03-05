@@ -4,7 +4,6 @@ import { TitleText } from "../../utils/helpers.js";
 
 import FuzzyClock from "../FuzzyClock.js";
 import MusicPlayer from "../MusicPLayer.js";
-import Saying from "../Saying.js";
 
 const iconImage = Widget.Icon({
     icon: `${settings.assets.wallpapers}/image.png`,
@@ -98,17 +97,13 @@ const DesktopWidget = () =>
             RowTwo(),
             // FuzzyClock("my-fuzzy-clock-box small-shadow"),
             MusicPlayer("my-desktop-music-box small-shadow"),
-            // Saying("saying-wd-label small-shadow"),
         ],
     });
 
 const DesktopWidget2 = () =>
     Widget.Box({
         vertical: true,
-        children: [
-            FuzzyClock("my-fuzzy-clock-box small-shadow"),
-            Saying("saying-wd-label small-shadow"),
-        ],
+        children: [FuzzyClock("my-fuzzy-clock-box small-shadow")],
     });
 
 const FWidget = () =>
