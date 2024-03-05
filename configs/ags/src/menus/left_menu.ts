@@ -348,7 +348,7 @@ const menuRevealer = Revealer({
     child: widgets,
 });
 
-export const LeftMenu = ({ monitor } = {}) =>
+export const LeftMenu = ({ monitor }: { monitor?: number } = {}) =>
     Window({
         name: `left_menu_${monitor}`,
         margins: [0, 0, 0, 0],
@@ -379,9 +379,9 @@ globalThis.showLeftMenu = () => {
 };
 
 function changeMenuBtn() {
-    if (menuRevealer.revealChild) {
-        MenuButton.label = "";
-    } else {
-        MenuButton.label = "";
-    }
+    // if (menuRevealer.revealChild) {
+    //     MenuButton.label = "";
+    // } else {
+    //     MenuButton.label = "";
+    // }
 }

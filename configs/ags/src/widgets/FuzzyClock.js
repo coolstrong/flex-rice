@@ -72,7 +72,8 @@ export default (className) =>
                 } else if (day == TUESDAY) {
                     usedFuzzyDay.children[0].label = "Half the week has come";
                     usedFuzzyDay.children[1].label = "";
-                    usedTimeNow.label = "MaWEDNESDAY) {
+                    usedTimeNow.label = "Maintain the momentum and positivity.";
+                } else if (day == WEDNESDAY) {
                     usedFuzzyDay.children[0].label = "Only two days left";
                     usedFuzzyDay.children[1].label = "";
                     usedTimeNow.label = "Enjoy challenges and do your best.";
@@ -86,8 +87,7 @@ export default (className) =>
                     usedTimeNow.label =
                         "Fun and relaxation, enjoy the quiet moments.";
                 }
-intain the momentum and positivity.";
-                } else if (day == 
+
                 if (hour >= 0 && hour < 4) {
                     usedFuzzyTime.children[0].label =
                         "Time to code, time to create";

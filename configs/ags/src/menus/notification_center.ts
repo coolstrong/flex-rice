@@ -22,12 +22,18 @@ const NotificationsBox = () => {
 
         for (let index = 0; index < array.length; index++) {
             const element = array[index];
-            let line = Box({
-                className: "horizontal-line",
-            });
-            if (index === array.length - 1) {
-                line = null;
-            }
+            // let line = Box({
+            //     className: "horizontal-line",
+            // });
+            // if (index === array.length - 1) {
+            //     line = null;
+            // }
+            const line =
+                index !== array.length - 1
+                    ? Box({
+                          class_name: "horizontal-line",
+                      })
+                    : null;
 
             notificationList.push(Notification(element), line);
         }
