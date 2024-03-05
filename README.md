@@ -4,7 +4,7 @@
 
 **Note:** This configuration is a work in progress, and I will continue to add more features as time permits.
 
-### Required dependencies:
+### dependencies:
 
 -   [Hyprland](https://wiki.hyprland.org/Getting-Started/Installation/)
 -   [AGS](https://github.com/Aylur/ags/wiki/installation)

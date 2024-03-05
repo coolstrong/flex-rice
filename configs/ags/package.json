@@ -1,0 +1,14 @@
+{
+    "name": "flex-rice-ags",
+    "module": "config.js",
+    "type": "module",
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "scripts": {
+        "build": "bun build.js"
+    }
+}
