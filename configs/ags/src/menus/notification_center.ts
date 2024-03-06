@@ -1,3 +1,5 @@
+import { E, undef } from "@/utils/common";
+import Gtk from "gi://Gtk";
 import {
     Box,
     Button,
@@ -6,7 +8,7 @@ import {
     Scrollable,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
-import Notification from "../notifications/MenuNotification.js";
+import Notification from "../notifications/MenuNotification";
 import { local } from "../utils/helpers.js";
 const Notifications = await Service.import("notifications");
 
@@ -14,26 +16,20 @@ const NotificationsBox = () => {
     return Box({
         className: "notification-menu-header",
         vertical: true,
-        children: [],
+        children: [] as Gtk.Widget[],
     }).hook(Notifications, (self) => {
-        let notificationList = [];
+        let notificationList = [] as (Gtk.Widget | undef)[];
 
         const array = Notifications.notifications.reverse();
 
         for (let index = 0; index < array.length; index++) {
             const element = array[index];
-            // let line = Box({
-            //     className: "horizontal-line",
-            // });
-            // if (index === array.length - 1) {
-            //     line = null;
-            // }
             const line =
                 index !== array.length - 1
                     ? Box({
                           class_name: "horizontal-line",
                       })
-                    : null;
+                    : undef;
 
             notificationList.push(Notification(element), line);
         }
@@ -59,7 +55,7 @@ const NotificationsBox = () => {
             notificationList.push(noNotifications);
         }
 
-        self.children = [...notificationList];
+        self.children = notificationList.filter(E);
     });
 };
 
@@ -143,7 +139,7 @@ export const NotificationCenterButton = () =>
         className: "notification-center-button unset",
         // child: Label({ label: "" }),
         label: "",
-        onClicked: () => showNotificationCenter(),
+        onClicked: () => globalThis.showNotificationCenter(),
     }).hook(Notifications, (self) => {
         if (Notifications.dnd) {
             self.label = "󰂛";

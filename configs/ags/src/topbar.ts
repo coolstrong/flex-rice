@@ -96,7 +96,7 @@ const Left = () =>
         children: [
             // Volume(),
             NotificationCenterButton(),
-            Weather(),
+            // Weather(),
             NetworkInformation(),
             SysTrayBox(),
             MenuButton(),

@@ -1,8 +1,4 @@
 import Gtk from "gi://Gtk";
-
-/**
- * @param {string} place
- */
 export const RoundedCorner = (
     place: string,
     props: Parameters<typeof Widget.DrawingArea>[0]

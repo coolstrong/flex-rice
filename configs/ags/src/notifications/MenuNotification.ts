@@ -1,4 +1,5 @@
 const { GLib } = imports.gi;
+import { optArr } from "@/utils/common";
 import { local } from "@/utils/helpers.js";
 import { lookUpIcon } from "resource:///com/github/Aylur/ags/utils.js";
 import {
@@ -148,7 +149,10 @@ export default (notification) => {
         },
         child: Box({
             vertical: true,
-            children: [content, notification.actions.length > 0 && actionsbox],
+            children: [
+                content,
+                ...optArr(notification.actions.length > 0, [actionsbox]),
+            ],
         }),
     });
 

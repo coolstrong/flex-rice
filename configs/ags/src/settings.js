@@ -32,12 +32,12 @@ const settings = {
         mainCss: `${getPath("/scss/main.scss")}`,
         styleCss: `${getPath("/style.scss")}`,
     },
-    weather: {
-        // provider is 'ar.wttr.in'
-        language: "ar", // Not implemented yot - only arabic is supported
-        location: "sanaa",
-        format: "j1",
-    },
+    // weather: {
+    //     // provider is 'ar.wttr.in'
+    //     language: "ar", // Not implemented yot - only arabic is supported
+    //     location: "sanaa",
+    //     format: "j1",
+    // },
 };
 
 export default settings;
