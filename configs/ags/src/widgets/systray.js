@@ -1,4 +1,4 @@
-import { SystemTray } from "resource:///com/github/Aylur/ags/service/systemtray.js";
+import { systemTray } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 
 const { Gravity } = imports.gi.Gdk;
 
@@ -9,6 +9,7 @@ const PanelButton = ({ className, content, ...rest }) =>
         ...rest,
     });
 
+/** @param {import('@/types/service/systemtray').TrayItem} item */
 const SysTrayItem = (item) =>
     PanelButton({
         className: "tray-btn unset",
@@ -35,7 +36,7 @@ export const SysTrayBox = () =>
         attribute: {
             items: new Map(),
             onAdded: (box, id) => {
-                const item = SystemTray.getItem(id);
+                const item = systemTray.getItem(id);
                 if (box.attribute.items.has(id) || !item) return;
 
                 const widget = SysTrayItem(item);
@@ -51,9 +52,9 @@ export const SysTrayBox = () =>
             },
         },
     })
-        .hook(SystemTray, (box, id) => box.attribute.onAdded(box, id), "added")
+        .hook(systemTray, (box, id) => box.attribute.onAdded(box, id), "added")
         .hook(
-            SystemTray,
+            systemTray,
             (box, id) => box.attribute.onRemoved(box, id),
             "removed"
         );

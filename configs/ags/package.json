@@ -1,15 +1,19 @@
 {
-    "name": "flex-rice-ags",
-    "module": "config.js",
-    "type": "module",
-    "devDependencies": {
-        "@types/bun": "latest"
-    },
-    "peerDependencies": {
-        "typescript": "^5.0.0"
-    },
-    "scripts": {
-        "build": "bun build ./src/config.js --outdir ./dist -e resource://* -e gi://*",
-        "watch": "bun build --watch ./src/config.js --outdir ./dist -e resource://* -e gi://*"
-    }
+  "name": "flex-rice-ags",
+  "module": "config.js",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "build": "bun build ./src/config.js --outdir ./dist -e resource://* -e gi://*",
+    "watch": "bun build --watch ./src/config.js --outdir ./dist -e resource://* -e gi://*"
+  },
+  "dependencies": {
+    "@mobily/ts-belt": "next",
+    "ts-pattern": "^5.0.8"
+  }
 }

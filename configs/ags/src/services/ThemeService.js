@@ -279,15 +279,17 @@ class ThemeService extends Service {
         kittyConfig,
         konsoleTheme
     ) {
-        const kittyBind = `bind = $mainMod, Return, exec, kitty -c ${App.configDir}/modules/theme/kitty/${kittyConfig}`;
-        const konsoleBind = `bind = $mainMod, Return, exec, konsole --profile ${konsoleTheme}`;
+        // const kittyBind = `bind = $mainMod, Return, exec, kitty -c ${App.configDir}/modules/theme/kitty/${kittyConfig}`;
+        // const konsoleBind = `bind = $mainMod, Return, exec, konsole --profile ${konsoleTheme}`;
 
-        execAsync([
-            "sed",
-            "-i",
-            `42s|.*|${konsoleBind}|`,
-            `/home/${USER}/.config/hypr/binding.conf`,
-        ])
+        // execAsync([
+        //     "sed",
+        //     "-i",
+        //     `42s|.*|${konsoleBind}|`,
+        //     `/home/${USER}/.config/hypr/binding.conf`,
+        // ])
+        //todo It should be batched ofk
+        Promise.resolve()
             .then(() => {
                 timeout(1000, () => {
                     execAsync(

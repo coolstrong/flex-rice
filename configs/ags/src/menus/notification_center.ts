@@ -9,7 +9,7 @@ import {
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import Notification from "../notifications/MenuNotification";
-import { local } from "../utils/helpers.js";
+import { local } from "@/utils/helpers";
 const Notifications = await Service.import("notifications");
 
 const NotificationsBox = () => {

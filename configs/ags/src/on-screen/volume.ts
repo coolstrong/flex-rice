@@ -1,3 +1,4 @@
+import { tuple } from "@/utils/common";
 import Audio from "resource:///com/github/Aylur/ags/service/audio.js";
 import {
     Box,
@@ -29,17 +30,16 @@ export const Volume = () =>
                 Audio,
                 (stack) => {
                     if (!Audio.speaker) return;
-
-                    if (Audio.speaker.isMuted) {
-                        stack.shown = "0";
+                    if (Audio.speaker.is_muted) {
+                        stack.shown = 0;
                         return;
                     }
 
-                    const show = [101, 67, 34, 1, 0].find(
-                        (threshold) => threshold <= Audio.speaker.volume * 100
-                    );
-
-                    stack.shown = `${show}`;
+                    stack.shown =
+                        tuple(101, 67, 34, 1, 0).find(
+                            (threshold) =>
+                                threshold <= Audio.speaker.volume * 100
+                        ) ?? 0;
                 },
                 "speaker-changed"
             ),

@@ -6,7 +6,7 @@ import {
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import { local } from "../utils/helpers.js";
-import MyNotification from "./Notification.js";
+import MyNotification from "./Notification";
 
 const Popups = () =>
     Box({

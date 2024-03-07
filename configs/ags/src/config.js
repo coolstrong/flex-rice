@@ -5,7 +5,7 @@ import { WeatherMenu } from "./menus/WeatherMenu.js";
 import { LeftMenu } from "./menus/left_menu.js";
 import { NotificationCenter } from "./menus/notification_center.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
-import { VolumeOSD } from "./on-screen/volume.js";
+import { VolumeOSD } from "./on-screen/volume.ts";
 import { Bar } from "./topbar.js";
 // import ScreenCorners from './modules/components/ScreenCorners.js';
 

@@ -1,3 +1,4 @@
+import Gtk30 from "gi://Gtk";
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
 import { timeout } from "resource:///com/github/Aylur/ags/utils.js";
 import {
@@ -44,9 +45,11 @@ const Popups = () =>
                     id,
                     MyNotification(Notifications.getNotification(id))
                 );
-                let children = [];
+                let children: Gtk30.Widget[] = [];
                 const mapValues = Array.from(box.attribute.map.values());
                 for (let i = mapValues.length - 1; i >= 0; i--) {
+                    //fixme fix types
+                    //@ts-expect-error
                     children.push(mapValues[i]);
                     if (mapValues.length > 1) {
                         children.push(Label({}));
@@ -74,7 +77,7 @@ const Popups = () =>
             "closed"
         );
 
-const PopupList = ({ transition = "slide_up" } = {}) =>
+const PopupList = ({ transition = <Transition>"slide_up" } = {}) =>
     Box({
         className: "notifications-popup-list",
         children: [

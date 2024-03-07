@@ -1,5 +1,8 @@
+// noinspection HtmlUnknownAttribute
+
 import { local } from "@/utils/helpers";
 import Gtk from "gi://Gtk";
+
 const Battery = await Service.import("battery");
 
 var menuIsOpen: boolean | null = null;
@@ -60,9 +63,9 @@ const batteryProgress = Widget.CircularProgress({
     startAt: 0,
     rounded: false,
 }).hook(Battery, (self) => {
-    let percentage = Battery.percent;
+    const percentage = Battery.percent;
     self.value = percentage / 100;
-
+    
     var label = "";
 
     if (Battery.charging) {
@@ -83,9 +86,10 @@ const batteryProgress = Widget.CircularProgress({
         } else if (percentage > 70) {
             label = "󱊣";
         }
-        // self.child.label = "";
+        self.child.label = "";
         self.child.class_name = "menu-battery-icon";
     }
+    
     self.child.label = label;
 
     self.child.tooltipMarkup = `<span weight='bold'>Battery percentage (${percentage}%)</span>`;
@@ -238,7 +242,7 @@ const tablesBox = () => {
         )
             .then((val) => {
                 let data = JSON.parse(val);
-                let children = [
+                self.children = [
                     // Header
                     tableRow({
                         appName: "the battery",
@@ -275,7 +279,6 @@ const tablesBox = () => {
                         deviceName: batDeviceName,
                     }),
                 ];
-                self.children = children;
             })
             .catch(print);
     });
@@ -289,7 +292,7 @@ const tablesBox = () => {
             .then((val) => {
                 // let data = JSON.parse(val);
 
-                let children = [
+                self.children = [
                     // Header
                     tableRow({
                         appName: "System",
@@ -315,7 +318,6 @@ const tablesBox = () => {
                         deviceName: osClassName,
                     }),
                 ];
-                self.children = children;
             })
             .catch(print);
     });

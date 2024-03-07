@@ -43,7 +43,7 @@ class WeatherService extends Service {
                 weatherCode3: ["string", "r"],
                 weatherTime3: ["string", "r"],
 
-                hourly: ["dictionary", "r"],
+                hourly: ["jsobject", "r"],
 
                 // 'avgTempC4': ['string', 'r'],
                 // 'weatherCode4': ['string', 'r'],
@@ -81,6 +81,7 @@ class WeatherService extends Service {
             .catch(() => {
                 const source = setTimeout(() => {
                     this.getWeather();
+                    // @ts-expect-error типы не пропатчены
                     source.destroy();
                     this.checkColdWeather();
                 }, 300000);
