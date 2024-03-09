@@ -1,12 +1,12 @@
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
-import { HardwareMenu } from "./menus/HardwareMenu";
+import { Bar } from "./Bar.js";
+import { HardwareMenu } from "./menus/HardwareMenu.js";
 import { WeatherMenu } from "./menus/WeatherMenu.js";
-import { LeftMenu } from "./menus/left_menu.js";
 import { NotificationCenter } from "./menus/notification_center.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
-import { VolumeOSD } from "./on-screen/volume.ts";
-import { Bar } from "./topbar.js";
+import { VolumeOSD } from "./on-screen/volume.js";
+import { LeftMenu } from "./widgets/menus/LeftMenu.js";
 // import ScreenCorners from './modules/components/ScreenCorners.js';
 
 // in config.js
@@ -16,13 +16,14 @@ const css = App.configDir + "/style.css";
 Utils.exec(`sassc ${scss} ${css}`);
 
 let windows = [
-    // Bar({monitor : 1}),
-    // Bar({ monitor: 0 }),
     VolumeOSD(),
     MyNotifications(),
     NotificationCenter(),
     HardwareMenu(),
     WeatherMenu(),
+
+    Bar({ monitor: 0 }),
+    LeftMenu(),
 
     // ... Desktop widgets ... //
     /*     ColorWidget,
@@ -38,19 +39,10 @@ let windows = [
     whiteFlowerWidget, */
 ];
 
-const screens = JSON.parse(Utils.exec("hyprctl monitors all -j"));
-
-for (let i = 0; i < screens.length; i++) {
-    const screen = screens[i];
-
-    windows.push(Bar({ monitor: screen.id }));
-    windows.push(LeftMenu({ monitor: screen.id }));
-}
-
 export default {
-    css: css,
+    css,
     cacheNotificationActions: true,
-    windows: windows,
+    windows,
 };
 
 globalThis.getNot = () => Notifications;

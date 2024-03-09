@@ -5,7 +5,7 @@ import {
     Revealer,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
-import { local } from "../utils/helpers.js";
+import { local } from "../utils/helpers";
 import MyNotification from "./Notification";
 
 const Popups = () =>
@@ -123,7 +123,7 @@ const PopupList = ({ transition = "slide_up" } = {}) =>
         ],
     });
 
-export default (monitor) =>
+export default monitor =>
     Window({
         monitor,
         layer: "overlay",

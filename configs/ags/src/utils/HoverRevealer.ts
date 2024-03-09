@@ -9,7 +9,7 @@ export default ({
     boxClass,
     indicator,
     child,
-    direction = "left" as "left" | "right" | "down" | "up",
+    direction = <Direction>"left",
     duration = 500,
     ...rest
 }) => {

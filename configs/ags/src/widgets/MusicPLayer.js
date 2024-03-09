@@ -1,5 +1,5 @@
 import Gdk from "gi://Gdk";
-import { local } from "../utils/helpers.js";
+import { local } from "../utils/helpers";
 const Mpris = await Service.import("mpris");
 
 export var selectedMusicPlayer = null;
@@ -56,7 +56,7 @@ const RowOne = () => {
     const selectPlayerBtn = Widget.Button({
         className: "music-wd-player",
         child: playerName,
-        onClicked: (event) => {
+        onClicked: event => {
             playersMenu.popup(event);
         },
     });
@@ -66,7 +66,7 @@ const RowOne = () => {
         // homogeneous: true,
         spacing: 120,
         children: [length(), selectPlayerBtn],
-    }).hook(Mpris, (self) => {
+    }).hook(Mpris, self => {
         let playersList = [];
         for (const player in Mpris.players) {
             if (Object.hasOwnProperty.call(Mpris.players, player)) {
@@ -127,7 +127,7 @@ const RowTwo = () => {
         vertical: true,
         className: "music-wd-row-two",
         children: [title, artist],
-    }).hook(Mpris, (self) => {
+    }).hook(Mpris, self => {
         let player = Mpris.getPlayer(selectedMusicPlayer);
 
         if (player !== null) {
@@ -209,7 +209,7 @@ const ButtonsRow = () => {
         spacing: 10,
         // homogeneous: true,
         children: [backBtn, playBtn, nextBtn, skipBackwardBtn, skipForwardBtn],
-    }).hook(Mpris, (self) => {
+    }).hook(Mpris, self => {
         let player = Mpris.getPlayer(selectedMusicPlayer);
         nextBtn.set_sensitive(player?.canGoNext);
         backBtn.set_sensitive(player?.canGoPrev);
@@ -229,7 +229,7 @@ const ButtonsRow = () => {
     });
 };
 
-export default (className) =>
+export default className =>
     Widget.Box({
         className: className || "music-wd-box",
         vertical: true,

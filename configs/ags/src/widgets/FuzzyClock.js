@@ -1,4 +1,4 @@
-import { TitleText } from "../utils/helpers.js";
+import { TitleText } from "../utils/helpers";
 
 const SATURDAY = 6;
 const SUNDAY = 7;
@@ -38,14 +38,14 @@ const FuzzyTime = () =>
         vertical: false,
     });
 
-export default (className) =>
+export default className =>
     Widget.Box({
         className: className || "wd-fuzzy-clock-box",
         vertical: true,
         children: [FuzzyDay(), TimeNow(), FuzzyTime()],
-    }).poll(15 * 1000 * 60, (box) => {
+    }).poll(15 * 1000 * 60, box => {
         Utils.execAsync(["date", "+%u|%-k"])
-            .then((val) => {
+            .then(val => {
                 const date = val.split("|");
                 const day = date[0];
                 let hour = date[1];

@@ -5,6 +5,7 @@ import {
     CircularProgress,
     Label,
 } from "resource:///com/github/Aylur/ags/widget.js";
+import { showHardwareMenu } from "./all";
 
 export const TempWidget = () => {
     const label = Label({
@@ -27,9 +28,9 @@ export const TempWidget = () => {
 
     return Box({
         className: "bar-hw-temp-box",
-    }).poll(30000, (box) => {
+    }).poll(30000, box => {
         execAsync(`/home/${Utils.USER}/.config/ags/scripts/temp.sh`)
-            .then((val) => {
+            .then(val => {
                 const temps = val.split("\n");
                 let total = 0;
                 for (let index = 0; index < temps.length; index++) {
@@ -38,7 +39,7 @@ export const TempWidget = () => {
                         .replace("°C", "");
                     total += parseInt(element);
                 }
-                total = parseInt(total / temps.length);
+                total = total / temps.length;
                 progress.value = total / 100;
                 label.tooltipMarkup = `<span weight='bold' foreground='#C78DF2'>Total temperature of the devices (${total}%)</span>`;
             })

@@ -4,12 +4,12 @@ import { Icon, Label } from "resource:///com/github/Aylur/ags/widget.js";
 import HoverRevealer from "../utils/HoverRevealer.ts";
 import { local } from "../utils/helpers.js";
 
-export default ({ direction = "left" } = {}) =>
+export default ({ direction = "left" as Direction } = {}) =>
     HoverRevealer({
         className: "notifications-revealer",
         boxClass: "notifications-revealer-box",
         direction,
-        indicator: Icon().hook(Notifications, (icon) => {
+        indicator: Icon().hook(Notifications, icon => {
             icon.icon = Notifications.dnd
                 ? "notifications-disabled-symbolic"
                 : "preferences-system-notifications-symbolic";
@@ -21,11 +21,11 @@ export default ({ direction = "left" } = {}) =>
                     : "margin-right: 0.4rem",
             truncate: "end",
             maxWidthChars: 40,
-        }).hook(Notifications, (label) => {
+        }).hook(Notifications, label => {
             label.label = Notifications.notifications[0]?.summary || "";
         }),
     })
-        .hook(Notifications, (revealer) => {
+        .hook(Notifications, revealer => {
             const title = Notifications.notifications[0]?.summary;
             if (revealer._title === title) return;
 
@@ -35,7 +35,7 @@ export default ({ direction = "left" } = {}) =>
                 revealer.revealChild = false;
             });
         })
-        .hook(Notifications, (box) => {
+        .hook(Notifications, box => {
             box.visible =
                 Notifications.notifications.length > 0 || Notifications.dnd;
         })

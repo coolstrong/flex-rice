@@ -11,9 +11,13 @@
         "baseUrl": ".",
         "noEmit": true,
         "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "allowImportingTsExtensions": true,
+        "strictNullChecks": true,
         "paths": {
             "@/*": ["./src/*"],
-            "@/types/*": ["./@types/*"]
+            "@/types/*": ["./@types/*"],
+            "config": ["./config.json"]
         }
     },
     "exclude": ["./dist/**/*"]

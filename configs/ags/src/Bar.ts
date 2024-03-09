@@ -1,9 +1,9 @@
-import { MenuButton } from "./menus/left_menu.js";
 import { NotificationCenterButton } from "./menus/notification_center.js";
+import { Workspaces } from "./widgets/Workspaces.js";
 import { HardwareBox } from "./widgets/hardware/all.js";
 import { NetworkInformation } from "./widgets/internet.js";
+import { MenuButton } from "./widgets/menus/LeftMenu.js";
 import { SysTrayBox } from "./widgets/systray.js";
-import { Workspaces } from "./widgets/workspace.js";
 
 import { execAsync } from "resource:///com/github/Aylur/ags/utils.js";
 import {
@@ -18,9 +18,9 @@ import weatherService from "./services/WeatherService.js";
 const Clock = () =>
     Label({
         className: "clock small-shadow unset",
-    }).poll(1000, (self) =>
+    }).poll(1000, self =>
         execAsync(["date", "+(%I:%M) %A, %d %B"])
-            .then((date) => (self.label = date))
+            .then(date => (self.label = date))
             .catch(print)
     );
 
@@ -41,7 +41,7 @@ const Weather = () => {
         child: Box({
             className: "bar-weather-box small-shadow unset",
             children: [icon, text],
-        }).hook(weatherService, (self) => {
+        }).hook(weatherService, self => {
             if (weatherService.arValue != "") {
                 const max = weatherService.maxTempC;
                 const min = weatherService.minTempC;
@@ -62,7 +62,7 @@ const DynamicWallpaper = () =>
         onClicked: () => {
             themeService.toggleDynamicWallpaper();
         },
-    }).hook(themeService, (btn) => {
+    }).hook(themeService, btn => {
         if (!themeService.isDynamicTheme) {
             btn.visible = false;
             return;

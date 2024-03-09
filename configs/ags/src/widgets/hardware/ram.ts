@@ -5,10 +5,11 @@ import {
     CircularProgress,
     Label,
 } from "resource:///com/github/Aylur/ags/widget.js";
+import { showHardwareMenu } from "./all";
 
-export const CpuWidget = () => {
+export const RamWidget = () => {
     const label = Label({
-        className: "cpu-inner",
+        className: "ram-inner",
         label: "",
     });
 
@@ -19,22 +20,23 @@ export const CpuWidget = () => {
     });
 
     const progress = CircularProgress({
-        className: "cpu",
-        child: button,
+        className: "ram",
         startAt: 0,
         rounded: false,
         // inverted: true,
+        child: button,
     });
 
     return Box({
-        className: "bar-hw-cpu-box",
-    }).poll(1000, (box) => {
-        execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`)
-            .then((val) => {
-                progress.value = val / 100;
-                label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
+        className: "bar-hw-ram-box",
+    }).poll(30000, box => {
+        execAsync(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`)
+            .then(val => {
+                progress.value = Number(val) / 100;
+                label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
             })
             .catch(print);
+
         box.children = [progress];
         box.show_all();
     });

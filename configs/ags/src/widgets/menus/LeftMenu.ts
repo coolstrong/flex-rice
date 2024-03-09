@@ -8,8 +8,6 @@ import {
     Button,
     Icon,
     Label,
-    Revealer,
-    Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import ThemesDictionary, {
     BLACK_HOLE_THEME,
@@ -28,7 +26,8 @@ import ThemesDictionary, {
     UNICAT_THEME,
     WHITE_FLOWER,
     WIN_20,
-} from "../theme/themes.js";
+} from "../../theme/themes.js";
+import { Popup } from "./Popup.js";
 
 const Profile = () => {
     const userImage = Icon({
@@ -56,7 +55,7 @@ const Header = () => {
             background-image: url("${settings.assets.wallpapers}/black-hole.png");
         `,
         vertical: true,
-    }).hook(themeService, (box) => {
+    }).hook(themeService, box => {
         let wallpaper = ThemesDictionary[themeService.selectedTheme].wallpaper;
         box.css = `background-image: url("${wallpaper}");`;
     });
@@ -96,7 +95,7 @@ const ThemeButton = ({
         css: css,
         child: box,
         onClicked: () => themeService.changeTheme(theme),
-    }).hook(themeService, (btn) => {
+    }).hook(themeService, btn => {
         btn.class_name = "theme-btn";
         if (themeService.selectedTheme === theme) {
             btn.class_name = "selected-theme";
@@ -331,35 +330,21 @@ const PowerButtonsRow = () => {
     });
 };
 
-const widgets = Box({
-    className: "left-menu-box unset",
-    vertical: true,
-    children: [
-        Header(),
-        Profile(),
-        ThemesButtonsRowOne(),
-        MusicPLayer("left-menu-music-wd"),
-        PowerButtonsRow(),
-    ],
-});
-
-const menuRevealer = Revealer({
-    transition: "slide_down",
-    child: widgets,
-});
-
-export const LeftMenu = ({ monitor }: { monitor?: number } = {}) =>
-    Window({
-        name: `left_menu_${monitor}`,
-        margins: [0, 0, 0, 0],
-        // layer: 'overlay',
-        anchor: ["top", local === "RTL" ? "left" : "right"],
+export const LeftMenu = () =>
+    Popup({
+        name: "left_menu",
+        anchor: ["bottom", "right"],
+        transition: "slide_up",
         child: Box({
-            // className: "left-menu-window",
-            css: `
-            min-height: 2px;
-        `,
-            children: [menuRevealer],
+            className: "left-menu-box unset",
+            vertical: true,
+            children: [
+                Header(),
+                Profile(),
+                ThemesButtonsRowOne(),
+                MusicPLayer("left-menu-music-wd"),
+                PowerButtonsRow(),
+            ],
         }),
     });
 
@@ -367,21 +352,5 @@ export const MenuButton = () =>
     Button({
         className: "menu-button unset",
         label: "",
-        onClicked: () => {
-            menuRevealer.revealChild = !menuRevealer.revealChild;
-            changeMenuBtn();
-        },
+        onClicked: () => App.toggleWindow("left_menu"),
     });
-
-globalThis.showLeftMenu = () => {
-    menuRevealer.revealChild = !menuRevealer.revealChild;
-    changeMenuBtn();
-};
-
-function changeMenuBtn() {
-    // if (menuRevealer.revealChild) {
-    //     MenuButton.label = "";
-    // } else {
-    //     MenuButton.label = "";
-    // }
-}

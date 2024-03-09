@@ -10,3 +10,5 @@ type Transition =
     | "slide_left"
     | "slide_up"
     | "slide_down";
+
+type Direction = "left" | "right" | "down" | "up";

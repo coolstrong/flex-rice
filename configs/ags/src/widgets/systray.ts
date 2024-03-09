@@ -1,21 +1,27 @@
+import { TrayItem } from "@/types/service/systemtray";
+import { ButtonProps } from "@/types/widgets/button";
+import Gtk30 from "gi://Gtk";
 import { systemTray } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 
 const { Gravity } = imports.gi.Gdk;
 
-const PanelButton = ({ className, content, ...rest }) =>
+const PanelButton = ({
+    className,
+    content,
+    ...rest
+}: ButtonProps & { content: Gtk30.Widget }) =>
     Widget.Button({
         className: `panel-button ${className} unset`,
         child: Widget.Box({ children: [content] }),
         ...rest,
     });
 
-/** @param {import('@/types/service/systemtray').TrayItem} item */
-const SysTrayItem = (item) =>
+const SysTrayItem = (item: TrayItem) =>
     PanelButton({
         className: "tray-btn unset",
         content: Widget.Icon().bind("icon", item, "icon"),
         setup: (btn) => {
-            const id = item.menu.connect("popped-up", (menu) => {
+            const id = item.menu?.connect("popped-up", (menu) => {
                 btn.toggleClassName("active");
                 menu.connect("notify::visible", (menu) => {
                     btn.toggleClassName("active", menu.visible);
@@ -24,10 +30,10 @@ const SysTrayItem = (item) =>
             });
         },
         onPrimaryClick: (_, event) => {
-            item.activate(event).catch(print);
+            item.activate(event);
         },
         onSecondaryClick: (btn) =>
-            item.menu.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null),
+            item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null),
     });
 
 export const SysTrayBox = () =>
