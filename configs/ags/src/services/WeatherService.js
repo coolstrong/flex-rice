@@ -340,10 +340,10 @@ class WeatherService extends Service {
 }
 
 // the singleton instance
-const weatherService = new WeatherService();
+// const weatherService = new WeatherService();
 
 // export to use in other modules
-export default weatherService;
+// export default weatherService;
 
 const moon_icon_dic = {
     395: "",

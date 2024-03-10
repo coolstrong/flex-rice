@@ -39,18 +39,23 @@ export const Popup = ({
 
     return Widget.Window({
         exclusivity: "ignore",
+        name,
         visible: false,
         ...props,
         setup: w => w.keybind("Escape", closing.invoke),
         keymode: "on-demand",
-        child: PopupRevealer({
-            transition,
-            name,
-            child: Widget.EventBox({
-                onHoverLost: closing.schedule,
-                onHover: closing.cancel,
-                child,
-            }),
+        child: Widget.Box({
+            css: `min-height: 2px;`,
+            child: PopupRevealer({
+                transition,
+                name,
+                child: Widget.EventBox({
+                    onHoverLost: closing.schedule,
+                    onHover: closing.cancel,
+                    child,
+                    css: `min-height: 2px;`
+                }),
+            })
         }),
     });
 };

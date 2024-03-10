@@ -2,6 +2,7 @@
 
 import { local } from "@/utils/helpers";
 import Gtk from "gi://Gtk";
+import { Popup } from "./Popup";
 
 const Battery = await Service.import("battery");
 
@@ -348,31 +349,15 @@ const tablesBox = () => {
     });
 };
 
-const menuRevealer = Widget.Revealer({
-    transition: "slide_down",
+export const HardwareMenu = () => Popup({
+    className: "hardware-menu-box",
+    name: "hardware_menu",
+    anchor: ["bottom", "left"],
+    transition: "slide_up",
+    margins: [6, 250],
     child: Widget.Box({
-        className: "hardware-menu-box",
+        className: "left-menu-window",
         vertical: true,
-        children: [headerBox, tablesBox()],
-    }),
-});
-
-export const HardwareMenu = () =>
-    Widget.Window({
-        name: `hardware_menu`,
-        margins: [6, 250],
-        // layer: 'overlay',
-        anchor: ["top", local === "RTL" ? "right" : "left"],
-        child: Widget.Box({
-            // className: "left-menu-window",
-            css: `
-            min-height: 2px;
-        `,
-            children: [menuRevealer],
-        }),
-    });
-
-globalThis.showHardwareMenu = () => {
-    menuRevealer.revealChild = !menuRevealer.revealChild;
-    menuIsOpen = menuRevealer.revealChild;
-};
+        children: [headerBox, tablesBox()]
+    })
+})

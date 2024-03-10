@@ -1,8 +1,8 @@
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
 import { Bar } from "./Bar.js";
-import { HardwareMenu } from "./menus/HardwareMenu.js";
-import { WeatherMenu } from "./menus/WeatherMenu.js";
+import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
+// import { WeatherMenu } from "./menus/WeatherMenu.js";
 import { NotificationCenter } from "./menus/notification_center.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
 import { VolumeOSD } from "./on-screen/volume.js";
@@ -20,7 +20,7 @@ let windows = [
     MyNotifications(),
     NotificationCenter(),
     HardwareMenu(),
-    WeatherMenu(),
+    // WeatherMenu(),
 
     Bar({ monitor: 0 }),
     LeftMenu(),
@@ -39,10 +39,15 @@ let windows = [
     whiteFlowerWidget, */
 ];
 
-export default {
-    css,
+// export default {
+//     css,
+//     cacheNotificationActions: true,
+//     windows,
+// };
+App.config({
+    style: css,
     cacheNotificationActions: true,
     windows,
-};
+});
 
 globalThis.getNot = () => Notifications;

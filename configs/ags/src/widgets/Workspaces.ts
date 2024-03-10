@@ -68,7 +68,7 @@ const MonitorWorkspaces = (monitorId = 0) => {
         className: "unset workspaces",
         children: A.range(
             firstWsId,
-            firstWsId + config.workspacesPerMonitor
+            firstWsId + config.workspacesPerMonitor - 1
         ).map(i =>
             Button({
                 onClicked: () => setWorkspace(i),
@@ -88,8 +88,9 @@ export const Workspaces = () =>
     Box({
         className: "unset",
         vertical: false,
-        spacing: 8,
-        children: Hyprland.bind("monitors").as(monitors =>
-            monitors.map((_, i) => MonitorWorkspaces(i))
-        ),
+        spacing: 2,
+        children: Hyprland.monitors.map(m => MonitorWorkspaces(m.id))
+        // children: Hyprland.bind("monitors").as(monitors =>
+        //     monitors.map((_, i) => MonitorWorkspaces(i))
+        // ),
     });

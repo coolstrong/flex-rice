@@ -13,7 +13,7 @@ import {
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import themeService from "./services/ThemeService.js";
-import weatherService from "./services/WeatherService.js";
+// import weatherService from "./services/WeatherService.js";
 
 const Clock = () =>
     Label({
@@ -24,37 +24,37 @@ const Clock = () =>
             .catch(print)
     );
 
-const Weather = () => {
-    let icon = Label({
-        className: "bar-weather-icon unset",
-    });
+// const Weather = () => {
+//     let icon = Label({
+//         className: "bar-weather-icon unset",
+//     });
 
-    let text = Label({
-        truncate: "end",
-        xalign: 0,
-        maxWidthChars: 24,
-    });
+//     let text = Label({
+//         truncate: "end",
+//         xalign: 0,
+//         maxWidthChars: 24,
+//     });
 
-    let button = Widget.Button({
-        className: "unset un-hover",
-        onClicked: () => showWeatherMenu(),
-        child: Box({
-            className: "bar-weather-box small-shadow unset",
-            children: [icon, text],
-        }).hook(weatherService, self => {
-            if (weatherService.arValue != "") {
-                const max = weatherService.maxTempC;
-                const min = weatherService.minTempC;
-                text.label = `(${min} - ${max}) ${weatherService.feelsLike} ${weatherService.arValue}`;
-                icon.label = `${weatherService.weatherCode}`;
-            } else {
-                text.label = `Weather service is not available`;
-            }
-        }),
-    });
+//     let button = Widget.Button({
+//         className: "unset un-hover",
+//         onClicked: () => showWeatherMenu(),
+//         child: Box({
+//             className: "bar-weather-box small-shadow unset",
+//             children: [icon, text],
+//         }).hook(weatherService, self => {
+//             if (weatherService.arValue != "") {
+//                 const max = weatherService.maxTempC;
+//                 const min = weatherService.minTempC;
+//                 text.label = `(${min} - ${max}) ${weatherService.feelsLike} ${weatherService.arValue}`;
+//                 icon.label = `${weatherService.weatherCode}`;
+//             } else {
+//                 text.label = `Weather service is not available`;
+//             }
+//         }),
+//     });
 
-    return button;
-};
+//     return button;
+// };
 
 const DynamicWallpaper = () =>
     Widget.Button({

@@ -3054,55 +3054,7 @@ Window
 } from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/utils/helpers.ts
-var TitleText = ({
-  title = undef,
-  titleClass = "",
-  text = undef,
-  textClass = "",
-  boxClass = "",
-  homogeneous = false,
-  titleXalign = 0.5,
-  textXalign = 0.5,
-  vertical = true,
-  spacing = 0
-}) => {
-  const _title = Widget.Label({
-    label: title,
-    className: titleClass,
-    xalign: titleXalign
-  });
-  const _text = Widget.Label({
-    label: text,
-    className: textClass,
-    xalign: textXalign
-  });
-  return Widget.Box({
-    className: boxClass,
-    vertical,
-    homogeneous,
-    spacing,
-    children: [_title, _text]
-  });
-};
 var local = Utils.exec(`/home/${Utils.USER}/.config/ags/scripts/lang.sh`);
-var notify = ({
-  tonePath,
-  title,
-  message,
-  icon,
-  priority = "normal"
-}) => {
-  Utils.execAsync([`paplay`, tonePath]).catch(print);
-  Utils.execAsync([
-    `notify-send`,
-    "-u",
-    priority,
-    "-i",
-    icon,
-    title,
-    message
-  ]);
-};
 
 // src/notifications/MenuNotification.ts
 import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
@@ -3535,7 +3487,7 @@ var MonitorWorkspaces = (monitorId = 0) => {
   const scale = getScale(assert(Hyprland.getMonitor(monitorId)));
   return Box3({
     className: "unset workspaces",
-    children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor).map((i2) => Button3({
+    children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor - 1).map((i2) => Button3({
       onClicked: () => setWorkspace(i2),
       className: Hyprland.active.workspace.bind("id").as((id) => id === i2 ? "unset focused" : "unset unfocused"),
       child: ClientRenderer({
@@ -3548,8 +3500,8 @@ var MonitorWorkspaces = (monitorId = 0) => {
 var Workspaces = () => Box3({
   className: "unset",
   vertical: false,
-  spacing: 8,
-  children: Hyprland.bind("monitors").as((monitors) => monitors.map((_2, i2) => MonitorWorkspaces(i2)))
+  spacing: 2,
+  children: Hyprland.monitors.map((m) => MonitorWorkspaces(m.id))
 });
 
 // src/widgets/hardware/all.ts
@@ -3714,58 +3666,6 @@ var showHardwareMenu = () => App.toggleWindow("hardware_menu");
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import {exec} from "resource:///com/github/Aylur/ags/utils.js";
 import {Box as Box8, Label as Label7} from "resource:///com/github/Aylur/ags/widget.js";
-var convertToH = function(bytes) {
-  let speed;
-  let dim;
-  let bits = Number(bytes) * 8;
-  bits = bits / 10;
-  if (bits < 1000) {
-    bits = 0;
-    speed = bits;
-    dim = "b/s";
-  } else if (bits < 1e6) {
-    speed = bits / 1000;
-    dim = "kb/s";
-  } else if (bits < 1e9) {
-    speed = bits / 1e6;
-    dim = "mb/s";
-  } else if (bits < 1000000000000) {
-    speed = bits / 1e9;
-    dim = "gb/s";
-  } else {
-    speed = bits;
-    dim = "b/s";
-  }
-  return Math.floor(speed + 0.5) + dim;
-};
-var TIMEOUT = 300;
-var NetSpeedMeters = () => {
-  let prevReceivedBytes = 0;
-  let prevTransmittedBytes = 0;
-  return Box8().poll(TIMEOUT, (box) => {
-    const receivedBytes = Number(exec("cat /sys/class/net/wlp0s20f3/statistics/rx_bytes"));
-    const transmittedBytes = Number(exec("cat /sys/class/net/wlp0s20f3/statistics/tx_bytes"));
-    const download = Label7({
-      justification: "right",
-      css: "min-width: 60px"
-    });
-    const upload = Label7({
-      justification: "right",
-      css: "min-width: 80px"
-    });
-    const downloadSpeed = (receivedBytes - prevReceivedBytes) / (TIMEOUT / 1000);
-    const uploadSpeed = (transmittedBytes - prevTransmittedBytes) / (TIMEOUT / 1000);
-    download.label = `${convertToH(downloadSpeed)} \uF103`;
-    upload.label = `${convertToH(uploadSpeed)} \uF102`;
-    prevReceivedBytes = receivedBytes;
-    prevTransmittedBytes = transmittedBytes;
-    box.children = [
-      download,
-      upload
-    ];
-    box.show_all();
-  });
-};
 var NetworkInformation = () => Box8({
   className: "internet-box small-shadow unset"
 }).hook(Network, (box) => {
@@ -3793,7 +3693,7 @@ var NetworkInformation = () => Box8({
     className: "wifi-icon-strength unset",
     label: internetLabel
   });
-  box.children = [NetSpeedMeters(), ssidLabel, internetStatusLabel];
+  box.children = [ssidLabel, internetStatusLabel];
   box.show_all();
 });
 
@@ -4707,7 +4607,6 @@ import {execAsync as execAsync5} from "resource:///com/github/Aylur/ags/utils.js
 import {
 Box as Box9,
 Button as Button8,
-Icon as Icon2,
 Label as Label8
 } from "resource:///com/github/Aylur/ags/widget.js";
 
@@ -5003,39 +4902,28 @@ var Popup = ({
   });
   return Widget.Window({
     exclusivity: "ignore",
+    name,
     visible: false,
     ...props,
     setup: (w2) => w2.keybind("Escape", closing.invoke),
     keymode: "on-demand",
-    child: PopupRevealer({
-      transition,
-      name,
-      child: Widget.EventBox({
-        onHoverLost: closing.schedule,
-        onHover: closing.cancel,
-        child
+    child: Widget.Box({
+      css: `min-height: 2px;`,
+      child: PopupRevealer({
+        transition,
+        name,
+        child: Widget.EventBox({
+          onHoverLost: closing.schedule,
+          onHover: closing.cancel,
+          child,
+          css: `min-height: 2px;`
+        })
       })
     })
   });
 };
 
 // src/widgets/menus/LeftMenu.ts
-var Profile = () => {
-  const userImage = Icon2({
-    className: "profile-icon",
-    icon: `${settings_default.assets.wallpapers}/image.png`,
-    size: 80
-  });
-  const myName = Label8({
-    className: "profile-label",
-    label: "Ahmed Al-Saadi"
-  });
-  return Box9({
-    className: "profile-box",
-    vertical: true,
-    children: [userImage, myName]
-  });
-};
 var Header = () => {
   return Box9({
     className: "left-menu-header",
@@ -5291,7 +5179,6 @@ var LeftMenu = () => Popup({
     vertical: true,
     children: [
       Header(),
-      Profile(),
       ThemesButtonsRowOne(),
       MusicPLayer_default("left-menu-music-wd"),
       PowerButtonsRow()
@@ -5363,348 +5250,6 @@ CenterBox as CenterBox2,
 Label as Label9,
 Window as Window2
 } from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/services/WeatherService.js
-class WeatherService extends Service {
-  static {
-    Service.register(this, {}, {
-      arValue: ["string", "r"],
-      weatherCode: ["string", "r"],
-      maxTempC: ["float", "r"],
-      minTempC: ["float", "r"],
-      feelsLike: ["float", "r"],
-      tempC: ["float", "r"],
-      pressure: ["float", "r"],
-      windspeedKmph: ["float", "r"],
-      humidity: ["float", "r"],
-      cloudcover: ["float", "r"],
-      observation_time: ["string", "r"],
-      areaName: ["string", "r"],
-      sunrise: ["string", "r"],
-      sunset: ["string", "r"],
-      moonrise: ["string", "r"],
-      moonset: ["string", "r"],
-      avgTempC1: ["string", "r"],
-      weatherCode1: ["string", "r"],
-      weatherTime1: ["string", "r"],
-      avgTempC2: ["string", "r"],
-      weatherCode2: ["string", "r"],
-      weatherTime2: ["string", "r"],
-      avgTempC3: ["string", "r"],
-      weatherCode3: ["string", "r"],
-      weatherTime3: ["string", "r"],
-      hourly: ["jsobject", "r"]
-    });
-  }
-  coldWeatherWarned = false;
-  hotWeatherWarned = false;
-  constructor() {
-    super();
-    this.state = {};
-    this.initWeather();
-  }
-  initWeather() {
-    Utils.interval(900000, () => {
-      this.getWeather();
-    });
-  }
-  getWeather() {
-    Utils.execAsync([
-      "curl",
-      `${settings_default.weather.language}.wttr.in/${settings_default.weather.location}?format=${settings_default.weather.format}`
-    ]).then((val) => {
-      const jsonData = JSON.parse(val);
-      this.state = jsonData;
-      this.checkColdWeather();
-      this.emit("changed");
-    }).catch(() => {
-      const source = setTimeout(() => {
-        this.getWeather();
-        source.destroy();
-        this.checkColdWeather();
-      }, 300000);
-    });
-  }
-  checkColdWeather() {
-    if (parseInt(this.minTempC) <= 7 && !this.coldWeatherWarned) {
-      notify({
-        tonePath: settings_default.assets.audio.cold_weather,
-        title: "Cold weather",
-        message: `Lowest temperature today ${this.minTempC}\xB0`,
-        icon: settings_default.assets.icons.cold_weather,
-        priority: "critical"
-      });
-      this.coldWeatherWarned = true;
-    } else if (parseInt(this.maxTempC) > 30 && !this.hotWeatherWarned) {
-      notify({
-        tonePath: settings_default.assets.audio.cold_weather,
-        title: "Hot weather",
-        message: `High temperature today ${this.maxTempC}\xB0`,
-        icon: settings_default.assets.icons.hot_weather
-      });
-      this.hotWeatherWarned = true;
-    }
-  }
-  isDay() {
-    const sunriseTime = this.sunrise;
-    const sunsetTime = this.sunset;
-    const currentTime = new Date;
-    const sunrise = new Date;
-    const sunset = new Date;
-    const sunriseComponents = sunriseTime.split(" ")[0].split(":");
-    const sunriseHour = Number(sunriseComponents[0]);
-    const sunriseMinute = Number(sunriseComponents[1]);
-    const sunrisePeriod = sunriseTime.split(" ")[1];
-    const sunsetComponents = sunsetTime.split(" ")[0].split(":");
-    const sunsetHour = Number(sunsetComponents[0]);
-    const sunsetMinute = Number(sunsetComponents[1]);
-    const sunsetPeriod = sunsetTime.split(" ")[1];
-    sunrise.setHours(sunriseHour + (sunrisePeriod === "PM" && sunriseHour !== 12 ? 12 : 0));
-    sunrise.setMinutes(sunriseMinute);
-    sunset.setHours(sunsetHour + (sunsetPeriod === "PM" && sunsetHour !== 12 ? 12 : 0));
-    sunset.setMinutes(sunsetMinute);
-    return currentTime > sunrise && currentTime < sunset;
-  }
-  get arValue() {
-    try {
-      return this.state?.current_condition?.[0]?.lang_ar[0].value;
-    } catch (TypeError) {
-      return this.state?.current_condition?.[0]?.weatherDesc?.[0]?.value || "";
-    }
-  }
-  get weatherCode() {
-    const weatherCode = this.state?.current_condition?.[0]?.weatherCode;
-    if (this.isDay()) {
-      return sun_icon_dic[weatherCode] || "";
-    } else {
-      return moon_icon_dic[weatherCode] || "";
-    }
-  }
-  get maxTempC() {
-    return this.state?.weather?.[0]?.maxtempC || "";
-  }
-  get minTempC() {
-    return this.state?.weather?.[0]?.mintempC || "";
-  }
-  get tempC() {
-    return this.state?.current_condition?.[0]?.temp_C || "";
-  }
-  get feelsLike() {
-    return this.state?.current_condition?.[0].FeelsLikeC || "";
-  }
-  get pressure() {
-    return this.state?.current_condition?.[0].pressure || "";
-  }
-  get windspeedKmph() {
-    return this.state?.current_condition?.[0].windspeedKmph || "";
-  }
-  get humidity() {
-    return this.state?.current_condition?.[0].humidity || "";
-  }
-  get cloudcover() {
-    return this.state?.current_condition?.[0].cloudcover || "";
-  }
-  get observation_time() {
-    return this.state?.current_condition?.[0].observation_time || "";
-  }
-  get areaName() {
-    return this.state?.nearest_area?.[0].areaName[0].value || "";
-  }
-  get sunrise() {
-    return this.state?.weather?.[0].astronomy[0].sunrise || "18:00";
-  }
-  get sunset() {
-    return this.state?.weather?.[0].astronomy[0].sunset || "05:00";
-  }
-  get moonrise() {
-    return this.state?.weather?.[0].astronomy[0].moonrise || "";
-  }
-  get moonset() {
-    return this.state?.weather?.[0].astronomy[0].moonset || "";
-  }
-  get avgTempC1() {
-    return `${this.state?.weather?.[0]?.avgtempC || ""} C\xB0`;
-  }
-  get weatherCode1() {
-    const weatherCode = this.state?.weather?.[0]?.hourly?.[4]?.weatherCode;
-    if (this.isDay()) {
-      return sun_icon_dic[weatherCode] || "";
-    } else {
-      return moon_icon_dic[weatherCode] || "";
-    }
-  }
-  get weatherTime1() {
-    return "today";
-  }
-  get avgTempC2() {
-    return `${this.state?.weather?.[1]?.avgtempC || ""} C\xB0`;
-  }
-  get weatherCode2() {
-    const weatherCode = this.state?.weather?.[1]?.hourly?.[4]?.weatherCode;
-    if (this.isDay()) {
-      return sun_icon_dic[weatherCode] || "";
-    } else {
-      return moon_icon_dic[weatherCode] || "";
-    }
-  }
-  get weatherTime2() {
-    return "tomorrow";
-  }
-  get avgTempC3() {
-    return `${this.state?.weather?.[2]?.avgtempC || ""} C\xB0`;
-  }
-  get weatherCode3() {
-    const weatherCode = this.state?.weather?.[2]?.hourly?.[4]?.weatherCode;
-    if (this.isDay()) {
-      return sun_icon_dic[weatherCode] || "";
-    } else {
-      return moon_icon_dic[weatherCode] || "";
-    }
-  }
-  get weatherTime3() {
-    return "after tomorrow";
-  }
-  getHourlyByIndex(index, dict) {
-    var arValue = null;
-    try {
-      arValue = this.state?.weather?.[0]?.hourly?.[index]?.lang_ar[0]?.value;
-    } catch (TypeError) {
-      arValue = this.state?.weather?.[0]?.hourly?.[index]?.weatherDesc?.[0]?.value || "-";
-    }
-    const hourly = {
-      tempC: this.state?.weather?.[0]?.hourly?.[index]?.tempC || "",
-      lang_ar: arValue,
-      weatherDesc: this.state?.weather?.[0]?.hourly?.[index]?.weatherDesc?.[0]?.value || "",
-      weatherCode: dict[this.state?.weather?.[0]?.hourly?.[index]?.weatherCode] || ""
-    };
-    return hourly;
-  }
-  get hourly() {
-    const weatherData = {
-      hour1: {
-        time: `09:00 AM`,
-        ...this.getHourlyByIndex(3, sun_icon_dic)
-      },
-      hour2: {
-        time: `12:00 PM`,
-        ...this.getHourlyByIndex(4, sun_icon_dic)
-      },
-      hour3: {
-        time: `09:00 PM`,
-        ...this.getHourlyByIndex(6, moon_icon_dic)
-      },
-      hour4: {
-        time: `12:00 AM`,
-        ...this.getHourlyByIndex(7, moon_icon_dic)
-      }
-    };
-    return weatherData;
-  }
-}
-var weatherService = new WeatherService;
-var WeatherService_default = weatherService;
-var moon_icon_dic = {
-  395: "",
-  392: "\u26C8",
-  389: "\u26C8",
-  386: "\u26C8",
-  377: "",
-  374: "",
-  371: "",
-  368: "",
-  365: "",
-  362: "",
-  359: "\uF73C",
-  356: "\uF740",
-  353: "\uF73C",
-  350: "",
-  338: "",
-  335: "",
-  332: "",
-  329: "",
-  326: "",
-  323: "",
-  320: "",
-  317: "",
-  314: "",
-  311: "",
-  308: "\uF73C",
-  305: "\uF740",
-  302: "\uF73C",
-  299: "\uF73D",
-  296: "\uF73C",
-  293: "\uF73C",
-  284: "",
-  281: "",
-  266: "\uF73C",
-  263: "\uF73C",
-  260: "\uD83C\uDF2B",
-  248: "\uD83C\uDF2B",
-  230: "",
-  227: "",
-  200: "\u26C8",
-  185: "",
-  182: "",
-  179: "",
-  176: "\uF73C",
-  143: "\uD83C\uDF2B",
-  122: "\uD83C\uDF25",
-  119: "\uF0C2",
-  116: "\uF6C3",
-  113: "\uF186"
-};
-var sun_icon_dic = {
-  395: "",
-  392: "\u26C8",
-  389: "\u26C8",
-  386: "\u26C8",
-  377: "",
-  374: "",
-  371: "",
-  368: "",
-  365: "",
-  362: "",
-  359: "\uF743",
-  356: "\uF740",
-  353: "\uF743",
-  350: "",
-  338: "",
-  335: "",
-  332: "",
-  329: "",
-  326: "",
-  323: "",
-  320: "",
-  317: "",
-  314: "",
-  311: "",
-  308: "\uF743",
-  305: "\uF740",
-  302: "\uF743",
-  299: "\uF73D",
-  296: "\uF743",
-  293: "\uF743",
-  284: "",
-  281: "",
-  266: "\uF743",
-  263: "\uF743",
-  260: "\uD83C\uDF2B",
-  248: "\uD83C\uDF2B",
-  230: "",
-  227: "",
-  200: "\u26C8",
-  185: "",
-  182: "",
-  179: "",
-  176: "\uF743",
-  143: "\uD83C\uDF2B",
-  122: "\uD83C\uDF25",
-  119: "\uF0C2",
-  116: "\uF6C4",
-  113: "\uF185"
-};
-
-// src/Bar.ts
 var Clock = () => Label9({
   className: "clock small-shadow unset"
 }).poll(1000, (self) => execAsync6(["date", "+(%I:%M) %A, %d %B"]).then((date) => self.label = date).catch(print));
@@ -5757,7 +5302,7 @@ var Bar = ({ monitor } = {}) => Window2({
   })
 });
 
-// src/menus/HardwareMenu.ts
+// src/widgets/menus/HardwareMenu.ts
 var Battery2 = await Service.import("battery");
 var menuIsOpen = null;
 var cpuIsInitialized = false;
@@ -6042,200 +5587,18 @@ var tablesBox = () => {
     ]
   });
 };
-var menuRevealer2 = Widget.Revealer({
-  transition: "slide_down",
+var HardwareMenu = () => Popup({
+  className: "hardware-menu-box",
+  name: "hardware_menu",
+  anchor: ["bottom", "left"],
+  transition: "slide_up",
+  margins: [6, 250],
   child: Widget.Box({
-    className: "hardware-menu-box",
+    className: "left-menu-window",
     vertical: true,
     children: [headerBox, tablesBox()]
   })
 });
-var HardwareMenu = () => Widget.Window({
-  name: `hardware_menu`,
-  margins: [6, 250],
-  anchor: ["top", local === "RTL" ? "right" : "left"],
-  child: Widget.Box({
-    css: `
-            min-height: 2px;
-        `,
-    children: [menuRevealer2]
-  })
-});
-globalThis.showHardwareMenu = () => {
-  menuRevealer2.revealChild = !menuRevealer2.revealChild;
-  menuIsOpen = menuRevealer2.revealChild;
-};
-
-// src/menus/WeatherMenu.js
-var createWeatherDay = () => {
-  const time = Widget.Label({
-    className: "weather-menu-today-time"
-  });
-  const tempC = Widget.Label({
-    className: "weather-menu-today-temp"
-  });
-  const weather = Widget.Label({
-    className: "weather-menu-today-weather",
-    max_width_chars: 10,
-    justification: "left",
-    truncate: "end"
-  });
-  return Widget.Box({
-    vertical: true,
-    className: "weather-menu-today-box",
-    children: [time, tempC, weather]
-  });
-};
-var MenuRevealer = () => {
-  const weatherIcon = Widget.Label({
-    className: "weather-menu-icon"
-  });
-  const weatherCity = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-city"
-  });
-  const weatherValue = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-value"
-  });
-  const sunrise = TitleText({
-    titleClass: "weather-menu-sunrise",
-    textClass: "weather-menu-sunrise-icon",
-    vertical: false
-  });
-  const sunset = TitleText({
-    titleClass: "weather-menu-sunset",
-    textClass: "weather-menu-sunset-icon",
-    vertical: false
-  });
-  const latestUpdate = Widget.Button({
-    className: "weather-menu-latest-update",
-    onClicked: () => {
-      WeatherService_default.getWeather();
-      latestUpdate.label = " ... ";
-    }
-  });
-  const feelsLike = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-feels-like"
-  });
-  const humidity = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-humidity"
-  });
-  const pressure = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-pressure"
-  });
-  const wind = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-wind"
-  });
-  const clouds = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-clouds"
-  });
-  const minAndMax = Widget.Label({
-    xalign: 0,
-    className: "weather-menu-min-max"
-  });
-  const generalInformation = Widget.Box({
-    vertical: true,
-    className: "weather-menu-general-information-box",
-    children: [
-      weatherCity,
-      weatherValue,
-      Widget.Box({
-        homogeneous: true,
-        children: [sunrise, sunset, latestUpdate]
-      })
-    ]
-  });
-  const detailedInformation = Widget.Box({
-    vertical: true,
-    className: "weather-menu-detail-box",
-    children: [feelsLike, humidity, pressure, wind, clouds, minAndMax]
-  });
-  const rowOne = Widget.Box({
-    children: [weatherIcon, generalInformation, detailedInformation]
-  });
-  const today1 = createWeatherDay();
-  const today2 = createWeatherDay();
-  const today3 = createWeatherDay();
-  const today4 = createWeatherDay();
-  const rowTwo = Widget.Box({
-    className: "weather-row-two",
-    homogeneous: true,
-    children: [today1, today2, today3, today4]
-  });
-  return Widget.Revealer({
-    transition: "slide_down",
-    child: Widget.Box({
-      className: "weather-menu-box",
-      vertical: true,
-      children: [rowOne, rowTwo]
-    }).hook(WeatherService_default, (box) => {
-      weatherIcon.label = WeatherService_default.weatherCode;
-      weatherValue.label = `${WeatherService_default.arValue}, ${WeatherService_default.tempC} C\xB0`;
-      weatherCity.label = WeatherService_default.areaName;
-      sunrise.children[0].label = WeatherService_default.sunrise;
-      sunrise.children[1].label = `\uF185`;
-      sunset.children[0].label = WeatherService_default.sunset;
-      sunset.children[1].label = `\uF186`;
-      latestUpdate.label = `\uE9C7 ${WeatherService_default.observation_time}`;
-      feelsLike.label = `Feels like : ${WeatherService_default.feelsLike} C\xB0`;
-      humidity.label = `Humidity : ${WeatherService_default.humidity}%`;
-      pressure.label = `Pressure : ${WeatherService_default.pressure}`;
-      wind.label = `Wind : ${WeatherService_default.windspeedKmph}`;
-      clouds.label = `Clouds : ${WeatherService_default.cloudcover}`;
-      minAndMax.label = `Min and max : ${WeatherService_default.minTempC} - ${WeatherService_default.maxTempC}`;
-      today1.children[0].label = WeatherService_default.hourly.hour1.time;
-      today1.children[1].label = `${WeatherService_default.hourly.hour1.weatherCode} ${WeatherService_default.hourly.hour1.tempC} C\xB0`;
-      if (WeatherService_default.hourly.hour1.lang_ar !== undefined) {
-        today1.children[2].label = WeatherService_default.hourly.hour1.lang_ar;
-      } else {
-        today1.children[2].label = "";
-      }
-      today2.children[0].label = WeatherService_default.hourly.hour2.time;
-      today2.children[1].label = `${WeatherService_default.hourly.hour2.weatherCode} ${WeatherService_default.hourly.hour2.tempC} C\xB0`;
-      if (WeatherService_default.hourly.hour2.lang_ar !== undefined) {
-        today2.children[2].label = WeatherService_default.hourly.hour2.lang_ar;
-      } else {
-        today2.children[2].label = "";
-      }
-      today3.children[0].label = WeatherService_default.hourly.hour3.time;
-      today3.children[1].label = `${WeatherService_default.hourly.hour3.weatherCode} ${WeatherService_default.hourly.hour3.tempC} C\xB0`;
-      if (WeatherService_default.hourly.hour3.lang_ar !== undefined) {
-        today3.children[2].label = WeatherService_default.hourly.hour3.lang_ar;
-      } else {
-        today3.children[2].label = "";
-      }
-      today4.children[0].label = WeatherService_default.hourly.hour4.time;
-      today4.children[1].label = `${WeatherService_default.hourly.hour4.weatherCode} ${WeatherService_default.hourly.hour4.tempC} C\xB0`;
-      if (WeatherService_default.hourly.hour4.lang_ar !== undefined) {
-        today4.children[2].label = WeatherService_default.hourly.hour4.lang_ar;
-      } else {
-        today4.children[2].label = "";
-      }
-    })
-  });
-};
-var menuRevealer3 = MenuRevealer();
-var WeatherMenu = () => Widget.Window({
-  name: `weather_menu`,
-  margins: [6, 210],
-  anchor: ["top", local === "RTL" ? "left" : "right"],
-  child: Widget.Box({
-    css: `
-            min-height: 2px;
-            min-width: 2px;
-        `,
-    children: [menuRevealer3]
-  })
-});
-globalThis.showWeatherMenu = () => {
-  menuRevealer3.revealChild = !menuRevealer3.revealChild;
-};
 
 // src/notifications/OSDNotifications.js
 import Notifications3 from "resource:///com/github/Aylur/ags/service/notifications.js";
@@ -6553,16 +5916,12 @@ var windows = [
   OSDNotifications_default(),
   NotificationCenter(),
   HardwareMenu(),
-  WeatherMenu(),
   Bar({ monitor: 0 }),
   LeftMenu()
 ];
-var config_default2 = {
-  css,
+App4.config({
+  style: css,
   cacheNotificationActions: true,
   windows
-};
+});
 globalThis.getNot = () => Notifications4;
-export {
-  config_default2 as default
-};

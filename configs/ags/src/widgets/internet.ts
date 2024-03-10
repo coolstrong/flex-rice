@@ -105,7 +105,7 @@ export const NetworkInformation = () =>
             label: internetLabel,
         });
 
-        box.children = [NetSpeedMeters(), ssidLabel, internetStatusLabel];
+        box.children = [/* NetSpeedMeters(), */ ssidLabel, internetStatusLabel];
 
         box.show_all();
     });

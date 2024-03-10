@@ -29,25 +29,6 @@ import ThemesDictionary, {
 } from "../../theme/themes.js";
 import { Popup } from "./Popup.js";
 
-const Profile = () => {
-    const userImage = Icon({
-        className: "profile-icon",
-        icon: `${settings.assets.wallpapers}/image.png`,
-        size: 80,
-    });
-
-    const myName = Label({
-        className: "profile-label",
-        label: "Ahmed Al-Saadi",
-    });
-
-    return Box({
-        className: "profile-box",
-        vertical: true,
-        children: [userImage, myName],
-    });
-};
-
 const Header = () => {
     return Box({
         className: "left-menu-header",
@@ -340,7 +321,6 @@ export const LeftMenu = () =>
             vertical: true,
             children: [
                 Header(),
-                Profile(),
                 ThemesButtonsRowOne(),
                 MusicPLayer("left-menu-music-wd"),
                 PowerButtonsRow(),
