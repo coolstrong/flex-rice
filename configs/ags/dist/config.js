@@ -3456,11 +3456,8 @@ var config_default = {
 };
 
 // src/widgets/Workspaces.ts
-import {
-Box as Box3,
-Button as Button3,
-CenterBox
-} from "resource:///com/github/Aylur/ags/widget.js";
+import Gtk30 from "gi://Gtk?version=3.0";
+import {Box as Box3, Button as Button3} from "resource:///com/github/Aylur/ags/widget.js";
 var Hyprland = await Service.import("hyprland");
 var Apps = await Service.import("applications");
 var setWorkspace = (num) => Hyprland.messageAsync(`dispatch workspace ${num}`);
@@ -3472,22 +3469,22 @@ var getScale = ({ height, width }) => ({
 var ClientRenderer = ({
   wsId,
   scale
-}) => Widget.Fixed().hook(Hyprland, (self) => {
-  self.get_children().forEach(($2) => $2.destroy());
-  Hyprland.clients.filter(($2) => $2.workspace.id === wsId).forEach((client) => client.mapped && self.put(CenterBox({
-    centerWidget: Widget.Icon({
-      icon: pipe(Apps.list.find((app2) => app2.match(client.class)), (app2) => appIcon(app2?.icon_name ?? undef)),
-      css: "font-size: 12px;"
-    })
-  }), client.at[0] * scale.width, client.at[1] * scale.height));
-  self.show_all();
-}, "notify::clients");
+}) => Widget.Box({
+  halign: Gtk30.Align.CENTER,
+  spacing: 2,
+  css: "padding: 2 0;",
+  children: Hyprland.bind("clients").as(Ra.filterMap((client) => client.workspace.id === wsId && client.mapped ? Widget.Icon({
+    icon: pipe(Apps.list.find((app2) => app2.match(client.class)), (app2) => appIcon(app2?.icon_name ?? undef)),
+    css: "font-size: 12px;"
+  }) : undef))
+});
 var MonitorWorkspaces = (monitorId = 0) => {
   const firstWsId = config_default.workspacesPerMonitor * monitorId + 1;
   const scale = getScale(assert(Hyprland.getMonitor(monitorId)));
   return Box3({
     className: "unset workspaces",
     children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor - 1).map((i2) => Button3({
+      css: "min-width: 30px;",
       onClicked: () => setWorkspace(i2),
       className: Hyprland.active.workspace.bind("id").as((id) => id === i2 ? "unset focused" : "unset unfocused"),
       child: ClientRenderer({
@@ -3498,9 +3495,8 @@ var MonitorWorkspaces = (monitorId = 0) => {
   });
 };
 var Workspaces = () => Box3({
-  className: "unset",
-  vertical: false,
-  spacing: 2,
+  className: "unset workspace-box",
+  spacing: 4,
   children: Hyprland.monitors.map((m) => MonitorWorkspaces(m.id))
 });
 
@@ -4604,11 +4600,7 @@ globalThis.mp = () => {
 
 // src/widgets/menus/LeftMenu.ts
 import {execAsync as execAsync5} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box9,
-Button as Button8,
-Label as Label8
-} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box9, Button as Button8, Label as Label8} from "resource:///com/github/Aylur/ags/widget.js";
 
 // node_modules/ts-pattern/dist/index.js
 var a2 = function(...t2) {
@@ -5174,6 +5166,7 @@ var LeftMenu = () => Popup({
   name: "left_menu",
   anchor: ["bottom", "right"],
   transition: "slide_up",
+  margins: [30, 0],
   child: Box9({
     className: "left-menu-box unset",
     vertical: true,
@@ -5246,7 +5239,7 @@ var SysTrayBox = () => Widget.Box({
 import {execAsync as execAsync6} from "resource:///com/github/Aylur/ags/utils.js";
 import {
 Box as Box10,
-CenterBox as CenterBox2,
+CenterBox,
 Label as Label9,
 Window as Window2
 } from "resource:///com/github/Aylur/ags/widget.js";
@@ -5270,6 +5263,7 @@ var DynamicWallpaper = () => Widget.Button({
     btn.label = "\uE3F4";
 });
 var Right = () => Box10({
+  spacing: 8,
   children: [
     Workspaces(),
     HardwareBox(),
@@ -5281,6 +5275,7 @@ var Center = () => Box10({
 });
 var Left = () => Box10({
   hpack: "end",
+  spacing: 8,
   children: [
     NotificationCenterButton(),
     NetworkInformation(),
@@ -5294,7 +5289,7 @@ var Bar = ({ monitor } = {}) => Window2({
   monitor,
   anchor: ["bottom", "left", "right"],
   exclusivity: "exclusive",
-  child: CenterBox2({
+  child: CenterBox({
     className: "bar shadow",
     startWidget: Right(),
     centerWidget: Center(),
@@ -5592,7 +5587,7 @@ var HardwareMenu = () => Popup({
   name: "hardware_menu",
   anchor: ["bottom", "left"],
   transition: "slide_up",
-  margins: [6, 250],
+  margins: [50, 250],
   child: Widget.Box({
     className: "left-menu-window",
     vertical: true,
@@ -5617,7 +5612,7 @@ import {
 Box as Box11,
 Button as Button9,
 EventBox as EventBox2,
-Icon as Icon3,
+Icon as Icon2,
 Label as Label10,
 Revealer as Revealer2
 } from "resource:///com/github/Aylur/ags/widget.js";
@@ -5655,7 +5650,7 @@ var NotificationIcon2 = ({ appEntry, appIcon: appIcon2, image }) => {
             ${rtlMargin}
         `,
     children: [
-      Icon3({
+      Icon2({
         icon: icon2,
         size: 58,
         hpack: "center",
@@ -5728,7 +5723,7 @@ var Notification_default = (notification) => {
                 onHover: hover,
                 className: "notification-close-button",
                 vpack: "start",
-                child: Icon3("window-close-symbolic"),
+                child: Icon2("window-close-symbolic"),
                 onClicked: () => {
                   notification.close();
                 }
@@ -5835,7 +5830,7 @@ var OSDNotifications_default = (monitor) => Window3({
 import Audio from "resource:///com/github/Aylur/ags/service/audio.js";
 import {
 Box as Box13,
-Icon as Icon4,
+Icon as Icon3,
 Slider,
 Stack,
 Window as Window4
@@ -5867,11 +5862,11 @@ var Volume = () => Box13({
     Stack({
       className: "vol-stack",
       children: {
-        101: Icon4("audio-volume-overamplified-symbolic"),
-        67: Icon4("audio-volume-high-symbolic"),
-        34: Icon4("audio-volume-medium-symbolic"),
-        1: Icon4("audio-volume-low-symbolic"),
-        0: Icon4("audio-volume-muted-symbolic")
+        101: Icon3("audio-volume-overamplified-symbolic"),
+        67: Icon3("audio-volume-high-symbolic"),
+        34: Icon3("audio-volume-medium-symbolic"),
+        1: Icon3("audio-volume-low-symbolic"),
+        0: Icon3("audio-volume-muted-symbolic")
       }
     }).hook(Audio, (stack) => {
       if (!Audio.speaker)

@@ -76,6 +76,7 @@ const DynamicWallpaper = () =>
 // layout of the bar
 const Right = () =>
     Box({
+        spacing: 8,
         children: [
             Workspaces(),
             HardwareBox(),
@@ -93,6 +94,7 @@ const Center = () =>
 const Left = () =>
     Box({
         hpack: "end",
+        spacing: 8,
         children: [
             // Volume(),
             NotificationCenterButton(),

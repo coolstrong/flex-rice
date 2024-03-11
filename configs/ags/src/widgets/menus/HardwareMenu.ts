@@ -21,11 +21,11 @@ const cpuProgress = Widget.CircularProgress({
     }),
     startAt: 0,
     rounded: false,
-}).poll(1000, (self) => {
+}).poll(1000, self => {
     if (menuIsOpen) {
         Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`)
             .then(parseFloat)
-            .then((val) => {
+            .then(val => {
                 cpuProgress.value = val / 100;
                 self.child.tooltipMarkup = `<span weight='bold'>CPU usage (${val}%)</span>`;
                 cpuUsage = val;
@@ -42,11 +42,11 @@ const ramProgress = Widget.CircularProgress({
     }),
     startAt: 0,
     rounded: false,
-}).poll(1000, (self) => {
+}).poll(1000, self => {
     if (menuIsOpen) {
         Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`)
             .then(parseFloat)
-            .then((val) => {
+            .then(val => {
                 self.value = val / 100;
                 self.child.tooltipMarkup = `<span weight='bold'>RAM usage (${val}%)</span>`;
                 ramUsage = val;
@@ -63,10 +63,10 @@ const batteryProgress = Widget.CircularProgress({
     }),
     startAt: 0,
     rounded: false,
-}).hook(Battery, (self) => {
+}).hook(Battery, self => {
     const percentage = Battery.percent;
     self.value = percentage / 100;
-    
+
     var label = "";
 
     if (Battery.charging) {
@@ -90,7 +90,7 @@ const batteryProgress = Widget.CircularProgress({
         self.child.label = "";
         self.child.class_name = "menu-battery-icon";
     }
-    
+
     self.child.label = label;
 
     self.child.tooltipMarkup = `<span weight='bold'>Battery percentage (${percentage}%)</span>`;
@@ -104,9 +104,9 @@ const tempProgress = Widget.CircularProgress({
     }),
     startAt: 0,
     rounded: false,
-}).poll(30000, (self) => {
+}).poll(30000, self => {
     Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/temp.sh`)
-        .then((val) => {
+        .then(val => {
             const temps = val.split("\n");
             let total = 0;
             for (let index = 0; index < temps.length; index++) {
@@ -184,7 +184,7 @@ const hardwareUsageTable = ({
     });
 
     if (scriptPath) {
-        table.poll(interval, (self) => {
+        table.poll(interval, self => {
             if (deviceName === "cpu") {
                 headerLeftText = `${cpuUsage}%`;
             }
@@ -195,7 +195,7 @@ const hardwareUsageTable = ({
             // Calling only if menu is open
             if (!cpuIsInitialized || !ramIsInitialized || menuIsOpen) {
                 Utils.execAsync(scriptPath)
-                    .then((val) => {
+                    .then(val => {
                         let data = JSON.parse(val);
                         let children = [
                             tableRow({
@@ -237,11 +237,11 @@ const tablesBox = () => {
     let batteryTable = hardwareUsageTable({
         scriptPath: "",
         deviceName: batDeviceName,
-    }).hook(Battery, (self) => {
+    }).hook(Battery, self => {
         Utils.execAsync(
             `/home/${Utils.USER}/.config/ags/scripts/hardware_info.sh`
         )
-            .then((val) => {
+            .then(val => {
                 let data = JSON.parse(val);
                 self.children = [
                     // Header
@@ -288,9 +288,9 @@ const tablesBox = () => {
     let tempTable = hardwareUsageTable({
         scriptPath: "",
         deviceName: osClassName,
-    }).hook(Battery, (self) => {
+    }).hook(Battery, self => {
         Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/uptime.sh`)
-            .then((val) => {
+            .then(val => {
                 // let data = JSON.parse(val);
 
                 self.children = [
@@ -349,15 +349,16 @@ const tablesBox = () => {
     });
 };
 
-export const HardwareMenu = () => Popup({
-    className: "hardware-menu-box",
-    name: "hardware_menu",
-    anchor: ["bottom", "left"],
-    transition: "slide_up",
-    margins: [6, 250],
-    child: Widget.Box({
-        className: "left-menu-window",
-        vertical: true,
-        children: [headerBox, tablesBox()]
-    })
-})
+export const HardwareMenu = () =>
+    Popup({
+        className: "hardware-menu-box",
+        name: "hardware_menu",
+        anchor: ["bottom", "left"],
+        transition: "slide_up",
+        margins: [50, 250],
+        child: Widget.Box({
+            className: "left-menu-window",
+            vertical: true,
+            children: [headerBox, tablesBox()],
+        }),
+    });

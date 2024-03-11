@@ -3,12 +3,7 @@ import settings from "@/settings.js";
 import { local } from "@/utils/helpers.js";
 import MusicPLayer from "@/widgets/MusicPLayer.js";
 import { execAsync } from "resource:///com/github/Aylur/ags/utils.js";
-import {
-    Box,
-    Button,
-    Icon,
-    Label,
-} from "resource:///com/github/Aylur/ags/widget.js";
+import { Box, Button, Label } from "resource:///com/github/Aylur/ags/widget.js";
 import ThemesDictionary, {
     BLACK_HOLE_THEME,
     CIRCLES_THEME,
@@ -316,6 +311,7 @@ export const LeftMenu = () =>
         name: "left_menu",
         anchor: ["bottom", "right"],
         transition: "slide_up",
+        margins: [30, 0],
         child: Box({
             className: "left-menu-box unset",
             vertical: true,
