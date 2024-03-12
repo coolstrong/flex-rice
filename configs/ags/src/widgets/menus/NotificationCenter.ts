@@ -8,8 +8,9 @@ import {
     Scrollable,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
-import Notification from "../notifications/MenuNotification";
+import Notification from "../../notifications/MenuNotification";
 import { local } from "@/utils/helpers";
+import { Popup } from "./Popup";
 const Notifications = await Service.import("notifications");
 
 const NotificationsBox = () => {
@@ -17,7 +18,7 @@ const NotificationsBox = () => {
         className: "notification-menu-header",
         vertical: true,
         children: [] as Gtk.Widget[],
-    }).hook(Notifications, (self) => {
+    }).hook(Notifications, self => {
         let notificationList = [] as (Gtk.Widget | undef)[];
 
         const array = Notifications.notifications.reverse();
@@ -88,7 +89,7 @@ const NotificationHeader = () => {
                 // label: "",
             }),
         ],
-    }).hook(Notifications, (self) => {
+    }).hook(Notifications, self => {
         if (Notifications.dnd) {
             self.children[2].label = "󰂛";
         } else {
@@ -104,31 +105,44 @@ const notificationContainer = Scrollable({
     child: NotificationsBox(),
 });
 
-const menuRevealer = Revealer({
-    transition: "slide_down",
-    child: Box({
-        className: "left-menu-box",
-        vertical: true,
-        children: [NotificationHeader(), notificationContainer],
-    }),
-});
+// const menuRevealer = Revealer({
+//     transition: "slide_down",
+//     child: Box({
+//         className: "left-menu-box",
+//         vertical: true,
+//         children: [NotificationHeader(), notificationContainer],
+//     }),
+// });
 
 export const NotificationCenter = () =>
-    Window({
-        name: `notification_center`,
-        margins: [0, local === "RTL" ? 500 : 400],
-        // layer: 'overlay',
-        anchor: ["top", local === "RTL" ? "left" : "right"],
+    Popup({
+        name: "notification_center",
+        margins: [30, 200],
+        anchor: ["bottom", "right"],
+        transition: "slide_up",
         child: Box({
-            css: `
-            min-height: 2px;
-        `,
-            children: [menuRevealer],
+            className: "left-menu-box",
+            vertical: true,
+            children: [NotificationHeader(), notificationContainer],
         }),
     });
 
-globalThis.showNotificationCenter = () =>
-    (menuRevealer.revealChild = !menuRevealer.revealChild);
+// export const NotificationCenter = () =>
+//     Window({
+//         name: `notification_center`,
+//         margins: [0, local === "RTL" ? 500 : 400],
+//         // layer: 'overlay',
+//         anchor: ["top", local === "RTL" ? "left" : "right"],
+//         child: Box({
+//             css: `
+//             min-height: 2px;
+//         `,
+//             children: [menuRevealer],
+//         }),
+//     });
+
+// globalThis.showNotificationCenter = () =>
+//     (menuRevealer.revealChild = !menuRevealer.revealChild);
 
 // Notification muted  |  | 󰂛 |  | 
 // Notification 󰂜 | 󰂚 |  | 
@@ -139,8 +153,9 @@ export const NotificationCenterButton = () =>
         className: "notification-center-button unset",
         // child: Label({ label: "" }),
         label: "",
-        onClicked: () => globalThis.showNotificationCenter(),
-    }).hook(Notifications, (self) => {
+        onClicked: () => App.toggleWindow("notification_center"),
+        onSecondaryClick: () => Notifications.Clear(),
+    }).hook(Notifications, self => {
         if (Notifications.dnd) {
             self.label = "󰂛";
         } else if (Notifications.notifications.length === 0) {

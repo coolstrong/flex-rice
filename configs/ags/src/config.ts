@@ -3,7 +3,7 @@ import Notifications from "resource:///com/github/Aylur/ags/service/notification
 import { Bar } from "./Bar.js";
 import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
 // import { WeatherMenu } from "./menus/WeatherMenu.js";
-import { NotificationCenter } from "./menus/notification_center.js";
+import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
 import { VolumeOSD } from "./on-screen/volume.js";
 import { LeftMenu } from "./widgets/menus/LeftMenu.js";

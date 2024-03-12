@@ -1,6 +1,6 @@
 //copied from https://github.com/Aylur/dotfiles/blob/main/ags/lib/icons.ts
 import { undef } from "@/utils/common";
-import { O, flow } from "@mobily/ts-belt";
+import { flow } from "@mobily/ts-belt";
 import GLib20 from "gi://GLib";
 export const substitutes = {
     "transmission-gtk": "transmission",
@@ -157,6 +157,6 @@ export const icon = (
 };
 
 export const appIcon: (appName: string | undef) => string = flow(
-    O.map(s => s + "-symbolic"),
+    // O.map(s => s + "-symbolic"),
     s => icon(s ?? undef, icons.fallback.executable)
 );

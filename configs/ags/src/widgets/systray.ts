@@ -1,15 +1,9 @@
-import { TrayItem } from "@/types/service/systemtray";
-import { ButtonProps } from "@/types/widgets/button";
-import Gtk30 from "gi://Gtk";
-import { systemTray } from "resource:///com/github/Aylur/ags/service/systemtray.js";
+import type { TrayItem } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 
 const { Gravity } = imports.gi.Gdk;
+const SystemTray = await Service.import("systemtray");
 
-const PanelButton = ({
-    className,
-    content,
-    ...rest
-}: ButtonProps & { content: Gtk30.Widget }) =>
+const PanelButton = ({ className, content, ...rest }) =>
     Widget.Button({
         className: `panel-button ${className} unset`,
         child: Widget.Box({ children: [content] }),
@@ -20,19 +14,33 @@ const SysTrayItem = (item: TrayItem) =>
     PanelButton({
         className: "tray-btn unset",
         content: Widget.Icon().bind("icon", item, "icon"),
-        setup: (btn) => {
-            const id = item.menu?.connect("popped-up", (menu) => {
+        tooltip_markup: item.bind("tooltip_markup"),
+        setup: btn => {
+            const menu = item.menu;
+            if (!menu) return;
+            const id = item.menu?.connect("popped-up", () => {
                 btn.toggleClassName("active");
-                menu.connect("notify::visible", (menu) => {
+                menu.connect("notify::visible", () => {
                     btn.toggleClassName("active", menu.visible);
                 });
-                menu.disconnect(id);
+                id && menu.disconnect(id);
             });
+
+            if (id) btn.connect("destroy", () => item.menu?.disconnect(id));
         },
-        onPrimaryClick: (_, event) => {
-            item.activate(event);
+        onPrimaryClick: (btn, event) => {
+            try {
+                item.activate(event);
+            } catch (TypeError) {
+                // item.menu.popup_at_widget(
+                //     btn,
+                //     Gravity.SOUTH,
+                //     Gravity.NORTH,
+                //     null
+                // );
+            }
         },
-        onSecondaryClick: (btn) =>
+        onSecondaryClick: btn =>
             item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null),
     });
 
@@ -42,7 +50,7 @@ export const SysTrayBox = () =>
         attribute: {
             items: new Map(),
             onAdded: (box, id) => {
-                const item = systemTray.getItem(id);
+                const item = SystemTray.getItem(id);
                 if (box.attribute.items.has(id) || !item) return;
 
                 const widget = SysTrayItem(item);
@@ -57,10 +65,14 @@ export const SysTrayBox = () =>
                 box.attribute.items.delete(id);
             },
         },
+        setup: self =>
+            SystemTray.items.forEach(item =>
+                self.attribute.onAdded(self, item.id)
+            ),
     })
-        .hook(systemTray, (box, id) => box.attribute.onAdded(box, id), "added")
+        .hook(SystemTray, (box, id) => box.attribute.onAdded(box, id), "added")
         .hook(
-            systemTray,
+            SystemTray,
             (box, id) => box.attribute.onRemoved(box, id),
             "removed"
         );

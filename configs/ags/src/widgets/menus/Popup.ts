@@ -40,6 +40,7 @@ export const Popup = ({
     return Widget.Window({
         exclusivity: "ignore",
         name,
+        monitor: 0,
         visible: false,
         ...props,
         setup: w => w.keybind("Escape", closing.invoke),
@@ -53,9 +54,9 @@ export const Popup = ({
                     onHoverLost: closing.schedule,
                     onHover: closing.cancel,
                     child,
-                    css: `min-height: 2px;`
+                    css: `min-height: 2px;`,
                 }),
-            })
+            }),
         }),
     });
 };

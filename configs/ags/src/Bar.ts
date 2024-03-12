@@ -1,4 +1,4 @@
-import { NotificationCenterButton } from "./menus/notification_center.js";
+import { NotificationCenterButton } from "./widgets/menus/NotificationCenter.js";
 import { Workspaces } from "./widgets/Workspaces.js";
 import { HardwareBox } from "./widgets/hardware/all.js";
 import { NetworkInformation } from "./widgets/internet.js";
@@ -19,7 +19,7 @@ const Clock = () =>
     Label({
         className: "clock small-shadow unset",
     }).poll(1000, self =>
-        execAsync(["date", "+(%I:%M) %A, %d %B"])
+        execAsync(["date", "+%H:%M:%S | %Y-%m-%d"])
             .then(date => (self.label = date))
             .catch(print)
     );
@@ -86,10 +86,7 @@ const Right = () =>
         ],
     });
 
-const Center = () =>
-    Box({
-        children: [Clock()],
-    });
+const Center = () => Box({});
 
 const Left = () =>
     Box({
@@ -101,6 +98,7 @@ const Left = () =>
             // Weather(),
             NetworkInformation(),
             SysTrayBox(),
+            Clock(),
             MenuButton(),
         ],
     });

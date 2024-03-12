@@ -359,13 +359,6 @@ var some = function(_) {
     return _;
   }
 };
-var nullable_to_opt = function(_) {
-  if (_ == null) {
-    return;
-  } else {
-    return some(_);
-  }
-};
 var valFromOption = function(_) {
   if (_ === null || _.BS_PRIVATE_NESTED_SOME_NONE === undefined) {
     return _;
@@ -729,88 +722,6 @@ var unzip = function(r) {
 };
 
 // node_modules/@mobily/ts-belt/dist/caml_exceptions-99f2c2ac.mjs
-var sub = function(n, r, t) {
-  var e = new Array(t);
-  var u = 0;
-  var a = r;
-  while (u < t) {
-    e[u] = n[a];
-    u = u + 1 | 0;
-    a = a + 1 | 0;
-  }
-  return e;
-};
-var app = function(n, r) {
-  while (true) {
-    var t = r;
-    var e = n;
-    var u = e.length;
-    var a = u === 0 ? 1 : u;
-    var c = a - t.length | 0;
-    if (c === 0) {
-      return e.apply(null, t);
-    }
-    if (c >= 0) {
-      return function(n2, r2) {
-        return function(t2) {
-          return app(n2, r2.concat([t2]));
-        };
-      }(e, t);
-    }
-    r = sub(t, a, 0 | -c);
-    n = e.apply(null, sub(t, 0, a));
-  }
-};
-var _1 = function(n, r) {
-  var t = n.length;
-  if (t === 1) {
-    return n(r);
-  } else {
-    switch (t) {
-      case 1:
-        return n(r);
-      case 2:
-        return function(t2) {
-          return n(r, t2);
-        };
-      case 3:
-        return function(t2, e) {
-          return n(r, t2, e);
-        };
-      case 4:
-        return function(t2, e, u) {
-          return n(r, t2, e, u);
-        };
-      case 5:
-        return function(t2, e, u, a) {
-          return n(r, t2, e, u, a);
-        };
-      case 6:
-        return function(t2, e, u, a, c) {
-          return n(r, t2, e, u, a, c);
-        };
-      case 7:
-        return function(t2, e, u, a, c, i) {
-          return n(r, t2, e, u, a, c, i);
-        };
-      default:
-        return app(n, [r]);
-    }
-  }
-};
-var __1 = function(n) {
-  if (n.length === 1) {
-    return n;
-  } else {
-    return function(r) {
-      return _1(n, r);
-    };
-  }
-};
-var create = function(r) {
-  n.contents = n.contents + 1 | 0;
-  return r + "/" + n.contents;
-};
 var is_extension = function(n) {
   if (n == null) {
     return false;
@@ -818,20 +729,8 @@ var is_extension = function(n) {
     return typeof n.RE_EXN_ID == "string";
   }
 };
-var n = {
-  contents: 0
-};
 
 // node_modules/@mobily/ts-belt/dist/belt_Option-91f3b350.mjs
-var getExn2 = function(t) {
-  if (t !== undefined) {
-    return valFromOption(t);
-  }
-  throw {
-    RE_EXN_ID: "Not_found",
-    Error: new Error
-  };
-};
 var mapWithDefaultU = function(t, i, a) {
   if (t !== undefined) {
     return a(valFromOption(t));
@@ -839,31 +738,8 @@ var mapWithDefaultU = function(t, i, a) {
     return i;
   }
 };
-var mapU2 = function(t, a) {
-  if (t !== undefined) {
-    return some(a(valFromOption(t)));
-  }
-};
-var flatMapU = function(t, i) {
-  if (t !== undefined) {
-    return i(valFromOption(t));
-  }
-};
-var flatMap = function(n2, i) {
-  return flatMapU(n2, __1(i));
-};
-var getWithDefault = function(t, i) {
-  if (t !== undefined) {
-    return valFromOption(t);
-  } else {
-    return i;
-  }
-};
 var isSome = function(t) {
   return t !== undefined;
-};
-var isNone = function(t) {
-  return t === undefined;
 };
 
 // node_modules/@mobily/ts-belt/dist/caml_js_exceptions-5c6894a5.mjs
@@ -879,34 +755,34 @@ var internalToOCamlException = function(e) {
 };
 
 // node_modules/@mobily/ts-belt/dist/index-0eef19ec.mjs
-var treeHeight = function(n2) {
-  if (n2 !== undefined) {
-    return n2.h;
+var treeHeight = function(n) {
+  if (n !== undefined) {
+    return n.h;
   } else {
     return 0;
   }
 };
-var create2 = function(n2, t, e, r) {
-  var o = treeHeight(n2);
+var create = function(n, t, e, r) {
+  var o = treeHeight(n);
   var u = treeHeight(r);
   return {
     k: t,
     v: e,
     h: o >= u ? o + 1 | 0 : u + 1 | 0,
-    l: n2,
+    l: n,
     r
   };
 };
-var bal = function(n2, t, e, r) {
-  var o = n2 !== undefined ? n2.h : 0;
+var bal = function(n, t, e, r) {
+  var o = n !== undefined ? n.h : 0;
   var u = r !== undefined ? r.h : 0;
   if (o > (u + 2 | 0)) {
-    var i = n2.l;
-    var c = n2.r;
+    var i = n.l;
+    var c = n.r;
     if (treeHeight(i) >= treeHeight(c)) {
-      return create2(i, n2.k, n2.v, create2(c, t, e, r));
+      return create(i, n.k, n.v, create(c, t, e, r));
     } else {
-      return create2(create2(i, n2.k, n2.v, c.l), c.k, c.v, create2(c.r, t, e, r));
+      return create(create(i, n.k, n.v, c.l), c.k, c.v, create(c.r, t, e, r));
     }
   }
   if (u <= (o + 2 | 0)) {
@@ -914,23 +790,23 @@ var bal = function(n2, t, e, r) {
       k: t,
       v: e,
       h: o >= u ? o + 1 | 0 : u + 1 | 0,
-      l: n2,
+      l: n,
       r
     };
   }
   var a = r.l;
   var s = r.r;
   if (treeHeight(s) >= treeHeight(a)) {
-    return create2(create2(n2, t, e, a), r.k, r.v, s);
+    return create(create(n, t, e, a), r.k, r.v, s);
   } else {
-    return create2(create2(n2, t, e, a.l), a.k, a.v, create2(a.r, r.k, r.v, s));
+    return create(create(n, t, e, a.l), a.k, a.v, create(a.r, r.k, r.v, s));
   }
 };
-var set = function(n2, t, e) {
-  if (n2 === undefined) {
-    return function singleton(n3, t2) {
+var set = function(n, t, e) {
+  if (n === undefined) {
+    return function singleton(n2, t2) {
       return {
-        k: n3,
+        k: n2,
         v: t2,
         h: 1,
         l: undefined,
@@ -938,92 +814,92 @@ var set = function(n2, t, e) {
       };
     }(t, e);
   }
-  var r = n2.k;
+  var r = n.k;
   if (t === r) {
-    return function updateValue(n3, t2) {
-      if (n3.v === t2) {
-        return n3;
+    return function updateValue(n2, t2) {
+      if (n2.v === t2) {
+        return n2;
       } else {
         return {
-          k: n3.k,
+          k: n2.k,
           v: t2,
-          h: n3.h,
-          l: n3.l,
-          r: n3.r
+          h: n2.h,
+          l: n2.l,
+          r: n2.r
         };
       }
-    }(n2, e);
+    }(n, e);
   }
-  var o = n2.v;
+  var o = n.v;
   if (t < r) {
-    return bal(set(n2.l, t, e), r, o, n2.r);
+    return bal(set(n.l, t, e), r, o, n.r);
   } else {
-    return bal(n2.l, r, o, set(n2.r, t, e));
+    return bal(n.l, r, o, set(n.r, t, e));
   }
 };
-var placeholder = function(n2) {
+var placeholder = function(n) {
 };
-var identity = function(n2) {
-  return n2;
+var identity = function(n) {
+  return n;
 };
 var equals = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return s(t, n2[0]);
+      return s(t, n[0]);
     };
   }
   return s(arguments[0], arguments[1]);
 };
-var _both = function(n2, t, e) {
-  if (t(n2)) {
-    return e(n2);
+var _both = function(n, t, e) {
+  if (t(n)) {
+    return e(n);
   } else {
     return false;
   }
 };
 var both = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _both(t, n2[0], n2[1]);
+      return _both(t, n[0], n[1]);
     };
   }
   return _both(arguments[0], arguments[1], arguments[2]);
 };
-var _either = function(n2, t, e) {
-  if (t(n2)) {
+var _either = function(n, t, e) {
+  if (t(n)) {
     return true;
   } else {
-    return e(n2);
+    return e(n);
   }
 };
 var either = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _either(t, n2[0], n2[1]);
+      return _either(t, n[0], n[1]);
     };
   }
   return _either(arguments[0], arguments[1], arguments[2]);
 };
-var always = function(n2) {
+var always = function(n) {
   return function() {
-    return n2;
+    return n;
   };
 };
-var _defaultTo = function(n2, t) {
-  if (n2 == null) {
+var _defaultTo = function(n, t) {
+  if (n == null) {
     return t;
   } else {
-    return n2;
+    return n;
   }
 };
 var defaultTo = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _defaultTo(t, n2[0]);
+      return _defaultTo(t, n[0]);
     };
   }
   return _defaultTo(arguments[0], arguments[1]);
@@ -1034,107 +910,107 @@ var falsy = function() {
 var truthy = function() {
   return true;
 };
-var _ifElse = function(n2, t, e, r) {
-  if (t(n2)) {
-    return e(n2);
+var _ifElse = function(n, t, e, r) {
+  if (t(n)) {
+    return e(n);
   } else {
-    return r(n2);
+    return r(n);
   }
 };
 var ifElse = function() {
   if (arguments.length === 3) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _ifElse(t, n2[0], n2[1], n2[2]);
+      return _ifElse(t, n[0], n[1], n[2]);
     };
   }
   return _ifElse(arguments[0], arguments[1], arguments[2], arguments[3]);
 };
-var ignore = function(n2) {
+var ignore = function(n) {
 };
-var _unless = function(n2, t, e) {
-  if (t(n2)) {
-    return n2;
+var _unless = function(n, t, e) {
+  if (t(n)) {
+    return n;
   } else {
-    return e(n2);
+    return e(n);
   }
 };
 var unless = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _unless(t, n2[0], n2[1]);
+      return _unless(t, n[0], n[1]);
     };
   }
   return _unless(arguments[0], arguments[1], arguments[2]);
 };
-var _when_ = function(n2, t, e) {
-  if (t(n2)) {
-    return e(n2);
+var _when_ = function(n, t, e) {
+  if (t(n)) {
+    return e(n);
   } else {
-    return n2;
+    return n;
   }
 };
 var when = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _when_(t, n2[0], n2[1]);
+      return _when_(t, n[0], n[1]);
     };
   }
   return _when_(arguments[0], arguments[1], arguments[2]);
 };
-var _allPass = function(n2, e) {
+var _allPass = function(n, e) {
   return everyU(e, function(t) {
-    return t(n2);
+    return t(n);
   });
 };
 var allPass = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _allPass(t, n2[0]);
+      return _allPass(t, n[0]);
     };
   }
   return _allPass(arguments[0], arguments[1]);
 };
-var _anyPass = function(n2, t) {
+var _anyPass = function(n, t) {
   return someU(t, function(t2) {
-    return t2(n2);
+    return t2(n);
   });
 };
 var anyPass = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _anyPass(t, n2[0]);
+      return _anyPass(t, n[0]);
     };
   }
   return _anyPass(arguments[0], arguments[1]);
 };
-var _tap = function(n2, t) {
-  t(n2);
-  return n2;
+var _tap = function(n, t) {
+  t(n);
+  return n;
 };
 var tap = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _tap(t, n2[0]);
+      return _tap(t, n[0]);
     };
   }
   return _tap(arguments[0], arguments[1]);
 };
-var _makeControlledThrottle = function(n2, t) {
+var _makeControlledThrottle = function(n, t) {
   var e = {
     contents: false
   };
   var o = {
     contents: undefined
   };
-  var cancel = function(n3) {
-    mapWithDefaultU(o.contents, undefined, function(n4) {
-      clearTimeout(n4);
+  var cancel = function(n2) {
+    mapWithDefaultU(o.contents, undefined, function(n3) {
+      clearTimeout(n3);
     });
     o.contents = undefined;
   };
@@ -1145,23 +1021,23 @@ var _makeControlledThrottle = function(n2, t) {
     cancel,
     invoke: function(...t2) {
       cancel();
-      n2(...t2);
+      n(...t2);
     },
-    isScheduled: function(n3) {
+    isScheduled: function(n2) {
       return e.contents;
     },
     schedule: function(...r) {
       if (i.contents) {
         i.contents = false;
-        return n2(...r);
+        return n(...r);
       } else {
         if (e.contents) {
           return;
         }
         cancel();
         e.contents = true;
-        n2(...r);
-        var c = setTimeout(function(n3) {
+        n(...r);
+        var c = setTimeout(function(n2) {
           e.contents = false;
           o.contents = undefined;
         }, t.delay);
@@ -1173,35 +1049,35 @@ var _makeControlledThrottle = function(n2, t) {
 };
 var makeControlledThrottle = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _makeControlledThrottle(t, n2[0]);
+      return _makeControlledThrottle(t, n[0]);
     };
   }
   return _makeControlledThrottle(arguments[0], arguments[1]);
 };
-var _throttle = function(n2, t) {
-  return makeControlledThrottle(n2, {
+var _throttle = function(n, t) {
+  return makeControlledThrottle(n, {
     delay: t,
     leading: false
   }).schedule;
 };
 var throttle = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _throttle(t, n2[0]);
+      return _throttle(t, n[0]);
     };
   }
   return _throttle(arguments[0], arguments[1]);
 };
-var _makeControlledDebounce = function(n2, t) {
+var _makeControlledDebounce = function(n, t) {
   var e = {
     contents: undefined
   };
-  var cancel = function(n3) {
-    mapWithDefaultU(e.contents, undefined, function(n4) {
-      clearTimeout(n4);
+  var cancel = function(n2) {
+    mapWithDefaultU(e.contents, undefined, function(n3) {
+      clearTimeout(n3);
     });
     e.contents = undefined;
   };
@@ -1212,19 +1088,19 @@ var _makeControlledDebounce = function(n2, t) {
     cancel,
     invoke: function(...t2) {
       cancel();
-      n2(...t2);
+      n(...t2);
     },
-    isScheduled: function(n3) {
+    isScheduled: function(n2) {
       return isSome(e.contents);
     },
     schedule: function(...r) {
       if (i.contents) {
         i.contents = false;
-        return n2(...r);
+        return n(...r);
       } else {
         cancel();
         var o = setTimeout(function(t2) {
-          n2(...r);
+          n(...r);
           e.contents = undefined;
         }, t.delay);
         e.contents = some(o);
@@ -1235,36 +1111,36 @@ var _makeControlledDebounce = function(n2, t) {
 };
 var makeControlledDebounce = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _makeControlledDebounce(t, n2[0]);
+      return _makeControlledDebounce(t, n[0]);
     };
   }
   return _makeControlledDebounce(arguments[0], arguments[1]);
 };
-var _debounce = function(n2, t) {
-  return makeControlledDebounce(n2, {
+var _debounce = function(n, t) {
+  return makeControlledDebounce(n, {
     delay: t,
     leading: false
   }).schedule;
 };
 var debounce = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _debounce(t, n2[0]);
+      return _debounce(t, n[0]);
     };
   }
   return _debounce(arguments[0], arguments[1]);
 };
-var _tryCatch = function(n2, t) {
+var _tryCatch = function(n, t) {
   try {
     return {
       TAG: 0,
-      _0: t(n2)
+      _0: t(n)
     };
-  } catch (n3) {
-    var e = internalToOCamlException(n3);
+  } catch (n2) {
+    var e = internalToOCamlException(n2);
     if (e.RE_EXN_ID === "JsError") {
       return {
         TAG: 1,
@@ -1280,14 +1156,14 @@ var _tryCatch = function(n2, t) {
 };
 var tryCatch = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _tryCatch(t, n2[0]);
+      return _tryCatch(t, n[0]);
     };
   }
   return _tryCatch(arguments[0], arguments[1]);
 };
-var _before = function(n2, t) {
+var _before = function(n, t) {
   var e = {
     contents: 0
   };
@@ -1297,7 +1173,7 @@ var _before = function(n2, t) {
   return function(...o) {
     var c = r.contents;
     if (c !== undefined) {
-      if (e.contents >= n2) {
+      if (e.contents >= n) {
         return valFromOption(c);
       }
       var a = t(...o);
@@ -1313,19 +1189,19 @@ var _before = function(n2, t) {
 };
 var before = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _before(t, n2[0]);
+      return _before(t, n[0]);
     };
   }
   return _before(arguments[0], arguments[1]);
 };
-var _after = function(n2, t) {
+var _after = function(n, t) {
   var e = {
     contents: 0
   };
   return function(...r) {
-    if (e.contents < n2) {
+    if (e.contents < n) {
       e.contents = e.contents + 1 | 0;
       return;
     } else {
@@ -1335,14 +1211,14 @@ var _after = function(n2, t) {
 };
 var after = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _after(t, n2[0]);
+      return _after(t, n[0]);
     };
   }
   return _after(arguments[0], arguments[1]);
 };
-var once = function(n2) {
+var once = function(n) {
   var t = {
     contents: undefined
   };
@@ -1351,17 +1227,17 @@ var once = function(n2) {
     if (r !== undefined) {
       return valFromOption(r);
     }
-    var o = n2(...e);
+    var o = n(...e);
     t.contents = some(o);
     return o;
   };
 };
-var _memoizeWithKey = function(n2, t) {
+var _memoizeWithKey = function(n, t) {
   var e = {
     contents: undefined
   };
   return function(...r) {
-    var o = n2(...r);
+    var o = n(...r);
     var u = a(e.contents, o);
     if (u !== undefined) {
       return valFromOption(u);
@@ -1373,34 +1249,34 @@ var _memoizeWithKey = function(n2, t) {
 };
 var memoizeWithKey = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _memoizeWithKey(t, n2[0]);
+      return _memoizeWithKey(t, n[0]);
     };
   }
   return _memoizeWithKey(arguments[0], arguments[1]);
 };
-var toMutable = function(n2) {
-  return n2;
+var toMutable = function(n) {
+  return n;
 };
-var coerce = function(n2) {
-  return n2;
+var coerce = function(n) {
+  return n;
 };
-var _andThen = function(n2, t) {
-  return t(n2);
+var _andThen = function(n, t) {
+  return t(n);
 };
 var andThen = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _andThen(t, n2[0]);
+      return _andThen(t, n[0]);
     };
   }
   return _andThen(arguments[0], arguments[1]);
 };
-var a = function get$1(n2, t) {
+var a = function get$1(n, t) {
   while (true) {
-    var e = n2;
+    var e = n;
     if (e === undefined) {
       return;
     }
@@ -1408,7 +1284,7 @@ var a = function get$1(n2, t) {
     if (t === r) {
       return some(e.v);
     }
-    n2 = t < r ? e.l : e.r;
+    n = t < r ? e.l : e.r;
   }
 };
 var s = equal;
@@ -1446,11 +1322,11 @@ var l = {
   andThen
 };
 // node_modules/@mobily/ts-belt/dist/Array.bs-4b4ec77c.mjs
-var merge = function(n2, t, e, u, i, f2, a2, o, c) {
+var merge = function(n, t, e, u, i, f2, a2, o, c) {
   var s2 = t + e | 0;
   var l2 = i + f2 | 0;
   var h = t;
-  var p = n2[t];
+  var p = n[t];
   var v = i;
   var g = u[i];
   var _ = o;
@@ -1467,23 +1343,23 @@ var merge = function(n2, t, e, u, i, f2, a2, o, c) {
         return blitUnsafe(u, m, a2, d + 1 | 0, l2 - m | 0);
       }
       _ = d + 1 | 0;
-      p = n2[B];
+      p = n[B];
       h = B;
       continue;
     }
     a2[d] = y;
     var W = m + 1 | 0;
     if (W >= l2) {
-      return blitUnsafe(n2, x, a2, d + 1 | 0, s2 - x | 0);
+      return blitUnsafe(n, x, a2, d + 1 | 0, s2 - x | 0);
     }
     _ = d + 1 | 0;
     g = u[W];
     v = W;
   }
 };
-var insertionSort = function(n2, t, r, e, u, i) {
+var insertionSort = function(n, t, r, e, u, i) {
   for (var f2 = 0;f2 < u; ++f2) {
-    var a2 = n2[t + f2 | 0];
+    var a2 = n[t + f2 | 0];
     var o = (e + f2 | 0) - 1 | 0;
     while (o >= e && i(r[o], a2) > 0) {
       r[o + 1 | 0] = r[o];
@@ -1492,29 +1368,29 @@ var insertionSort = function(n2, t, r, e, u, i) {
     r[o + 1 | 0] = a2;
   }
 };
-var sortTo = function(n2, t, r, e, u, i) {
+var sortTo = function(n, t, r, e, u, i) {
   if (u <= 5) {
-    return insertionSort(n2, t, r, e, u, i);
+    return insertionSort(n, t, r, e, u, i);
   }
   var f2 = u / 2 | 0;
   var a2 = u - f2 | 0;
-  sortTo(n2, t + f2 | 0, r, e + f2 | 0, a2, i);
-  sortTo(n2, t, n2, t + a2 | 0, f2, i);
-  merge(n2, t + a2 | 0, f2, r, e + f2 | 0, a2, r, e, i);
+  sortTo(n, t + f2 | 0, r, e + f2 | 0, a2, i);
+  sortTo(n, t, n, t + a2 | 0, f2, i);
+  merge(n, t + a2 | 0, f2, r, e + f2 | 0, a2, r, e, i);
 };
-var stableSortByU = function(n2, t) {
-  var r = n2.slice(0);
-  (function stableSortInPlaceByU(n3, t2) {
-    var r2 = n3.length;
+var stableSortByU = function(n, t) {
+  var r = n.slice(0);
+  (function stableSortInPlaceByU(n2, t2) {
+    var r2 = n2.length;
     if (r2 <= 5) {
-      return insertionSort(n3, 0, n3, 0, r2, t2);
+      return insertionSort(n2, 0, n2, 0, r2, t2);
     }
     var e = r2 / 2 | 0;
     var u = r2 - e | 0;
     var i = new Array(u);
-    sortTo(n3, e, i, 0, u, t2);
-    sortTo(n3, 0, n3, u, e, t2);
-    merge(n3, u, e, i, 0, u, n3, 0, t2);
+    sortTo(n2, e, i, 0, u, t2);
+    sortTo(n2, 0, n2, u, e, t2);
+    merge(n2, u, e, i, 0, u, n2, 0, t2);
   })(r, t);
   return r;
 };
@@ -1523,88 +1399,88 @@ var get$12 = function(t, r) {
     return some(t[r]);
   }
 };
-var placeholder2 = function(n2) {
+var placeholder2 = function(n) {
 };
-var makeEmpty = function(n2) {
+var makeEmpty = function(n) {
   return [];
 };
 var makeWithIndex = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return z(t, n2[0]);
+      return z(t, n[0]);
     };
   }
   return z(arguments[0], arguments[1]);
 };
 var make2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return S(t, n2[0]);
+      return S(t, n[0]);
     };
   }
   return S(arguments[0], arguments[1]);
 };
 var repeat = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return O(t, n2[0]);
+      return O(t, n[0]);
     };
   }
   return O(arguments[0], arguments[1]);
 };
-var length = function(n2) {
-  return n2.length;
+var length = function(n) {
+  return n.length;
 };
-var isEmpty = function(n2) {
-  return n2.length === 0;
+var isEmpty = function(n) {
+  return n.length === 0;
 };
-var isNotEmpty = function(n2) {
-  return n2.length !== 0;
+var isNotEmpty = function(n) {
+  return n.length !== 0;
 };
-var _append = function(n2, t) {
-  return concat(n2, [t]);
+var _append = function(n, t) {
+  return concat(n, [t]);
 };
 var append = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _append(t, n2[0]);
+      return _append(t, n[0]);
     };
   }
   return _append(arguments[0], arguments[1]);
 };
-var _prepend = function(n2, t) {
-  return concat([t], n2);
+var _prepend = function(n, t) {
+  return concat([t], n);
 };
 var prepend = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _prepend(t, n2[0]);
+      return _prepend(t, n[0]);
     };
   }
   return _prepend(arguments[0], arguments[1]);
 };
-var _prependToAll = function(n2, t) {
-  return reduceU(n2, [], function(n3, r) {
-    return concat(n3, [t, r]);
+var _prependToAll = function(n, t) {
+  return reduceU(n, [], function(n2, r) {
+    return concat(n2, [t, r]);
   });
 };
 var prependToAll = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _prependToAll(t, n2[0]);
+      return _prependToAll(t, n[0]);
     };
   }
   return _prependToAll(arguments[0], arguments[1]);
 };
-var _intersperse = function(n2, t) {
-  return reduceWithIndexU(n2, [], function(r, e, u) {
-    if ((n2.length - 1 | 0) === u) {
+var _intersperse = function(n, t) {
+  return reduceWithIndexU(n, [], function(r, e, u) {
+    if ((n.length - 1 | 0) === u) {
       r.push(e);
     } else {
       r.push(e, t);
@@ -1614,156 +1490,156 @@ var _intersperse = function(n2, t) {
 };
 var intersperse = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _intersperse(t, n2[0]);
+      return _intersperse(t, n[0]);
     };
   }
   return _intersperse(arguments[0], arguments[1]);
 };
 var get2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return C(t, n2[0]);
+      return C(t, n[0]);
     };
   }
   return C(arguments[0], arguments[1]);
 };
 var at = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return D(t, n2[0]);
+      return D(t, n[0]);
     };
   }
   return D(arguments[0], arguments[1]);
 };
-var _getUnsafe = function(n2, t) {
-  return n2[t];
+var _getUnsafe = function(n, t) {
+  return n[t];
 };
 var getUnsafe = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _getUnsafe(t, n2[0]);
+      return _getUnsafe(t, n[0]);
     };
   }
   return _getUnsafe(arguments[0], arguments[1]);
 };
-var _getUndefined = function(n2, t) {
-  return n2[t];
+var _getUndefined = function(n, t) {
+  return n[t];
 };
 var getUndefined = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _getUndefined(t, n2[0]);
+      return _getUndefined(t, n[0]);
     };
   }
   return _getUndefined(arguments[0], arguments[1]);
 };
 var getBy = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return N(t, n2[0]);
+      return N(t, n[0]);
     };
   }
   return N(arguments[0], arguments[1]);
 };
 var find = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return R(t, n2[0]);
+      return R(t, n[0]);
     };
   }
   return R(arguments[0], arguments[1]);
 };
-var head = function(n2) {
-  return get(n2, 0);
+var head = function(n) {
+  return get(n, 0);
 };
-var last = function(n2) {
-  var t = n2.length;
+var last = function(n) {
+  var t = n.length;
   if (t === 0) {
     return;
   } else {
-    return get(n2, t - 1 | 0);
+    return get(n, t - 1 | 0);
   }
 };
-var tail = function(n2) {
-  var t = n2.length;
+var tail = function(n) {
+  var t = n.length;
   if (t === 1) {
     return [];
   }
   if (t === 0) {
     return;
   }
-  var r = sliceToEnd(n2, 1);
+  var r = sliceToEnd(n, 1);
   if (r.length !== 0) {
     return r;
   }
 };
-var tailOrEmpty = function(n2) {
-  var t = tail(n2);
+var tailOrEmpty = function(n) {
+  var t = tail(n);
   if (t !== undefined) {
     return t;
   } else {
     return [];
   }
 };
-var init = function(n2) {
-  var t = n2.length;
+var init = function(n) {
+  var t = n.length;
   if (t === 0) {
     return;
   } else {
-    return slice(n2, 0, t - 1 | 0);
+    return slice(n, 0, t - 1 | 0);
   }
 };
-var initOrEmpty = function(n2) {
-  var t = init(n2);
+var initOrEmpty = function(n) {
+  var t = init(n);
   if (t !== undefined) {
     return t;
   } else {
     return [];
   }
 };
-var _take = function(n2, t) {
-  var r = n2.length;
-  return slice(n2, 0, t < 0 ? 0 : r < t ? r : t);
+var _take = function(n, t) {
+  var r = n.length;
+  return slice(n, 0, t < 0 ? 0 : r < t ? r : t);
 };
 var take = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _take(t, n2[0]);
+      return _take(t, n[0]);
     };
   }
   return _take(arguments[0], arguments[1]);
 };
-var _takeExactly = function(n2, t) {
-  if (t < 0 || t > n2.length) {
+var _takeExactly = function(n, t) {
+  if (t < 0 || t > n.length) {
     return;
   } else {
-    return slice(n2, 0, t);
+    return slice(n, 0, t);
   }
 };
 var takeExactly = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _takeExactly(t, n2[0]);
+      return _takeExactly(t, n[0]);
     };
   }
   return _takeExactly(arguments[0], arguments[1]);
 };
-var _takeWhile = function(n2, t) {
+var _takeWhile = function(n, t) {
   var r = 0;
   var e = false;
   var u = [];
-  while (r < n2.length && !e) {
-    var i = n2[r];
+  while (r < n.length && !e) {
+    var i = n[r];
     if (t(i)) {
       u.push(i);
       r = r + 1 | 0;
@@ -1775,90 +1651,90 @@ var _takeWhile = function(n2, t) {
 };
 var takeWhile = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _takeWhile(t, n2[0]);
+      return _takeWhile(t, n[0]);
     };
   }
   return _takeWhile(arguments[0], arguments[1]);
 };
-var _drop = function(n2, t) {
-  var r = n2.length;
-  return sliceToEnd(n2, t < 0 ? 0 : r < t ? r : t);
+var _drop = function(n, t) {
+  var r = n.length;
+  return sliceToEnd(n, t < 0 ? 0 : r < t ? r : t);
 };
 var drop = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _drop(t, n2[0]);
+      return _drop(t, n[0]);
     };
   }
   return _drop(arguments[0], arguments[1]);
 };
-var _dropExactly = function(n2, t) {
-  if (t < 0 || t > n2.length) {
+var _dropExactly = function(n, t) {
+  if (t < 0 || t > n.length) {
     return;
   } else {
-    return sliceToEnd(n2, t);
+    return sliceToEnd(n, t);
   }
 };
 var dropExactly = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _dropExactly(t, n2[0]);
+      return _dropExactly(t, n[0]);
     };
   }
   return _dropExactly(arguments[0], arguments[1]);
 };
-var _dropWhile = function(n2, t) {
-  return reduceU(n2, [], function(n3, r) {
+var _dropWhile = function(n, t) {
+  return reduceU(n, [], function(n2, r) {
     if (!t(r)) {
-      n3.push(r);
+      n2.push(r);
     }
-    return n3;
+    return n2;
   });
 };
 var dropWhile = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _dropWhile(t, n2[0]);
+      return _dropWhile(t, n[0]);
     };
   }
   return _dropWhile(arguments[0], arguments[1]);
 };
-var uncons = function(n2) {
-  if (n2.length !== 0) {
-    return [getExn(n2, 0), sliceToEnd(n2, 1)];
+var uncons = function(n) {
+  if (n.length !== 0) {
+    return [getExn(n, 0), sliceToEnd(n, 1)];
   }
 };
-var _map = function(n2, t) {
-  return mapU(n2, t);
+var _map = function(n, t) {
+  return mapU(n, t);
 };
 var map = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _map(t, n2[0]);
+      return _map(t, n[0]);
     };
   }
   return _map(arguments[0], arguments[1]);
 };
 var mapWithIndex = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return G(t, n2[0]);
+      return G(t, n[0]);
     };
   }
   return G(arguments[0], arguments[1]);
 };
-var _filter = function(n2, t) {
+var _filter = function(n, t) {
   var r = 0;
   var e = [];
-  while (r < n2.length) {
-    var u = n2[r];
+  while (r < n.length) {
+    var u = n[r];
     if (t(u)) {
       e.push(u);
     }
@@ -1868,18 +1744,18 @@ var _filter = function(n2, t) {
 };
 var filter = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _filter(t, n2[0]);
+      return _filter(t, n[0]);
     };
   }
   return _filter(arguments[0], arguments[1]);
 };
-var _filterWithIndex = function(n2, t) {
+var _filterWithIndex = function(n, t) {
   var r = 0;
   var e = [];
-  while (r < n2.length) {
-    var u = n2[r];
+  while (r < n.length) {
+    var u = n[r];
     if (t(r, u)) {
       e.push(u);
     }
@@ -1889,211 +1765,211 @@ var _filterWithIndex = function(n2, t) {
 };
 var filterWithIndex = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _filterWithIndex(t, n2[0]);
+      return _filterWithIndex(t, n[0]);
     };
   }
   return _filterWithIndex(arguments[0], arguments[1]);
 };
-var _reject = function(n2, t) {
-  return filter(n2, function(n3) {
-    return !t(n3);
+var _reject = function(n, t) {
+  return filter(n, function(n2) {
+    return !t(n2);
   });
 };
 var reject = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _reject(t, n2[0]);
+      return _reject(t, n[0]);
     };
   }
   return _reject(arguments[0], arguments[1]);
 };
-var _rejectWithIndex = function(n2, t) {
-  return filterWithIndex(n2, function(n3, r) {
-    return !t(n3, r);
+var _rejectWithIndex = function(n, t) {
+  return filterWithIndex(n, function(n2, r) {
+    return !t(n2, r);
   });
 };
 var rejectWithIndex = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _rejectWithIndex(t, n2[0]);
+      return _rejectWithIndex(t, n[0]);
     };
   }
   return _rejectWithIndex(arguments[0], arguments[1]);
 };
 var reduce = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return J(t, n2[0], n2[1]);
+      return J(t, n[0], n[1]);
     };
   }
   return J(arguments[0], arguments[1], arguments[2]);
 };
 var reduceReverse = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return K(t, n2[0], n2[1]);
+      return K(t, n[0], n[1]);
     };
   }
   return K(arguments[0], arguments[1], arguments[2]);
 };
 var reduceWithIndex = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return L(t, n2[0], n2[1]);
+      return L(t, n[0], n[1]);
     };
   }
   return L(arguments[0], arguments[1], arguments[2]);
 };
-var _splitAt = function(n2, t) {
-  if (t < 0 || t > n2.length) {
+var _splitAt = function(n, t) {
+  if (t < 0 || t > n.length) {
     return;
   } else {
-    return [slice(n2, 0, t), sliceToEnd(n2, t)];
+    return [slice(n, 0, t), sliceToEnd(n, t)];
   }
 };
 var splitAt = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _splitAt(t, n2[0]);
+      return _splitAt(t, n[0]);
     };
   }
   return _splitAt(arguments[0], arguments[1]);
 };
-var _splitEvery = function(n2, t) {
-  if (t < 1 || n2.length <= t) {
-    return [n2];
+var _splitEvery = function(n, t) {
+  if (t < 1 || n.length <= t) {
+    return [n];
   }
   var r = 0;
   var e = [];
-  while (r < n2.length) {
+  while (r < n.length) {
     var u = r + t | 0;
-    e.push(slice(n2, r, t));
+    e.push(slice(n, r, t));
     r = u;
   }
   return e;
 };
 var splitEvery = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _splitEvery(t, n2[0]);
+      return _splitEvery(t, n[0]);
     };
   }
   return _splitEvery(arguments[0], arguments[1]);
 };
 var partition = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return V(t, n2[0]);
+      return V(t, n[0]);
     };
   }
   return V(arguments[0], arguments[1]);
 };
 var concat2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return X(t, n2[0]);
+      return X(t, n[0]);
     };
   }
   return X(arguments[0], arguments[1]);
 };
 var every = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return Z(t, n2[0]);
+      return Z(t, n[0]);
     };
   }
   return Z(arguments[0], arguments[1]);
 };
 var some2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return nn(t, n2[0]);
+      return nn(t, n[0]);
     };
   }
   return nn(arguments[0], arguments[1]);
 };
 var slice2 = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return tn(t, n2[0], n2[1]);
+      return tn(t, n[0], n[1]);
     };
   }
   return tn(arguments[0], arguments[1], arguments[2]);
 };
 var sliceToEnd2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return rn(t, n2[0]);
+      return rn(t, n[0]);
     };
   }
   return rn(arguments[0], arguments[1]);
 };
 var eq = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return en(t, n2[0], n2[1]);
+      return en(t, n[0], n[1]);
     };
   }
   return en(arguments[0], arguments[1], arguments[2]);
 };
 var range2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return un(t, n2[0]);
+      return un(t, n[0]);
     };
   }
   return un(arguments[0], arguments[1]);
 };
 var rangeBy2 = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return an(t, n2[0], n2[1]);
+      return an(t, n[0], n[1]);
     };
   }
   return an(arguments[0], arguments[1], arguments[2]);
 };
-var copy = function(n2) {
-  return n2.slice(0);
+var copy = function(n) {
+  return n.slice(0);
 };
 var zip2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return on(t, n2[0]);
+      return on(t, n[0]);
     };
   }
   return on(arguments[0], arguments[1]);
 };
 var zipWith = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return cn(t, n2[0], n2[1]);
+      return cn(t, n[0], n[1]);
     };
   }
   return cn(arguments[0], arguments[1], arguments[2]);
 };
-var _replaceAt = function(n2, t, r) {
-  return mapWithIndexU(n2, function(n3, e) {
-    if (n3 === t) {
+var _replaceAt = function(n, t, r) {
+  return mapWithIndexU(n, function(n2, e) {
+    if (n2 === t) {
       return r;
     } else {
       return e;
@@ -2102,33 +1978,33 @@ var _replaceAt = function(n2, t, r) {
 };
 var replaceAt = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _replaceAt(t, n2[0], n2[1]);
+      return _replaceAt(t, n[0], n[1]);
     };
   }
   return _replaceAt(arguments[0], arguments[1], arguments[2]);
 };
-var _insertAt = function(n2, t, r) {
-  var e = splitAt(n2, t);
+var _insertAt = function(n, t, r) {
+  var e = splitAt(n, t);
   if (e !== undefined) {
     return concat(e[0], concat([r], e[1]));
   } else {
-    return n2;
+    return n;
   }
 };
 var insertAt = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _insertAt(t, n2[0], n2[1]);
+      return _insertAt(t, n[0], n[1]);
     };
   }
   return _insertAt(arguments[0], arguments[1], arguments[2]);
 };
-var _updateAt = function(n2, t, r) {
-  return mapWithIndexU(n2, function(n3, e) {
-    if (n3 === t) {
+var _updateAt = function(n, t, r) {
+  return mapWithIndexU(n, function(n2, e) {
+    if (n2 === t) {
       return r(e);
     } else {
       return e;
@@ -2137,28 +2013,28 @@ var _updateAt = function(n2, t, r) {
 };
 var updateAt = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _updateAt(t, n2[0], n2[1]);
+      return _updateAt(t, n[0], n[1]);
     };
   }
   return _updateAt(arguments[0], arguments[1], arguments[2]);
 };
-var _swapAt = function(n2, r, e) {
-  var i = get(n2, r);
-  var f2 = get(n2, e);
+var _swapAt = function(n, r, e) {
+  var i = get(n, r);
+  var f2 = get(n, e);
   if (i === undefined) {
-    return n2;
+    return n;
   }
   if (f2 === undefined) {
-    return n2;
+    return n;
   }
   var a2 = valFromOption(f2);
   var o = valFromOption(i);
-  return mapWithIndexU(n2, function(n3, t) {
-    if (r === n3) {
+  return mapWithIndexU(n, function(n2, t) {
+    if (r === n2) {
       return a2;
-    } else if (e === n3) {
+    } else if (e === n2) {
       return o;
     } else {
       return t;
@@ -2167,35 +2043,35 @@ var _swapAt = function(n2, r, e) {
 };
 var swapAt = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _swapAt(t, n2[0], n2[1]);
+      return _swapAt(t, n[0], n[1]);
     };
   }
   return _swapAt(arguments[0], arguments[1], arguments[2]);
 };
-var _removeAt = function(n2, t) {
-  return filterWithIndex(n2, function(n3, r) {
-    return n3 !== t;
+var _removeAt = function(n, t) {
+  return filterWithIndex(n, function(n2, r) {
+    return n2 !== t;
   });
 };
 var removeAt = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _removeAt(t, n2[0]);
+      return _removeAt(t, n[0]);
     };
   }
   return _removeAt(arguments[0], arguments[1]);
 };
-var _uniqBy = function(n2, t) {
+var _uniqBy = function(n, t) {
   var r = 0;
   var e = [];
-  while (r < n2.length) {
-    var u = n2[r];
-    var i = someU(e, function(n3) {
+  while (r < n.length) {
+    var u = n[r];
+    var i = someU(e, function(n2) {
       return function(r2) {
-        return equal(t(r2), t(n3));
+        return equal(t(r2), t(n2));
       };
     }(u));
     if (!i) {
@@ -2207,83 +2083,83 @@ var _uniqBy = function(n2, t) {
 };
 var uniqBy = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _uniqBy(t, n2[0]);
+      return _uniqBy(t, n[0]);
     };
   }
   return _uniqBy(arguments[0], arguments[1]);
 };
-var uniq = function(n2) {
-  return uniqBy(n2, function(n3) {
-    return n3;
+var uniq = function(n) {
+  return uniqBy(n, function(n2) {
+    return n2;
   });
 };
 var forEach = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return ln(t, n2[0]);
+      return ln(t, n[0]);
     };
   }
   return ln(arguments[0], arguments[1]);
 };
 var forEachWithIndex = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return hn(t, n2[0]);
+      return hn(t, n[0]);
     };
   }
   return hn(arguments[0], arguments[1]);
 };
 var getIndexBy = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return pn(t, n2[0]);
+      return pn(t, n[0]);
     };
   }
   return pn(arguments[0], arguments[1]);
 };
-var _includes = function(n2, t) {
-  return someU(n2, function(n3) {
-    return equal(n3, t);
+var _includes = function(n, t) {
+  return someU(n, function(n2) {
+    return equal(n2, t);
   });
 };
 var includes = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _includes(t, n2[0]);
+      return _includes(t, n[0]);
     };
   }
   return _includes(arguments[0], arguments[1]);
 };
-var _join = function(n2, t) {
-  return n2.join(t);
+var _join = function(n, t) {
+  return n.join(t);
 };
 var join = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _join(t, n2[0]);
+      return _join(t, n[0]);
     };
   }
   return _join(arguments[0], arguments[1]);
 };
 var sort = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return vn(t, n2[0]);
+      return vn(t, n[0]);
     };
   }
   return vn(arguments[0], arguments[1]);
 };
-var _sortBy = function(n2, t) {
-  return stableSortByU(n2, function(n3, r) {
-    var e = t(n3);
+var _sortBy = function(n, t) {
+  return stableSortByU(n, function(n2, r) {
+    var e = t(n2);
     var u = t(r);
     if (e === u) {
       return 0;
@@ -2296,50 +2172,50 @@ var _sortBy = function(n2, t) {
 };
 var sortBy = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _sortBy(t, n2[0]);
+      return _sortBy(t, n[0]);
     };
   }
   return _sortBy(arguments[0], arguments[1]);
 };
-var _groupBy = function(n2, t) {
-  return reduceU(n2, {}, function(n3, r) {
+var _groupBy = function(n, t) {
+  return reduceU(n, {}, function(n2, r) {
     var e = t(r);
-    var u = get$12(n3, e);
+    var u = get$12(n2, e);
     if (u !== undefined) {
       u.push(r);
     } else {
-      n3[e] = [r];
+      n2[e] = [r];
     }
-    return n3;
+    return n2;
   });
 };
 var groupBy = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _groupBy(t, n2[0]);
+      return _groupBy(t, n[0]);
     };
   }
   return _groupBy(arguments[0], arguments[1]);
 };
-var flat = function(n2) {
-  return reduceU(n2, [], function(n3, t) {
+var flat = function(n) {
+  return reduceU(n, [], function(n2, t) {
     if (Array.isArray(t)) {
       forEachU(t, function(t2) {
-        n3.push(t2);
+        n2.push(t2);
       });
     } else {
-      n3.push(t);
+      n2.push(t);
     }
-    return n3;
+    return n2;
   });
 };
-var _flatten = function(n2, t) {
+var _flatten = function(n, t) {
   var r = 0;
-  while (r < n2.length) {
-    var e = n2[r];
+  while (r < n.length) {
+    var e = n[r];
     if (Array.isArray(e)) {
       flatten(e, t);
     } else {
@@ -2351,57 +2227,57 @@ var _flatten = function(n2, t) {
 };
 var flatten = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _flatten(t, n2[0]);
+      return _flatten(t, n[0]);
     };
   }
   return _flatten(arguments[0], arguments[1]);
 };
-var deepFlat = function(n2) {
-  return flatten(n2, []);
+var deepFlat = function(n) {
+  return flatten(n, []);
 };
-var toTuple = function(n2) {
-  return n2;
+var toTuple = function(n) {
+  return n;
 };
-var _tap2 = function(n2, t) {
-  forEachU(n2, t);
-  return n2;
+var _tap2 = function(n, t) {
+  forEachU(n, t);
+  return n;
 };
 var tap2 = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _tap2(t, n2[0]);
+      return _tap2(t, n[0]);
     };
   }
   return _tap2(arguments[0], arguments[1]);
 };
-var flip = function(n2) {
-  return [n2[1], n2[0]];
+var flip = function(n) {
+  return [n[1], n[0]];
 };
 var filterMap = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return gn(t, n2[0]);
+      return gn(t, n[0]);
     };
   }
   return gn(arguments[0], arguments[1]);
 };
 var keepMap = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _n(t, n2[0]);
+      return _n(t, n[0]);
     };
   }
   return _n(arguments[0], arguments[1]);
 };
-var _removeFirstBy = function(n2, t, r) {
-  return reduceU(n2, [false, []], function(n3, e) {
-    var u = n3[1];
-    if (n3[0]) {
+var _removeFirstBy = function(n, t, r) {
+  return reduceU(n, [false, []], function(n2, e) {
+    var u = n2[1];
+    if (n2[0]) {
       u.push(e);
       return [true, u];
     } else if (r(e, t)) {
@@ -2414,114 +2290,114 @@ var _removeFirstBy = function(n2, t, r) {
 };
 var removeFirstBy = function() {
   if (arguments.length === 2) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _removeFirstBy(t, n2[0], n2[1]);
+      return _removeFirstBy(t, n[0], n[1]);
     };
   }
   return _removeFirstBy(arguments[0], arguments[1], arguments[2]);
 };
-var _removeFirst = function(n2, t) {
-  return removeFirstBy(n2, t, equal);
+var _removeFirst = function(n, t) {
+  return removeFirstBy(n, t, equal);
 };
 var removeFirst = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _removeFirst(t, n2[0]);
+      return _removeFirst(t, n[0]);
     };
   }
   return _removeFirst(arguments[0], arguments[1]);
 };
-var zipWithIndex = function(n2) {
-  return reduceWithIndexU(n2, [], function(n3, t, r) {
-    n3.push([t, r]);
-    return n3;
+var zipWithIndex = function(n) {
+  return reduceWithIndexU(n, [], function(n2, t, r) {
+    n2.push([t, r]);
+    return n2;
   });
 };
-var _all = function(n2, t) {
-  return everyU(n2, t);
+var _all = function(n, t) {
+  return everyU(n, t);
 };
 var all = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _all(t, n2[0]);
+      return _all(t, n[0]);
     };
   }
   return _all(arguments[0], arguments[1]);
 };
-var _any = function(n2, t) {
-  return someU(n2, t);
+var _any = function(n, t) {
+  return someU(n, t);
 };
 var any = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _any(t, n2[0]);
+      return _any(t, n[0]);
     };
   }
   return _any(arguments[0], arguments[1]);
 };
-var _difference = function(n2, t) {
-  return reject(uniqBy(n2, function(n3) {
-    return n3;
-  }), function(n3) {
-    return includes(t, n3);
+var _difference = function(n, t) {
+  return reject(uniqBy(n, function(n2) {
+    return n2;
+  }), function(n2) {
+    return includes(t, n2);
   });
 };
 var difference = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _difference(t, n2[0]);
+      return _difference(t, n[0]);
     };
   }
   return _difference(arguments[0], arguments[1]);
 };
-var _union = function(n2, t) {
-  return uniqBy(concat(n2, t), function(n3) {
-    return n3;
+var _union = function(n, t) {
+  return uniqBy(concat(n, t), function(n2) {
+    return n2;
   });
 };
 var union = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _union(t, n2[0]);
+      return _union(t, n[0]);
     };
   }
   return _union(arguments[0], arguments[1]);
 };
-var _intersection = function(n2, t) {
-  var r = n2.length > t.length ? [n2, t] : [t, n2];
+var _intersection = function(n, t) {
+  var r = n.length > t.length ? [n, t] : [t, n];
   var e = r[1];
-  return uniqBy(filter(r[0], function(n3) {
-    return includes(e, n3);
-  }), function(n3) {
-    return n3;
+  return uniqBy(filter(r[0], function(n2) {
+    return includes(e, n2);
+  }), function(n2) {
+    return n2;
   });
 };
 var intersection = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _intersection(t, n2[0]);
+      return _intersection(t, n[0]);
     };
   }
   return _intersection(arguments[0], arguments[1]);
 };
-var sample = function(n2) {
-  return n2[random_int(0, n2.length - 1 | 0)];
+var sample = function(n) {
+  return n[random_int(0, n.length - 1 | 0)];
 };
-var _flatMap = function(n2, t) {
-  return flat(mapU(n2, t));
+var _flatMap = function(n, t) {
+  return flat(mapU(n, t));
 };
-var flatMap2 = function() {
+var flatMap = function() {
   if (arguments.length === 1) {
-    const n2 = arguments;
+    const n = arguments;
     return function fn(t) {
-      return _flatMap(t, n2[0]);
+      return _flatMap(t, n[0]);
     };
   }
   return _flatMap(arguments[0], arguments[1]);
@@ -2656,28 +2532,17 @@ var Ra = {
   union,
   intersection,
   sample,
-  flatMap: flatMap2
+  flatMap
 };
-// node_modules/@mobily/ts-belt/dist/Promise.bs-06a7bae6.mjs
-var $$catch = function(r, s2) {
-  return r.catch(function(r2) {
-    return _1(s2, is_extension(r2) ? r2 : {
-      RE_EXN_ID: t,
-      _1: r2
-    });
-  });
-};
-var t = create("Promise.JsError");
-
 // node_modules/@mobily/ts-belt/dist/index-e7228f55.mjs
-var _is = function(i, n2) {
-  return typeof i === n2;
+var _is = function(i, n) {
+  return typeof i === n;
 };
 var is = function() {
   if (arguments.length === 1) {
     const i = arguments;
-    return function fn(n2) {
-      return _is(n2, i[0]);
+    return function fn(n) {
+      return _is(n, i[0]);
     };
   }
   return _is(arguments[0], arguments[1]);
@@ -2714,14 +2579,14 @@ var isNullable = function(i) {
 var isNotNullable = function(i) {
   return !(i == null);
 };
-var _isNot = function(i, n2) {
-  return !n2(i);
+var _isNot = function(i, n) {
+  return !n(i);
 };
 var isNot = function() {
   if (arguments.length === 1) {
     const i = arguments;
-    return function fn(n2) {
-      return _isNot(n2, i[0]);
+    return function fn(n) {
+      return _isNot(n, i[0]);
     };
   }
   return _isNot(arguments[0], arguments[1]);
@@ -2749,290 +2614,6 @@ var i = {
   isUndefined,
   isNot
 };
-// node_modules/@mobily/ts-belt/dist/index-c1cc4c86.mjs
-var placeholder3 = function(n2) {
-};
-var makeSome = function(n2) {
-  return some(n2);
-};
-var makeNone = function(n2) {
-};
-var fromNullable = function(n2) {
-  if (n2 == null) {
-    return;
-  } else {
-    return some(n2);
-  }
-};
-var fromFalsy = function(n2) {
-  if (n2) {
-    return n2;
-  }
-};
-var _fromPredicate = function(n2, t2) {
-  return flatMap(n2 == null ? undefined : some(n2), function(n3) {
-    if (t2(n3)) {
-      return some(n3);
-    }
-  });
-};
-var fromPredicate = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _fromPredicate(t2, n2[0]);
-    };
-  }
-  return _fromPredicate(arguments[0], arguments[1]);
-};
-var fromExecution = function(n2) {
-  try {
-    return some(n2(undefined));
-  } catch (n3) {
-    return;
-  }
-};
-var fromPromise = function(t2) {
-  return $$catch(t2.then(function(n2) {
-    return some(n2);
-  }), function(n2) {
-    return Promise.resolve(undefined);
-  });
-};
-var map2 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return h(t2, n2[0]);
-    };
-  }
-  return h(arguments[0], arguments[1]);
-};
-var flatMap3 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _(t2, n2[0]);
-    };
-  }
-  return _(arguments[0], arguments[1]);
-};
-var mapWithDefault = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return v(t2, n2[0], n2[1]);
-    };
-  }
-  return v(arguments[0], arguments[1], arguments[2]);
-};
-var _mapNullable = function(n2, t2) {
-  if (n2 !== undefined) {
-    return nullable_to_opt(t2(valFromOption(n2)));
-  }
-};
-var mapNullable = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _mapNullable(t2, n2[0]);
-    };
-  }
-  return _mapNullable(arguments[0], arguments[1]);
-};
-var _filter2 = function(n2, t2) {
-  return flatMapU(n2, function(n3) {
-    if (t2(n3)) {
-      return some(n3);
-    }
-  });
-};
-var filter2 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _filter2(t2, n2[0]);
-    };
-  }
-  return _filter2(arguments[0], arguments[1]);
-};
-var getWithDefault2 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return g(t2, n2[0]);
-    };
-  }
-  return g(arguments[0], arguments[1]);
-};
-var toNullable = function(n2) {
-  return getWithDefault(n2, null);
-};
-var toUndefined = function(n2) {
-  return getWithDefault(n2, undefined);
-};
-var _toResult = function(n2, t2) {
-  if (n2 !== undefined) {
-    return {
-      TAG: 0,
-      _0: valFromOption(n2)
-    };
-  } else {
-    return {
-      TAG: 1,
-      _0: t2
-    };
-  }
-};
-var toResult = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _toResult(t2, n2[0]);
-    };
-  }
-  return _toResult(arguments[0], arguments[1]);
-};
-var _match = function(n2, t2, r) {
-  if (n2 !== undefined) {
-    return t2(valFromOption(n2));
-  } else {
-    return r(undefined);
-  }
-};
-var match = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _match(t2, n2[0], n2[1]);
-    };
-  }
-  return _match(arguments[0], arguments[1], arguments[2]);
-};
-var _tap3 = function(n2, t2) {
-  if (n2 !== undefined) {
-    t2(valFromOption(n2));
-    return n2;
-  } else {
-    return n2;
-  }
-};
-var tap3 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _tap3(t2, n2[0]);
-    };
-  }
-  return _tap3(arguments[0], arguments[1]);
-};
-var _contains = function(n2, r) {
-  return mapWithDefaultU(n2, false, function(n3) {
-    return equal(n3, r);
-  });
-};
-var contains = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _contains(t2, n2[0]);
-    };
-  }
-  return _contains(arguments[0], arguments[1]);
-};
-var _zip = function(n2, t2) {
-  if (n2 !== undefined && t2 !== undefined) {
-    return [valFromOption(n2), valFromOption(t2)];
-  }
-};
-var zip3 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _zip(t2, n2[0]);
-    };
-  }
-  return _zip(arguments[0], arguments[1]);
-};
-var _zipWith = function(n2, t2, r) {
-  if (n2 !== undefined && t2 !== undefined) {
-    return some(r(valFromOption(n2), valFromOption(t2)));
-  }
-};
-var zipWith2 = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _zipWith(t2, n2[0], n2[1]);
-    };
-  }
-  return _zipWith(arguments[0], arguments[1], arguments[2]);
-};
-var _fold = function(n2, t2, r) {
-  if (n2 !== undefined) {
-    return t2(valFromOption(n2));
-  } else {
-    return r(undefined);
-  }
-};
-var fold = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _fold(t2, n2[0], n2[1]);
-    };
-  }
-  return _fold(arguments[0], arguments[1], arguments[2]);
-};
-var all2 = function(n2) {
-  return reduceU(n2, [], function(n3, t2) {
-    return flatMapU(n3, function(n4) {
-      if (t2 !== undefined) {
-        return concat(n4, [valFromOption(t2)]);
-      }
-    });
-  });
-};
-var h = mapU2;
-var _ = flatMapU;
-var v = mapWithDefaultU;
-var g = getWithDefault;
-var N2 = getExn2;
-var b = isNone;
-var z2 = isSome;
-var Some = (n2) => n2;
-var P2 = {
-  __proto__: null,
-  Some,
-  None: undefined,
-  placeholder: placeholder3,
-  makeSome,
-  makeNone,
-  fromNullable,
-  fromFalsy,
-  fromPredicate,
-  fromExecution,
-  fromPromise,
-  map: map2,
-  flatMap: flatMap3,
-  mapWithDefault,
-  mapNullable,
-  filter: filter2,
-  getWithDefault: getWithDefault2,
-  getExn: N2,
-  toNullable,
-  toUndefined,
-  toResult,
-  match,
-  isNone: b,
-  isSome: z2,
-  tap: tap3,
-  contains,
-  zip: zip3,
-  zipWith: zipWith2,
-  fold,
-  all: all2
-};
 // src/utils/common.ts
 var undef = undefined;
 var optArr = (condition, arr) => condition ? arr : [];
@@ -3043,14 +2624,12 @@ var raise = (e) => {
 };
 var assert = (value, message = "Value was null or undefined") => E(value) ? value : raise(new Error(message));
 
-// src/menus/notification_center.ts
+// src/widgets/menus/NotificationCenter.ts
 import {
 Box as Box2,
 Button as Button2,
 Label as Label2,
-Revealer,
-Scrollable,
-Window
+Scrollable
 } from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/utils/helpers.ts
@@ -3193,8 +2772,328 @@ var MenuNotification_default = (notification) => {
   });
   return mainbox;
 };
+// config.json
+var config_default = {
+  workspacesPerMonitor: 4,
+  popupCloseDelay: 1200,
+  transitionDuration: 250
+};
 
-// src/menus/notification_center.ts
+// node_modules/ts-pattern/dist/index.js
+var a2 = function(...t) {
+  if (t.length === 1) {
+    const [e] = t;
+    return (t2) => s2(e, t2, () => {
+    });
+  }
+  if (t.length === 2) {
+    const [e, n] = t;
+    return s2(e, n, () => {
+    });
+  }
+  throw new Error(`isMatching wasn't given the right number of arguments: expected 1 or 2, received ${t.length}.`);
+};
+var u = function(t) {
+  return Object.assign(t, { optional: () => l2(t), and: (e) => m(t, e), or: (e) => d(t, e), select: (e) => e === undefined ? p(t) : p(e, t) });
+};
+var h = function(t) {
+  return Object.assign(((t2) => Object.assign(t2, { [Symbol.iterator]() {
+    let n = 0;
+    const r = [{ value: Object.assign(t2, { [e]: true }), done: false }, { done: true, value: undefined }];
+    return { next: () => {
+      var t3;
+      return (t3 = r[n++]) != null ? t3 : r.at(-1);
+    } };
+  } }))(t), { optional: () => h(l2(t)), select: (e) => h(e === undefined ? p(t) : p(e, t)) });
+};
+var l2 = function(e) {
+  return u({ [t]: () => ({ match: (t) => {
+    let n = {};
+    const r = (t2, e2) => {
+      n[t2] = e2;
+    };
+    return t === undefined ? (o(e).forEach((t2) => r(t2, undefined)), { matched: true, selections: n }) : { matched: s2(e, t, r), selections: n };
+  }, getSelectionKeys: () => o(e), matcherType: "optional" }) });
+};
+var m = function(...e) {
+  return u({ [t]: () => ({ match: (t) => {
+    let n = {};
+    const r = (t2, e2) => {
+      n[t2] = e2;
+    };
+    return { matched: e.every((e2) => s2(e2, t, r)), selections: n };
+  }, getSelectionKeys: () => c(e, o), matcherType: "and" }) });
+};
+var d = function(...e) {
+  return u({ [t]: () => ({ match: (t) => {
+    let n = {};
+    const r = (t2, e2) => {
+      n[t2] = e2;
+    };
+    return c(e, o).forEach((t2) => r(t2, undefined)), { matched: e.some((e2) => s2(e2, t, r)), selections: n };
+  }, getSelectionKeys: () => c(e, o), matcherType: "or" }) });
+};
+var y = function(e) {
+  return { [t]: () => ({ match: (t) => ({ matched: Boolean(e(t)) }) }) };
+};
+var p = function(...e) {
+  const r = typeof e[0] == "string" ? e[0] : undefined, i2 = e.length === 2 ? e[1] : typeof e[0] == "string" ? undefined : e[0];
+  return u({ [t]: () => ({ match: (t) => {
+    let e2 = { [r != null ? r : n]: t };
+    return { matched: i2 === undefined || s2(i2, t, (t2, n) => {
+      e2[t2] = n;
+    }), selections: e2 };
+  }, getSelectionKeys: () => [r != null ? r : n].concat(i2 === undefined ? [] : o(i2)) }) });
+};
+var v = function(t) {
+  return typeof t == "number";
+};
+var b = function(t) {
+  return typeof t == "string";
+};
+var w = function(t) {
+  return typeof t == "bigint";
+};
+var N2 = function(t) {
+  return new $2(t, W);
+};
+var t = Symbol.for("@ts-pattern/matcher");
+var e = Symbol.for("@ts-pattern/isVariadic");
+var n = "@ts-pattern/anonymous-select-key";
+var r = (t2) => Boolean(t2 && typeof t2 == "object");
+var i2 = (e2) => e2 && !!e2[t];
+var s2 = (n2, o, c) => {
+  if (i2(n2)) {
+    const e2 = n2[t](), { matched: r2, selections: i3 } = e2.match(o);
+    return r2 && i3 && Object.keys(i3).forEach((t2) => c(t2, i3[t2])), r2;
+  }
+  if (r(n2)) {
+    if (!r(o))
+      return false;
+    if (Array.isArray(n2)) {
+      if (!Array.isArray(o))
+        return false;
+      let t2 = [], r2 = [], a3 = [];
+      for (const s3 of n2.keys()) {
+        const o2 = n2[s3];
+        i2(o2) && o2[e] ? a3.push(o2) : a3.length ? r2.push(o2) : t2.push(o2);
+      }
+      if (a3.length) {
+        if (a3.length > 1)
+          throw new Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
+        if (o.length < t2.length + r2.length)
+          return false;
+        const e2 = o.slice(0, t2.length), n3 = r2.length === 0 ? [] : o.slice(-r2.length), i3 = o.slice(t2.length, r2.length === 0 ? Infinity : -r2.length);
+        return t2.every((t3, n4) => s2(t3, e2[n4], c)) && r2.every((t3, e3) => s2(t3, n3[e3], c)) && (a3.length === 0 || s2(a3[0], i3, c));
+      }
+      return n2.length === o.length && n2.every((t3, e2) => s2(t3, o[e2], c));
+    }
+    return Object.keys(n2).every((e2) => {
+      const r2 = n2[e2];
+      return ((e2 in o) || i2(a3 = r2) && a3[t]().matcherType === "optional") && s2(r2, o[e2], c);
+      var a3;
+    });
+  }
+  return Object.is(o, n2);
+};
+var o = (e2) => {
+  var n2, s3, a3;
+  return r(e2) ? i2(e2) ? (n2 = (s3 = (a3 = e2[t]()).getSelectionKeys) == null ? undefined : s3.call(a3)) != null ? n2 : [] : Array.isArray(e2) ? c(e2, o) : c(Object.values(e2), o) : [];
+};
+var c = (t2, e2) => t2.reduce((t3, n2) => t3.concat(e2(n2)), []);
+var f2 = (t2, e2) => {
+  for (const n2 of t2)
+    if (!e2(n2))
+      return false;
+  return true;
+};
+var g = (t2, e2) => {
+  for (const [n2, r2] of t2.entries())
+    if (!e2(r2, n2))
+      return false;
+  return true;
+};
+var S2 = u(y(function(t2) {
+  return true;
+}));
+var O2 = S2;
+var j = (t2) => Object.assign(u(t2), { startsWith: (e2) => {
+  return j(m(t2, (n2 = e2, y((t3) => b(t3) && t3.startsWith(n2)))));
+  var n2;
+}, endsWith: (e2) => {
+  return j(m(t2, (n2 = e2, y((t3) => b(t3) && t3.endsWith(n2)))));
+  var n2;
+}, minLength: (e2) => j(m(t2, ((t3) => y((e3) => b(e3) && e3.length >= t3))(e2))), maxLength: (e2) => j(m(t2, ((t3) => y((e3) => b(e3) && e3.length <= t3))(e2))), includes: (e2) => {
+  return j(m(t2, (n2 = e2, y((t3) => b(t3) && t3.includes(n2)))));
+  var n2;
+}, regex: (e2) => {
+  return j(m(t2, (n2 = e2, y((t3) => b(t3) && Boolean(t3.match(n2))))));
+  var n2;
+} });
+var E2 = j(y(b));
+var K2 = (t2) => Object.assign(u(t2), { between: (e2, n2) => K2(m(t2, ((t3, e3) => y((n3) => v(n3) && t3 <= n3 && e3 >= n3))(e2, n2))), lt: (e2) => K2(m(t2, ((t3) => y((e3) => v(e3) && e3 < t3))(e2))), gt: (e2) => K2(m(t2, ((t3) => y((e3) => v(e3) && e3 > t3))(e2))), lte: (e2) => K2(m(t2, ((t3) => y((e3) => v(e3) && e3 <= t3))(e2))), gte: (e2) => K2(m(t2, ((t3) => y((e3) => v(e3) && e3 >= t3))(e2))), int: () => K2(m(t2, y((t3) => v(t3) && Number.isInteger(t3)))), finite: () => K2(m(t2, y((t3) => v(t3) && Number.isFinite(t3)))), positive: () => K2(m(t2, y((t3) => v(t3) && t3 > 0))), negative: () => K2(m(t2, y((t3) => v(t3) && t3 < 0))) });
+var x = K2(y(v));
+var A = (t2) => Object.assign(u(t2), { between: (e2, n2) => A(m(t2, ((t3, e3) => y((n3) => w(n3) && t3 <= n3 && e3 >= n3))(e2, n2))), lt: (e2) => A(m(t2, ((t3) => y((e3) => w(e3) && e3 < t3))(e2))), gt: (e2) => A(m(t2, ((t3) => y((e3) => w(e3) && e3 > t3))(e2))), lte: (e2) => A(m(t2, ((t3) => y((e3) => w(e3) && e3 <= t3))(e2))), gte: (e2) => A(m(t2, ((t3) => y((e3) => w(e3) && e3 >= t3))(e2))), positive: () => A(m(t2, y((t3) => w(t3) && t3 > 0))), negative: () => A(m(t2, y((t3) => w(t3) && t3 < 0))) });
+var P2 = A(y(w));
+var T = u(y(function(t2) {
+  return typeof t2 == "boolean";
+}));
+var k = u(y(function(t2) {
+  return typeof t2 == "symbol";
+}));
+var B = u(y(function(t2) {
+  return t2 == null;
+}));
+var _ = { __proto__: null, matcher: t, optional: l2, array: function(...e2) {
+  return h({ [t]: () => ({ match: (t2) => {
+    if (!Array.isArray(t2))
+      return { matched: false };
+    if (e2.length === 0)
+      return { matched: true };
+    const n2 = e2[0];
+    let r2 = {};
+    if (t2.length === 0)
+      return o(n2).forEach((t3) => {
+        r2[t3] = [];
+      }), { matched: true, selections: r2 };
+    const i3 = (t3, e3) => {
+      r2[t3] = (r2[t3] || []).concat([e3]);
+    };
+    return { matched: t2.every((t3) => s2(n2, t3, i3)), selections: r2 };
+  }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
+}, set: function(...e2) {
+  return u({ [t]: () => ({ match: (t2) => {
+    if (!(t2 instanceof Set))
+      return { matched: false };
+    let n2 = {};
+    if (t2.size === 0)
+      return { matched: true, selections: n2 };
+    if (e2.length === 0)
+      return { matched: true };
+    const r2 = (t3, e3) => {
+      n2[t3] = (n2[t3] || []).concat([e3]);
+    }, i3 = e2[0];
+    return { matched: f2(t2, (t3) => s2(i3, t3, r2)), selections: n2 };
+  }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
+}, map: function(...e2) {
+  return u({ [t]: () => ({ match: (t2) => {
+    if (!(t2 instanceof Map))
+      return { matched: false };
+    let n2 = {};
+    if (t2.size === 0)
+      return { matched: true, selections: n2 };
+    const r2 = (t3, e3) => {
+      n2[t3] = (n2[t3] || []).concat([e3]);
+    };
+    if (e2.length === 0)
+      return { matched: true };
+    var i3;
+    if (e2.length === 1)
+      throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
+    const [o2, c2] = e2;
+    return { matched: g(t2, (t3, e3) => {
+      const n3 = s2(o2, e3, r2), i4 = s2(c2, t3, r2);
+      return n3 && i4;
+    }), selections: n2 };
+  }, getSelectionKeys: () => e2.length === 0 ? [] : [...o(e2[0]), ...o(e2[1])] }) });
+}, intersection: m, union: d, not: function(e2) {
+  return u({ [t]: () => ({ match: (t2) => ({ matched: !s2(e2, t2, () => {
+  }) }), getSelectionKeys: () => [], matcherType: "not" }) });
+}, when: y, select: p, any: S2, _: O2, string: E2, number: x, bigint: P2, boolean: T, symbol: k, nullish: B, instanceOf: function(t2) {
+  return u(y(function(t3) {
+    return (e2) => e2 instanceof t3;
+  }(t2)));
+}, shape: function(t2) {
+  return u(y(a2(t2)));
+} };
+var W = { matched: false, value: undefined };
+
+class $2 {
+  constructor(t2, e2) {
+    this.input = undefined, this.state = undefined, this.input = t2, this.state = e2;
+  }
+  with(...t2) {
+    if (this.state.matched)
+      return this;
+    const e2 = t2[t2.length - 1], r2 = [t2[0]];
+    let i3;
+    t2.length === 3 && typeof t2[1] == "function" ? i3 = t2[1] : t2.length > 2 && r2.push(...t2.slice(1, t2.length - 1));
+    let o2 = false, c2 = {};
+    const a3 = (t3, e3) => {
+      o2 = true, c2[t3] = e3;
+    }, u2 = !r2.some((t3) => s2(t3, this.input, a3)) || i3 && !Boolean(i3(this.input)) ? W : { matched: true, value: e2(o2 ? n in c2 ? c2[n] : c2 : this.input, this.input) };
+    return new $2(this.input, u2);
+  }
+  when(t2, e2) {
+    if (this.state.matched)
+      return this;
+    const n2 = Boolean(t2(this.input));
+    return new $2(this.input, n2 ? { matched: true, value: e2(this.input, this.input) } : W);
+  }
+  otherwise(t2) {
+    return this.state.matched ? this.state.value : t2(this.input);
+  }
+  exhaustive() {
+    if (this.state.matched)
+      return this.state.value;
+    let t2;
+    try {
+      t2 = JSON.stringify(this.input);
+    } catch (e2) {
+      t2 = this.input;
+    }
+    throw new Error(`Pattern matching error: no pattern matches value ${t2}`);
+  }
+  run() {
+    return this.exhaustive();
+  }
+  returnType() {
+    return this;
+  }
+}
+
+// src/widgets/menus/Popup.ts
+var PopupRevealer = ({ child, name, transition }) => Widget.Revealer({
+  transition,
+  child,
+  transitionDuration: config_default.transitionDuration,
+  setup: (self) => self.hook(App, (_2, ...args) => N2(args).with([name, _.boolean], ([_3, visible]) => self.revealChild = visible), "window-toggled")
+});
+var Popup = ({
+  transition,
+  name,
+  child,
+  ...props
+}) => {
+  const closing = l.makeControlledDebounce(() => App.closeWindow(name), {
+    delay: config_default.popupCloseDelay,
+    leading: false
+  });
+  return Widget.Window({
+    exclusivity: "ignore",
+    name,
+    monitor: 0,
+    visible: false,
+    ...props,
+    setup: (w2) => w2.keybind("Escape", closing.invoke),
+    keymode: "on-demand",
+    child: Widget.Box({
+      css: `min-height: 2px;`,
+      child: PopupRevealer({
+        transition,
+        name,
+        child: Widget.EventBox({
+          onHoverLost: closing.schedule,
+          onHover: closing.cancel,
+          child,
+          css: `min-height: 2px;`
+        })
+      })
+    })
+  });
+};
+
+// src/widgets/menus/NotificationCenter.ts
 var Notifications = await Service.import("notifications");
 var NotificationsBox = () => {
   return Box2({
@@ -3267,30 +3166,22 @@ var notificationContainer = Scrollable({
   className: "notification-center-container",
   child: NotificationsBox()
 });
-var menuRevealer = Revealer({
-  transition: "slide_down",
+var NotificationCenter = () => Popup({
+  name: "notification_center",
+  margins: [30, 200],
+  anchor: ["bottom", "right"],
+  transition: "slide_up",
   child: Box2({
     className: "left-menu-box",
     vertical: true,
     children: [NotificationHeader(), notificationContainer]
   })
 });
-var NotificationCenter = () => Window({
-  name: `notification_center`,
-  margins: [0, local === "RTL" ? 500 : 400],
-  anchor: ["top", local === "RTL" ? "left" : "right"],
-  child: Box2({
-    css: `
-            min-height: 2px;
-        `,
-    children: [menuRevealer]
-  })
-});
-globalThis.showNotificationCenter = () => menuRevealer.revealChild = !menuRevealer.revealChild;
 var NotificationCenterButton = () => Button2({
   className: "notification-center-button unset",
   label: "\uF0F3",
-  onClicked: () => globalThis.showNotificationCenter()
+  onClicked: () => App.toggleWindow("notification_center"),
+  onSecondaryClick: () => Notifications.Clear()
 }).hook(Notifications, (self) => {
   if (Notifications.dnd) {
     self.label = "\uDB80\uDC9B";
@@ -3447,13 +3338,7 @@ var icon = (name, fallback = icons.missing) => {
   const icon2 = substitutes[name] ?? name;
   return GLib20.file_test(name, GLib20.FileTest.EXISTS) || Utils.lookUpIcon(icon2) ? icon2 : fallback;
 };
-var appIcon = flow(P2.map((s2) => s2 + "-symbolic"), (s2) => icon(s2 ?? undef, icons.fallback.executable));
-// config.json
-var config_default = {
-  workspacesPerMonitor: 4,
-  popupCloseDelay: 1200,
-  transitionDuration: 250
-};
+var appIcon = flow((s3) => icon(s3 ?? undef, icons.fallback.executable));
 
 // src/widgets/Workspaces.ts
 import Gtk30 from "gi://Gtk?version=3.0";
@@ -3474,7 +3359,7 @@ var ClientRenderer = ({
   spacing: 2,
   css: "padding: 2 0;",
   children: Hyprland.bind("clients").as(Ra.filterMap((client) => client.workspace.id === wsId && client.mapped ? Widget.Icon({
-    icon: pipe(Apps.list.find((app2) => app2.match(client.class)), (app2) => appIcon(app2?.icon_name ?? undef)),
+    icon: pipe(Apps.list.find((app) => app.match(client.class)), (app) => appIcon(app?.icon_name ?? undef)),
     css: "font-size: 12px;"
   }) : undef))
 });
@@ -3483,13 +3368,13 @@ var MonitorWorkspaces = (monitorId = 0) => {
   const scale = getScale(assert(Hyprland.getMonitor(monitorId)));
   return Box3({
     className: "unset workspaces",
-    children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor - 1).map((i2) => Button3({
+    children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor - 1).map((i3) => Button3({
       css: "min-width: 30px;",
-      onClicked: () => setWorkspace(i2),
-      className: Hyprland.active.workspace.bind("id").as((id) => id === i2 ? "unset focused" : "unset unfocused"),
+      onClicked: () => setWorkspace(i3),
+      className: Hyprland.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
       child: ClientRenderer({
         scale,
-        wsId: i2
+        wsId: i3
       })
     }))
   });
@@ -3497,7 +3382,7 @@ var MonitorWorkspaces = (monitorId = 0) => {
 var Workspaces = () => Box3({
   className: "unset workspace-box",
   spacing: 4,
-  children: Hyprland.monitors.map((m) => MonitorWorkspaces(m.id))
+  children: Hyprland.monitors.map((m2) => MonitorWorkspaces(m2.id))
 });
 
 // src/widgets/hardware/all.ts
@@ -4166,7 +4051,6 @@ class ThemeService extends Service2 {
     this.changeGTKTheme(theme.gtk_theme, theme.gtk_mode, theme.gtk_icon_theme);
     this.changeQtStyle(theme.qt_style_theme);
     this.changeIcons(theme.qt_icon_theme);
-    this.showDesktopWidget(theme.desktop_widget);
     let hypr = theme.hypr;
     this.steHyprland(hypr.border_width, hypr.active_border, hypr.inactive_border, hypr.rounding, hypr.drop_shadow, hypr.kitty, hypr.konsole);
     this.selectedTheme = selectedTheme;
@@ -4269,8 +4153,7 @@ class ThemeService extends Service2 {
     }).catch(print);
   }
   changePlasmaColor(plasmaColor) {
-    const plasmaCmd = `plasma-apply-colorscheme`;
-    execAsync4([plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
+    execAsync4(`cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`).catch(print);
   }
   changeGTKTheme(GTKTheme, gtkMode, iconTheme) {
     execAsync4([
@@ -4601,321 +4484,6 @@ globalThis.mp = () => {
 // src/widgets/menus/LeftMenu.ts
 import {execAsync as execAsync5} from "resource:///com/github/Aylur/ags/utils.js";
 import {Box as Box9, Button as Button8, Label as Label8} from "resource:///com/github/Aylur/ags/widget.js";
-
-// node_modules/ts-pattern/dist/index.js
-var a2 = function(...t2) {
-  if (t2.length === 1) {
-    const [e] = t2;
-    return (t3) => s2(e, t3, () => {
-    });
-  }
-  if (t2.length === 2) {
-    const [e, n2] = t2;
-    return s2(e, n2, () => {
-    });
-  }
-  throw new Error(`isMatching wasn't given the right number of arguments: expected 1 or 2, received ${t2.length}.`);
-};
-var u = function(t2) {
-  return Object.assign(t2, { optional: () => l2(t2), and: (e) => m(t2, e), or: (e) => d(t2, e), select: (e) => e === undefined ? p(t2) : p(e, t2) });
-};
-var h2 = function(t2) {
-  return Object.assign(((t3) => Object.assign(t3, { [Symbol.iterator]() {
-    let n2 = 0;
-    const r = [{ value: Object.assign(t3, { [e]: true }), done: false }, { done: true, value: undefined }];
-    return { next: () => {
-      var t4;
-      return (t4 = r[n2++]) != null ? t4 : r.at(-1);
-    } };
-  } }))(t2), { optional: () => h2(l2(t2)), select: (e) => h2(e === undefined ? p(t2) : p(e, t2)) });
-};
-var l2 = function(e) {
-  return u({ [t2]: () => ({ match: (t2) => {
-    let n2 = {};
-    const r = (t3, e2) => {
-      n2[t3] = e2;
-    };
-    return t2 === undefined ? (o(e).forEach((t3) => r(t3, undefined)), { matched: true, selections: n2 }) : { matched: s2(e, t2, r), selections: n2 };
-  }, getSelectionKeys: () => o(e), matcherType: "optional" }) });
-};
-var m = function(...e) {
-  return u({ [t2]: () => ({ match: (t2) => {
-    let n2 = {};
-    const r = (t3, e2) => {
-      n2[t3] = e2;
-    };
-    return { matched: e.every((e2) => s2(e2, t2, r)), selections: n2 };
-  }, getSelectionKeys: () => c(e, o), matcherType: "and" }) });
-};
-var d = function(...e) {
-  return u({ [t2]: () => ({ match: (t2) => {
-    let n2 = {};
-    const r = (t3, e2) => {
-      n2[t3] = e2;
-    };
-    return c(e, o).forEach((t3) => r(t3, undefined)), { matched: e.some((e2) => s2(e2, t2, r)), selections: n2 };
-  }, getSelectionKeys: () => c(e, o), matcherType: "or" }) });
-};
-var y = function(e) {
-  return { [t2]: () => ({ match: (t2) => ({ matched: Boolean(e(t2)) }) }) };
-};
-var p = function(...e) {
-  const r = typeof e[0] == "string" ? e[0] : undefined, i2 = e.length === 2 ? e[1] : typeof e[0] == "string" ? undefined : e[0];
-  return u({ [t2]: () => ({ match: (t2) => {
-    let e2 = { [r != null ? r : n2]: t2 };
-    return { matched: i2 === undefined || s2(i2, t2, (t3, n2) => {
-      e2[t3] = n2;
-    }), selections: e2 };
-  }, getSelectionKeys: () => [r != null ? r : n2].concat(i2 === undefined ? [] : o(i2)) }) });
-};
-var v2 = function(t2) {
-  return typeof t2 == "number";
-};
-var b2 = function(t2) {
-  return typeof t2 == "string";
-};
-var w = function(t2) {
-  return typeof t2 == "bigint";
-};
-var N3 = function(t2) {
-  return new $2(t2, W);
-};
-var t2 = Symbol.for("@ts-pattern/matcher");
-var e = Symbol.for("@ts-pattern/isVariadic");
-var n2 = "@ts-pattern/anonymous-select-key";
-var r = (t3) => Boolean(t3 && typeof t3 == "object");
-var i2 = (e2) => e2 && !!e2[t2];
-var s2 = (n3, o, c) => {
-  if (i2(n3)) {
-    const e2 = n3[t2](), { matched: r2, selections: i3 } = e2.match(o);
-    return r2 && i3 && Object.keys(i3).forEach((t3) => c(t3, i3[t3])), r2;
-  }
-  if (r(n3)) {
-    if (!r(o))
-      return false;
-    if (Array.isArray(n3)) {
-      if (!Array.isArray(o))
-        return false;
-      let t3 = [], r2 = [], a3 = [];
-      for (const s3 of n3.keys()) {
-        const o2 = n3[s3];
-        i2(o2) && o2[e] ? a3.push(o2) : a3.length ? r2.push(o2) : t3.push(o2);
-      }
-      if (a3.length) {
-        if (a3.length > 1)
-          throw new Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
-        if (o.length < t3.length + r2.length)
-          return false;
-        const e2 = o.slice(0, t3.length), n4 = r2.length === 0 ? [] : o.slice(-r2.length), i3 = o.slice(t3.length, r2.length === 0 ? Infinity : -r2.length);
-        return t3.every((t4, n5) => s2(t4, e2[n5], c)) && r2.every((t4, e3) => s2(t4, n4[e3], c)) && (a3.length === 0 || s2(a3[0], i3, c));
-      }
-      return n3.length === o.length && n3.every((t4, e2) => s2(t4, o[e2], c));
-    }
-    return Object.keys(n3).every((e2) => {
-      const r2 = n3[e2];
-      return ((e2 in o) || i2(a3 = r2) && a3[t2]().matcherType === "optional") && s2(r2, o[e2], c);
-      var a3;
-    });
-  }
-  return Object.is(o, n3);
-};
-var o = (e2) => {
-  var n3, s3, a3;
-  return r(e2) ? i2(e2) ? (n3 = (s3 = (a3 = e2[t2]()).getSelectionKeys) == null ? undefined : s3.call(a3)) != null ? n3 : [] : Array.isArray(e2) ? c(e2, o) : c(Object.values(e2), o) : [];
-};
-var c = (t3, e2) => t3.reduce((t4, n3) => t4.concat(e2(n3)), []);
-var f2 = (t3, e2) => {
-  for (const n3 of t3)
-    if (!e2(n3))
-      return false;
-  return true;
-};
-var g2 = (t3, e2) => {
-  for (const [n3, r2] of t3.entries())
-    if (!e2(r2, n3))
-      return false;
-  return true;
-};
-var S2 = u(y(function(t3) {
-  return true;
-}));
-var O2 = S2;
-var j = (t3) => Object.assign(u(t3), { startsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.startsWith(n3)))));
-  var n3;
-}, endsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.endsWith(n3)))));
-  var n3;
-}, minLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length >= t4))(e2))), maxLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length <= t4))(e2))), includes: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.includes(n3)))));
-  var n3;
-}, regex: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && Boolean(t4.match(n3))))));
-  var n3;
-} });
-var E2 = j(y(b2));
-var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v2(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v2(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v2(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v2(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v2(t4) && t4 < 0))) });
-var x = K2(y(v2));
-var A = (t3) => Object.assign(u(t3), { between: (e2, n3) => A(m(t3, ((t4, e3) => y((n4) => w(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 < t4))(e2))), gt: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 > t4))(e2))), lte: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 <= t4))(e2))), gte: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 >= t4))(e2))), positive: () => A(m(t3, y((t4) => w(t4) && t4 > 0))), negative: () => A(m(t3, y((t4) => w(t4) && t4 < 0))) });
-var P3 = A(y(w));
-var T = u(y(function(t3) {
-  return typeof t3 == "boolean";
-}));
-var k = u(y(function(t3) {
-  return typeof t3 == "symbol";
-}));
-var B = u(y(function(t3) {
-  return t3 == null;
-}));
-var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
-  return h2({ [t2]: () => ({ match: (t3) => {
-    if (!Array.isArray(t3))
-      return { matched: false };
-    if (e2.length === 0)
-      return { matched: true };
-    const n3 = e2[0];
-    let r2 = {};
-    if (t3.length === 0)
-      return o(n3).forEach((t4) => {
-        r2[t4] = [];
-      }), { matched: true, selections: r2 };
-    const i3 = (t4, e3) => {
-      r2[t4] = (r2[t4] || []).concat([e3]);
-    };
-    return { matched: t3.every((t4) => s2(n3, t4, i3)), selections: r2 };
-  }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
-}, set: function(...e2) {
-  return u({ [t2]: () => ({ match: (t3) => {
-    if (!(t3 instanceof Set))
-      return { matched: false };
-    let n3 = {};
-    if (t3.size === 0)
-      return { matched: true, selections: n3 };
-    if (e2.length === 0)
-      return { matched: true };
-    const r2 = (t4, e3) => {
-      n3[t4] = (n3[t4] || []).concat([e3]);
-    }, i3 = e2[0];
-    return { matched: f2(t3, (t4) => s2(i3, t4, r2)), selections: n3 };
-  }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
-}, map: function(...e2) {
-  return u({ [t2]: () => ({ match: (t3) => {
-    if (!(t3 instanceof Map))
-      return { matched: false };
-    let n3 = {};
-    if (t3.size === 0)
-      return { matched: true, selections: n3 };
-    const r2 = (t4, e3) => {
-      n3[t4] = (n3[t4] || []).concat([e3]);
-    };
-    if (e2.length === 0)
-      return { matched: true };
-    var i3;
-    if (e2.length === 1)
-      throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
-    const [o2, c2] = e2;
-    return { matched: g2(t3, (t4, e3) => {
-      const n4 = s2(o2, e3, r2), i4 = s2(c2, t4, r2);
-      return n4 && i4;
-    }), selections: n3 };
-  }, getSelectionKeys: () => e2.length === 0 ? [] : [...o(e2[0]), ...o(e2[1])] }) });
-}, intersection: m, union: d, not: function(e2) {
-  return u({ [t2]: () => ({ match: (t3) => ({ matched: !s2(e2, t3, () => {
-  }) }), getSelectionKeys: () => [], matcherType: "not" }) });
-}, when: y, select: p, any: S2, _: O2, string: E2, number: x, bigint: P3, boolean: T, symbol: k, nullish: B, instanceOf: function(t3) {
-  return u(y(function(t4) {
-    return (e2) => e2 instanceof t4;
-  }(t3)));
-}, shape: function(t3) {
-  return u(y(a2(t3)));
-} };
-var W = { matched: false, value: undefined };
-
-class $2 {
-  constructor(t3, e2) {
-    this.input = undefined, this.state = undefined, this.input = t3, this.state = e2;
-  }
-  with(...t3) {
-    if (this.state.matched)
-      return this;
-    const e2 = t3[t3.length - 1], r2 = [t3[0]];
-    let i3;
-    t3.length === 3 && typeof t3[1] == "function" ? i3 = t3[1] : t3.length > 2 && r2.push(...t3.slice(1, t3.length - 1));
-    let o2 = false, c2 = {};
-    const a3 = (t4, e3) => {
-      o2 = true, c2[t4] = e3;
-    }, u2 = !r2.some((t4) => s2(t4, this.input, a3)) || i3 && !Boolean(i3(this.input)) ? W : { matched: true, value: e2(o2 ? n2 in c2 ? c2[n2] : c2 : this.input, this.input) };
-    return new $2(this.input, u2);
-  }
-  when(t3, e2) {
-    if (this.state.matched)
-      return this;
-    const n3 = Boolean(t3(this.input));
-    return new $2(this.input, n3 ? { matched: true, value: e2(this.input, this.input) } : W);
-  }
-  otherwise(t3) {
-    return this.state.matched ? this.state.value : t3(this.input);
-  }
-  exhaustive() {
-    if (this.state.matched)
-      return this.state.value;
-    let t3;
-    try {
-      t3 = JSON.stringify(this.input);
-    } catch (e2) {
-      t3 = this.input;
-    }
-    throw new Error(`Pattern matching error: no pattern matches value ${t3}`);
-  }
-  run() {
-    return this.exhaustive();
-  }
-  returnType() {
-    return this;
-  }
-}
-
-// src/widgets/menus/Popup.ts
-var PopupRevealer = ({ child, name, transition }) => Widget.Revealer({
-  transition,
-  child,
-  transitionDuration: config_default.transitionDuration,
-  setup: (self) => self.hook(App, (_3, ...args) => N3(args).with([name, _2.boolean], ([_4, visible]) => self.revealChild = visible), "window-toggled")
-});
-var Popup = ({
-  transition,
-  name,
-  child,
-  ...props
-}) => {
-  const closing = l.makeControlledDebounce(() => App.closeWindow(name), {
-    delay: config_default.popupCloseDelay,
-    leading: false
-  });
-  return Widget.Window({
-    exclusivity: "ignore",
-    name,
-    visible: false,
-    ...props,
-    setup: (w2) => w2.keybind("Escape", closing.invoke),
-    keymode: "on-demand",
-    child: Widget.Box({
-      css: `min-height: 2px;`,
-      child: PopupRevealer({
-        transition,
-        name,
-        child: Widget.EventBox({
-          onHoverLost: closing.schedule,
-          onHover: closing.cancel,
-          child,
-          css: `min-height: 2px;`
-        })
-      })
-    })
-  });
-};
-
-// src/widgets/menus/LeftMenu.ts
 var Header = () => {
   return Box9({
     className: "left-menu-header",
@@ -5185,13 +4753,9 @@ var MenuButton = () => Button8({
 });
 
 // src/widgets/systray.ts
-import {systemTray} from "resource:///com/github/Aylur/ags/service/systemtray.js";
 var { Gravity } = imports.gi.Gdk;
-var PanelButton = ({
-  className,
-  content,
-  ...rest
-}) => Widget.Button({
+var SystemTray = await Service.import("systemtray");
+var PanelButton = ({ className, content, ...rest }) => Widget.Button({
   className: `panel-button ${className} unset`,
   child: Widget.Box({ children: [content] }),
   ...rest
@@ -5199,17 +4763,26 @@ var PanelButton = ({
 var SysTrayItem = (item) => PanelButton({
   className: "tray-btn unset",
   content: Widget.Icon().bind("icon", item, "icon"),
+  tooltip_markup: item.bind("tooltip_markup"),
   setup: (btn) => {
-    const id = item.menu?.connect("popped-up", (menu) => {
+    const menu = item.menu;
+    if (!menu)
+      return;
+    const id = item.menu?.connect("popped-up", () => {
       btn.toggleClassName("active");
-      menu.connect("notify::visible", (menu2) => {
-        btn.toggleClassName("active", menu2.visible);
+      menu.connect("notify::visible", () => {
+        btn.toggleClassName("active", menu.visible);
       });
-      menu.disconnect(id);
+      id && menu.disconnect(id);
     });
+    if (id)
+      btn.connect("destroy", () => item.menu?.disconnect(id));
   },
-  onPrimaryClick: (_3, event) => {
-    item.activate(event);
+  onPrimaryClick: (btn, event) => {
+    try {
+      item.activate(event);
+    } catch (TypeError) {
+    }
   },
   onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null)
 });
@@ -5218,7 +4791,7 @@ var SysTrayBox = () => Widget.Box({
   attribute: {
     items: new Map,
     onAdded: (box, id) => {
-      const item = systemTray.getItem(id);
+      const item = SystemTray.getItem(id);
       if (box.attribute.items.has(id) || !item)
         return;
       const widget11 = SysTrayItem(item);
@@ -5232,8 +4805,9 @@ var SysTrayBox = () => Widget.Box({
       box.attribute.items.get(id).destroy();
       box.attribute.items.delete(id);
     }
-  }
-}).hook(systemTray, (box, id) => box.attribute.onAdded(box, id), "added").hook(systemTray, (box, id) => box.attribute.onRemoved(box, id), "removed");
+  },
+  setup: (self) => SystemTray.items.forEach((item) => self.attribute.onAdded(self, item.id))
+}).hook(SystemTray, (box, id) => box.attribute.onAdded(box, id), "added").hook(SystemTray, (box, id) => box.attribute.onRemoved(box, id), "removed");
 
 // src/Bar.ts
 import {execAsync as execAsync6} from "resource:///com/github/Aylur/ags/utils.js";
@@ -5245,7 +4819,7 @@ Window as Window2
 } from "resource:///com/github/Aylur/ags/widget.js";
 var Clock = () => Label9({
   className: "clock small-shadow unset"
-}).poll(1000, (self) => execAsync6(["date", "+(%I:%M) %A, %d %B"]).then((date) => self.label = date).catch(print));
+}).poll(1000, (self) => execAsync6(["date", "+%H:%M:%S | %Y-%m-%d"]).then((date) => self.label = date).catch(print));
 var DynamicWallpaper = () => Widget.Button({
   className: "unset dynamic-wallpaper",
   onClicked: () => {
@@ -5270,9 +4844,7 @@ var Right = () => Box10({
     DynamicWallpaper()
   ]
 });
-var Center = () => Box10({
-  children: [Clock()]
-});
+var Center = () => Box10({});
 var Left = () => Box10({
   hpack: "end",
   spacing: 8,
@@ -5280,6 +4852,7 @@ var Left = () => Box10({
     NotificationCenterButton(),
     NetworkInformation(),
     SysTrayBox(),
+    Clock(),
     MenuButton()
   ]
 });

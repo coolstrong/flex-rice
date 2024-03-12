@@ -70,7 +70,7 @@ class ThemeService extends Service {
         this.changeIcons(theme.qt_icon_theme);
         // this.changeKvantumTheme(theme.kvantum_theme);
         // this.changeRofiTheme(theme.rofi_theme);
-        this.showDesktopWidget(theme.desktop_widget);
+        // this.showDesktopWidget(theme.desktop_widget);
 
         let hypr = theme.hypr;
         this.steHyprland(
@@ -129,7 +129,7 @@ class ThemeService extends Service {
 
     setDynamicWallpapers(path, themeMode, interval) {
         Utils.execAsync([settings.scripts.get_wallpapers, path])
-            .then((out) => {
+            .then(out => {
                 const wallpapers = JSON.parse(out);
                 this.wallpapersList = wallpapers;
 
@@ -145,7 +145,7 @@ class ThemeService extends Service {
                     this.clearDynamicWallpaperInterval();
                 }
             })
-            .catch((err) => print(err));
+            .catch(err => print(err));
     }
 
     toggleDynamicWallpaper() {
@@ -222,8 +222,10 @@ class ThemeService extends Service {
     }
 
     changePlasmaColor(plasmaColor) {
-        const plasmaCmd = `plasma-apply-colorscheme`;
-        execAsync([plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
+        // execAsync([...plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
+        execAsync(
+            `cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`
+        ).catch(print);
     }
 
     changeGTKTheme(GTKTheme, gtkMode, iconTheme) {
@@ -380,7 +382,7 @@ class ThemeService extends Service {
         Utils.writeFile(
             JSON.stringify(newData, null, 2),
             this.CACHE_FILE_PATH
-        ).catch((err) => print(err));
+        ).catch(err => print(err));
     }
 
     getCachedVariables() {
