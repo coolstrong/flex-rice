@@ -1,5 +1,5 @@
 {
     "workspacesPerMonitor": 4,
-    "popupCloseDelay": 1200,
+    "popupCloseDelay": 600,
     "transitionDuration": 250
 }

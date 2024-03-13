@@ -18,43 +18,10 @@ import themeService from "./services/ThemeService.js";
 const Clock = () =>
     Label({
         className: "clock small-shadow unset",
-    }).poll(1000, self =>
-        execAsync(["date", "+%H:%M:%S | %Y-%m-%d"])
-            .then(date => (self.label = date))
-            .catch(print)
-    );
-
-// const Weather = () => {
-//     let icon = Label({
-//         className: "bar-weather-icon unset",
-//     });
-
-//     let text = Label({
-//         truncate: "end",
-//         xalign: 0,
-//         maxWidthChars: 24,
-//     });
-
-//     let button = Widget.Button({
-//         className: "unset un-hover",
-//         onClicked: () => showWeatherMenu(),
-//         child: Box({
-//             className: "bar-weather-box small-shadow unset",
-//             children: [icon, text],
-//         }).hook(weatherService, self => {
-//             if (weatherService.arValue != "") {
-//                 const max = weatherService.maxTempC;
-//                 const min = weatherService.minTempC;
-//                 text.label = `(${min} - ${max}) ${weatherService.feelsLike} ${weatherService.arValue}`;
-//                 icon.label = `${weatherService.weatherCode}`;
-//             } else {
-//                 text.label = `Weather service is not available`;
-//             }
-//         }),
-//     });
-
-//     return button;
-// };
+        label: Variable("", {
+            poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]],
+        }).bind(),
+    });
 
 const DynamicWallpaper = () =>
     Widget.Button({

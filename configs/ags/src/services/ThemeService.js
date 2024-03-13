@@ -68,7 +68,7 @@ class ThemeService extends Service {
 
         this.changeQtStyle(theme.qt_style_theme);
         this.changeIcons(theme.qt_icon_theme);
-        // this.changeKvantumTheme(theme.kvantum_theme);
+        this.changeKvantumTheme(theme.kvantum_theme);
         // this.changeRofiTheme(theme.rofi_theme);
         // this.showDesktopWidget(theme.desktop_widget);
 

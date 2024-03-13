@@ -2619,10 +2619,6 @@ var undef = undefined;
 var optArr = (condition, arr) => condition ? arr : [];
 var E = i.isNotNullable;
 var tuple = (...items) => items;
-var raise = (e) => {
-  throw e;
-};
-var assert = (value, message = "Value was null or undefined") => E(value) ? value : raise(new Error(message));
 
 // src/widgets/menus/NotificationCenter.ts
 import {
@@ -2775,7 +2771,7 @@ var MenuNotification_default = (notification) => {
 // config.json
 var config_default = {
   workspacesPerMonitor: 4,
-  popupCloseDelay: 1200,
+  popupCloseDelay: 600,
   transitionDuration: 250
 };
 
@@ -3072,6 +3068,7 @@ var Popup = ({
   return Widget.Window({
     exclusivity: "ignore",
     name,
+    focusable: true,
     monitor: 0,
     visible: false,
     ...props,
@@ -3079,18 +3076,16 @@ var Popup = ({
     keymode: "on-demand",
     child: Widget.Box({
       css: `min-height: 2px;`,
-      child: PopupRevealer({
-        transition,
-        name,
-        child: Widget.EventBox({
-          onHoverLost: closing.schedule,
-          onHover: closing.cancel,
-          child,
-          css: `min-height: 2px;`
+      child: Widget.EventBox({
+        onHover: closing.cancel,
+        child: PopupRevealer({
+          transition,
+          name,
+          child
         })
       })
     })
-  });
+  }).on("leave-notify-event", closing.schedule);
 };
 
 // src/widgets/menus/NotificationCenter.ts
@@ -3346,15 +3341,7 @@ import {Box as Box3, Button as Button3} from "resource:///com/github/Aylur/ags/w
 var Hyprland = await Service.import("hyprland");
 var Apps = await Service.import("applications");
 var setWorkspace = (num) => Hyprland.messageAsync(`dispatch workspace ${num}`);
-var WS_SIZE = tuple(20, 16);
-var getScale = ({ height, width }) => ({
-  width: Math.round(WS_SIZE[0] / width),
-  height: Math.round(WS_SIZE[1] / height)
-});
-var ClientRenderer = ({
-  wsId,
-  scale
-}) => Widget.Box({
+var ClientRenderer = ({ wsId }) => Widget.Box({
   halign: Gtk30.Align.CENTER,
   spacing: 2,
   css: "padding: 2 0;",
@@ -3365,7 +3352,6 @@ var ClientRenderer = ({
 });
 var MonitorWorkspaces = (monitorId = 0) => {
   const firstWsId = config_default.workspacesPerMonitor * monitorId + 1;
-  const scale = getScale(assert(Hyprland.getMonitor(monitorId)));
   return Box3({
     className: "unset workspaces",
     children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor - 1).map((i3) => Button3({
@@ -3373,7 +3359,6 @@ var MonitorWorkspaces = (monitorId = 0) => {
       onClicked: () => setWorkspace(i3),
       className: Hyprland.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
       child: ClientRenderer({
-        scale,
         wsId: i3
       })
     }))
@@ -4051,6 +4036,7 @@ class ThemeService extends Service2 {
     this.changeGTKTheme(theme.gtk_theme, theme.gtk_mode, theme.gtk_icon_theme);
     this.changeQtStyle(theme.qt_style_theme);
     this.changeIcons(theme.qt_icon_theme);
+    this.changeKvantumTheme(theme.kvantum_theme);
     let hypr = theme.hypr;
     this.steHyprland(hypr.border_width, hypr.active_border, hypr.inactive_border, hypr.rounding, hypr.drop_shadow, hypr.kitty, hypr.konsole);
     this.selectedTheme = selectedTheme;
@@ -4810,7 +4796,6 @@ var SysTrayBox = () => Widget.Box({
 }).hook(SystemTray, (box, id) => box.attribute.onAdded(box, id), "added").hook(SystemTray, (box, id) => box.attribute.onRemoved(box, id), "removed");
 
 // src/Bar.ts
-import {execAsync as execAsync6} from "resource:///com/github/Aylur/ags/utils.js";
 import {
 Box as Box10,
 CenterBox,
@@ -4818,8 +4803,11 @@ Label as Label9,
 Window as Window2
 } from "resource:///com/github/Aylur/ags/widget.js";
 var Clock = () => Label9({
-  className: "clock small-shadow unset"
-}).poll(1000, (self) => execAsync6(["date", "+%H:%M:%S | %Y-%m-%d"]).then((date) => self.label = date).catch(print));
+  className: "clock small-shadow unset",
+  label: Variable("", {
+    poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]]
+  }).bind()
+});
 var DynamicWallpaper = () => Widget.Button({
   className: "unset dynamic-wallpaper",
   onClicked: () => {
@@ -5180,7 +5168,7 @@ Window as Window3
 // src/notifications/Notification.ts
 import Notifications2 from "resource:///com/github/Aylur/ags/service/notifications.js";
 import {lookUpIcon as lookUpIcon2, timeout as timeout2} from "resource:///com/github/Aylur/ags/utils.js";
-import Variable from "resource:///com/github/Aylur/ags/variable.js";
+import Variable2 from "resource:///com/github/Aylur/ags/variable.js";
 import {
 Box as Box11,
 Button as Button9,
@@ -5235,7 +5223,7 @@ var NotificationIcon2 = ({ appEntry, appIcon: appIcon2, image }) => {
   });
 };
 var Notification_default = (notification) => {
-  const hovered = Variable(false);
+  const hovered = Variable2(false);
   let timeoutId;
   const bodyLabel = Label10({
     css: `margin-top: 1rem;`,

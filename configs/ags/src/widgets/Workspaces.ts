@@ -11,20 +11,14 @@ const Apps = await Service.import("applications");
 const setWorkspace = (num: number) =>
     Hyprland.messageAsync(`dispatch workspace ${num}`);
 
-const WS_SIZE = tuple(20, 16);
+// const WS_SIZE = tuple(20, 16);
 
-const getScale = ({ height, width }: { width: number; height: number }) => ({
-    width: Math.round(WS_SIZE[0] / width),
-    height: Math.round(WS_SIZE[1] / height),
-});
+// const getScale = ({ height, width }: { width: number; height: number }) => ({
+//     width: Math.round(WS_SIZE[0] / width),
+//     height: Math.round(WS_SIZE[1] / height),
+// });
 
-const ClientRenderer = ({
-    wsId,
-    scale,
-}: {
-    wsId: number;
-    scale: { width: number; height: number };
-}) =>
+const ClientRenderer = ({ wsId }: { wsId: number }) =>
     Widget.Box({
         halign: Gtk30.Align.CENTER,
         spacing: 2,
@@ -77,7 +71,7 @@ const ClientRenderer = ({
 
 const MonitorWorkspaces = (monitorId = 0) => {
     const firstWsId = config.workspacesPerMonitor * monitorId + 1;
-    const scale = getScale(assert(Hyprland.getMonitor(monitorId)));
+    // const scale = getScale(assert(Hyprland.getMonitor(monitorId)));
 
     return Box({
         className: "unset workspaces",
@@ -92,7 +86,6 @@ const MonitorWorkspaces = (monitorId = 0) => {
                     .bind("id")
                     .as(id => (id === i ? "unset focused" : "unset unfocused")),
                 child: ClientRenderer({
-                    scale,
                     wsId: i,
                 }),
             })
