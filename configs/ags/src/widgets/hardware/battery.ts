@@ -9,7 +9,7 @@ import { showHardwareMenu } from "./all";
 export const BatteryWidget = () => {
     const label = Label({
         className: "battery-inner",
-        label: "",
+        label: "",
     });
 
     const button = Button({

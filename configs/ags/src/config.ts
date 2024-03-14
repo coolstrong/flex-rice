@@ -6,7 +6,7 @@ import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
 import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
 import { VolumeOSD } from "./on-screen/volume.js";
-import { LeftMenu } from "./widgets/menus/LeftMenu.js";
+import { SystemMenu } from "./widgets/menus/SystemMenu.js";
 // import ScreenCorners from './modules/components/ScreenCorners.js';
 
 // in config.js
@@ -23,7 +23,7 @@ let windows = [
     // WeatherMenu(),
 
     Bar({ monitor: 0 }),
-    LeftMenu(),
+    SystemMenu(),
 
     // ... Desktop widgets ... //
     /*     ColorWidget,

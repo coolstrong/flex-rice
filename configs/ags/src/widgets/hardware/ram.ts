@@ -10,7 +10,7 @@ import { showHardwareMenu } from "./all";
 export const RamWidget = () => {
     const label = Label({
         className: "ram-inner",
-        label: "",
+        label: "",
     });
 
     const button = Button({

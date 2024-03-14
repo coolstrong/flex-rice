@@ -2,7 +2,7 @@ import { NotificationCenterButton } from "./widgets/menus/NotificationCenter.js"
 import { Workspaces } from "./widgets/Workspaces.js";
 import { HardwareBox } from "./widgets/hardware/all.js";
 import { NetworkInformation } from "./widgets/internet.js";
-import { MenuButton } from "./widgets/menus/LeftMenu.js";
+import { MenuButton } from "./widgets/menus/SystemMenu.js";
 import { SysTrayBox } from "./widgets/systray.js";
 
 import { execAsync } from "resource:///com/github/Aylur/ags/utils.js";

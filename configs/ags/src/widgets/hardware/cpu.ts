@@ -10,7 +10,7 @@ import { showHardwareMenu } from "./all";
 export const CpuWidget = () => {
     const label = Label({
         className: "cpu-inner",
-        label: "",
+        label: "",
     });
 
     const button = Button({

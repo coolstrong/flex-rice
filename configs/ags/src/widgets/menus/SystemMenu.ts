@@ -68,7 +68,8 @@ const ThemeButton = ({
     });
 
     const button = Button({
-        css: css,
+        // hexpand: true,
+        css,
         child: box,
         onClicked: () => themeService.changeTheme(theme),
     }).hook(themeService, btn => {
@@ -213,31 +214,36 @@ const ThemesButtonsRowOne = () => {
     // ---------- ROWS ----------
     // --------------------------
     const row1 = Box({
-        children: [blackHoleTheme, deerTheme, colorTheme],
+        homogeneous: true,
+        children: [blackHoleTheme, deerTheme],
     });
     const row2 = Box({
+        homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [siberianTheme, materialYouTheme, win20Theme],
+        children: [siberianTheme, materialYouTheme /* win20Theme */],
     });
     const row3 = Box({
+        homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [gameTheme, darkTheme, unicatTheme],
+        children: [win20Theme, darkTheme],
     });
     const row4 = Box({
+        homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [newCatTheme, goldenTheme, harmonyTheme],
+        children: [newCatTheme, colorTheme /* goldenTheme, harmonyTheme */],
     });
     const row5 = Box({
+        homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [circlesTheme, whiteFlower, dynamicTheme],
+        children: [circlesTheme, unicatTheme /* whiteFlower, dynamicTheme */],
     });
 
     return Box({
@@ -260,7 +266,7 @@ const PowerButtonsRow = () => {
                 ${powerBtnMargin}
             `,
         child: Label({
-            label: "",
+            label: "",
         }),
         onClicked: () => execAsync("poweroff").catch(print),
     });
@@ -274,7 +280,7 @@ const PowerButtonsRow = () => {
                 ${powerBtnMargin}
             `,
         child: Label({
-            label: "",
+            label: "",
         }),
         onClicked: () => execAsync("reboot").catch(print),
     });
@@ -287,7 +293,7 @@ const PowerButtonsRow = () => {
                 border-radius: 1rem;
             `,
         child: Label({
-            label: "",
+            label: "",
         }),
         onClicked: () => execAsync("loginctl kill-session self").catch(print),
     });
@@ -306,7 +312,7 @@ const PowerButtonsRow = () => {
     });
 };
 
-export const LeftMenu = () =>
+export const SystemMenu = () =>
     Popup({
         name: "left_menu",
         anchor: ["bottom", "right"],
@@ -327,6 +333,6 @@ export const LeftMenu = () =>
 export const MenuButton = () =>
     Button({
         className: "menu-button unset",
-        label: "",
+        label: "",
         onClicked: () => App.toggleWindow("left_menu"),
     });

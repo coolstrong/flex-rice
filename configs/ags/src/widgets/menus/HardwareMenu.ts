@@ -3,6 +3,7 @@
 import { local } from "@/utils/helpers";
 import Gtk from "gi://Gtk";
 import { Popup } from "./Popup";
+import Gtk30 from "gi://Gtk";
 
 const Battery = await Service.import("battery");
 
@@ -124,7 +125,10 @@ const tempProgress = Widget.CircularProgress({
 const headerBox = Widget.Box({
     className: "hardware-menu-header-box",
     spacing: 32,
-    children: [cpuProgress, ramProgress, batteryProgress, tempProgress],
+    hexpand: true,
+    halign: Gtk30.Align.FILL,
+    homogeneous: true,
+    children: [cpuProgress, ramProgress, batteryProgress /* , tempProgress */],
 });
 
 let tableRow = ({
@@ -285,43 +289,43 @@ const tablesBox = () => {
     });
 
     let osClassName = "os";
-    let tempTable = hardwareUsageTable({
-        scriptPath: "",
-        deviceName: osClassName,
-    }).hook(Battery, self => {
-        Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/uptime.sh`)
-            .then(val => {
-                // let data = JSON.parse(val);
+    // let tempTable = hardwareUsageTable({
+    //     scriptPath: "",
+    //     deviceName: osClassName,
+    // }).hook(Battery, self => {
+    //     Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/uptime.sh`)
+    //         .then(val => {
+    //             // let data = JSON.parse(val);
 
-                self.children = [
-                    // Header
-                    tableRow({
-                        appName: "System",
-                        percentage: "",
-                        header: true,
-                        rightTextXalign: 1,
-                        deviceName: osClassName,
-                    }),
-                    // Body
-                    tableRow({
-                        appName: "Arch",
-                        percentage: "",
-                        deviceName: osClassName,
-                    }),
-                    tableRow({
-                        appName: val,
-                        percentage: "",
-                        deviceName: osClassName,
-                    }),
-                    tableRow({
-                        appName: "Ahmed",
-                        percentage: "",
-                        deviceName: osClassName,
-                    }),
-                ];
-            })
-            .catch(print);
-    });
+    //             self.children = [
+    //                 // Header
+    //                 tableRow({
+    //                     appName: "System",
+    //                     percentage: "",
+    //                     header: true,
+    //                     rightTextXalign: 1,
+    //                     deviceName: osClassName,
+    //                 }),
+    //                 // Body
+    //                 tableRow({
+    //                     appName: "Arch",
+    //                     percentage: "",
+    //                     deviceName: osClassName,
+    //                 }),
+    //                 tableRow({
+    //                     appName: val,
+    //                     percentage: "",
+    //                     deviceName: osClassName,
+    //                 }),
+    //                 tableRow({
+    //                     appName: "Ahmed",
+    //                     percentage: "",
+    //                     deviceName: osClassName,
+    //                 }),
+    //             ];
+    //         })
+    //         .catch(print);
+    // });
 
     return Widget.Box({
         className: "hardware-menu-tables-box",
@@ -343,7 +347,7 @@ const tablesBox = () => {
             }),
             Widget.Box({
                 vertical: true,
-                children: [batteryTable, tempTable],
+                children: [batteryTable],
             }),
         ],
     });

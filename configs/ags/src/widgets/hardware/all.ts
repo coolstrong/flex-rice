@@ -7,7 +7,7 @@ import { TempWidget } from "./temp.ts";
 export const HardwareBox = () =>
     Box({
         className: "hardware-box unset",
-        children: [CpuWidget(), RamWidget(), BatteryWidget(), TempWidget()],
+        children: [CpuWidget(), RamWidget(), BatteryWidget()],
     });
 
 export const showHardwareMenu = () => App.toggleWindow("hardware_menu");

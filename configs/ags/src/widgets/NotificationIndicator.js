@@ -4,7 +4,7 @@ import { Icon, Label } from "resource:///com/github/Aylur/ags/widget.js";
 import HoverRevealer from "../utils/HoverRevealer.ts";
 import { local } from "../utils/helpers.js";
 
-export default ({ direction = "left" as Direction } = {}) =>
+export default ({ direction = "left" } = {}) =>
     HoverRevealer({
         className: "notifications-revealer",
         boxClass: "notifications-revealer-box",
