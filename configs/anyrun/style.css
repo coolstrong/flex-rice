@@ -1,0 +1,49 @@
+#window {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+#entry {
+    min-height: 40px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    padding: 0 12px;
+}
+
+box#main {
+    border-radius: 8px;
+    padding: 20px;
+    border: 2px solid #262636;
+    background-color: @theme_bg_color;
+}
+
+list#main {
+    background-color: rgba(0, 0, 0, 0);
+    /* border-radius: 10px; */
+}
+
+list#plugin {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+#match {
+    border-radius: 4px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    font-weight: 500;
+}
+
+label#match-desc {
+    font-size: 10px;
+}
+
+/* label#plugin {
+    font-size: 14px;
+} */
+
+#plugin {
+    padding: 0;
+}
+
+#plugin:hover {
+    background-color: rgba(0, 0, 0, 0);
+}

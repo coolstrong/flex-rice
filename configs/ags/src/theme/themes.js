@@ -75,7 +75,7 @@ const deer = {
 };
 
 const colors = {
-    wallpaper: `${WALLPAPER_PATH}/colors.png`,
+    wallpaper: `${WALLPAPER_PATH}/Windows_365_Wallpaper_4.jpg`,
     css_theme: "colors.scss",
     plasma_color: "AColors.colors",
     qt_style_theme: "Breeze",

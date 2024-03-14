@@ -64,6 +64,8 @@ const ThemeButton = ({
 
     const box = Box({
         className: "unset theme-btn-box",
+        hexpand: true,
+        homogeneous: true,
         children: [_label, _icon],
     });
 
@@ -94,26 +96,25 @@ const ThemesButtonsRowOne = () => {
 
     const deerTheme = ThemeButton({
         label: "Deer",
-        icon: "",
+        icon: "",
         theme: DEER_THEME,
     });
 
     const colorTheme = ThemeButton({
         label: "Color",
-        icon: "",
+        icon: "",
         theme: COLOR_THEME,
-        end: "",
     });
 
     const siberianTheme = ThemeButton({
         label: "Gradient",
-        icon: "",
+        icon: "",
         theme: SIBERIAN_THEME,
     });
 
     const materialYouTheme = ThemeButton({
-        label: "Material",
-        icon: "",
+        label: "Pastel",
+        icon: "",
         theme: MATERIAL_YOU,
     });
 
@@ -121,7 +122,7 @@ const ThemesButtonsRowOne = () => {
         label: "Windows",
         icon: "",
         theme: WIN_20,
-        end: "",
+        // end: "",
     });
 
     const gameTheme = ThemeButton({
@@ -138,9 +139,8 @@ const ThemesButtonsRowOne = () => {
 
     const unicatTheme = ThemeButton({
         label: "Unicat",
-        icon: "",
+        icon: "",
         theme: UNICAT_THEME,
-        end: "",
     });
 
     const newCatTheme = ThemeButton({
@@ -159,7 +159,6 @@ const ThemesButtonsRowOne = () => {
         label: "Harmony",
         icon: "󰔉",
         theme: HARMONY_THEME,
-        end: "",
     });
 
     const circlesTheme = ThemeButton({

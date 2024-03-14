@@ -3634,7 +3634,7 @@ var deer = {
   dynamic: false
 };
 var colors = {
-  wallpaper: `${WALLPAPER_PATH}/colors.png`,
+  wallpaper: `${WALLPAPER_PATH}/Windows_365_Wallpaper_4.jpg`,
   css_theme: "colors.scss",
   plasma_color: "AColors.colors",
   qt_style_theme: "Breeze",
@@ -3991,7 +3991,6 @@ class ThemeService extends Service2 {
     }
     this.changePlasmaColor(theme.plasma_color);
     this.changeGTKTheme(theme.gtk_theme, theme.gtk_mode, theme.gtk_icon_theme);
-    this.changeQtStyle(theme.qt_style_theme);
     this.changeIcons(theme.qt_icon_theme);
     this.changeKvantumTheme(theme.kvantum_theme);
     let hypr = theme.hypr;
@@ -4464,6 +4463,8 @@ var ThemeButton = ({
   });
   const box = Box8({
     className: "unset theme-btn-box",
+    hexpand: true,
+    homogeneous: true,
     children: [_label, _icon]
   });
   const button = Button7({
@@ -4486,30 +4487,28 @@ var ThemesButtonsRowOne = () => {
   });
   const deerTheme = ThemeButton({
     label: "Deer",
-    icon: "\uF3D2",
+    icon: "\uF6FC",
     theme: DEER_THEME
   });
   const colorTheme = ThemeButton({
     label: "Color",
-    icon: "\uE2B1",
-    theme: COLOR_THEME,
-    end: ""
+    icon: "\uF53F",
+    theme: COLOR_THEME
   });
   const siberianTheme = ThemeButton({
     label: "Gradient",
-    icon: "\uE3E9",
+    icon: "\uF550",
     theme: SIBERIAN_THEME
   });
   const materialYouTheme = ThemeButton({
-    label: "Material",
-    icon: "\uE3F2",
+    label: "Pastel",
+    icon: "\uF18C",
     theme: MATERIAL_YOU
   });
   const win20Theme = ThemeButton({
     label: "Windows",
     icon: "\uF3CA",
-    theme: WIN_20,
-    end: ""
+    theme: WIN_20
   });
   const gameTheme = ThemeButton({
     label: "Game",
@@ -4523,9 +4522,8 @@ var ThemesButtonsRowOne = () => {
   });
   const unicatTheme = ThemeButton({
     label: "Unicat",
-    icon: "\uF3D2",
-    theme: UNICAT_THEME,
-    end: ""
+    icon: "\uF6BE",
+    theme: UNICAT_THEME
   });
   const newCatTheme = ThemeButton({
     label: "New cat",
@@ -4540,8 +4538,7 @@ var ThemesButtonsRowOne = () => {
   const harmonyTheme = ThemeButton({
     label: "Harmony",
     icon: "\uDB81\uDD09",
-    theme: HARMONY_THEME,
-    end: ""
+    theme: HARMONY_THEME
   });
   const circlesTheme = ThemeButton({
     label: "Circles",
