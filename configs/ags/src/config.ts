@@ -13,7 +13,14 @@ import { SystemMenu } from "./widgets/menus/SystemMenu.js";
 const scss = App.configDir + "/scss/main.scss";
 const css = App.configDir + "/style.css";
 
-Utils.exec(`sassc ${scss} ${css}`);
+const compileStyles = () => Utils.exec(`sassc ${scss} ${css}`);
+compileStyles();
+
+Utils.monitorFile(`${App.configDir}/scss`, () => {
+    compileStyles();
+    App.resetCss();
+    App.applyCss(css);
+});
 
 let windows = [
     VolumeOSD(),

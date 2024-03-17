@@ -3,7 +3,7 @@ import App from "resource:///com/github/Aylur/ags/app.js";
 let isProcessing = false; // Flag to track processing status
 let timeoutId: Timer; // Store the timeout ID
 
-export default (windowName: string, timeout = 5000) => {
+export default (windowName: string, timeout = 1000) => {
     if (isProcessing) {
         // If processing, reset the timer
         clearTimeout(timeoutId);

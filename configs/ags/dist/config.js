@@ -2772,7 +2772,10 @@ var MenuNotification_default = (notification) => {
 var config_default = {
   workspacesPerMonitor: 4,
   popupCloseDelay: 700,
-  transitionDuration: 250
+  transitionDuration: 250,
+  systray: {
+    ignore: []
+  }
 };
 
 // node_modules/ts-pattern/dist/index.js
@@ -3489,35 +3492,18 @@ var showHardwareMenu = () => App.toggleWindow("hardware_menu");
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import {exec} from "resource:///com/github/Aylur/ags/utils.js";
 import {Box as Box7, Label as Label6} from "resource:///com/github/Aylur/ags/widget.js";
-var NetworkInformation = () => Box7({
-  className: "internet-box small-shadow unset"
-}).hook(Network, (box) => {
-  let internetLabel;
-  const ssidLabel = Label6({
-    className: "wifi-name-label unset",
-    label: `${Network.wifi.ssid}`
-  });
-  if (Network.wifi?.internet === "disconnected") {
-    internetLabel = "\uDB82\uDD2E";
-  } else if (Network.connectivity === "limited") {
-    internetLabel = "\uDB82\uDD29";
-  } else if (Network.wifi?.strength > 85) {
-    internetLabel = "\uDB82\uDD28";
-  } else if (Network.wifi?.strength > 70) {
-    internetLabel = "\uDB82\uDD25";
-  } else if (Network.wifi?.strength > 50) {
-    internetLabel = "\uDB82\uDD22";
-  } else if (Network.wifi?.strength > 20) {
-    internetLabel = "\uDB82\uDD1F";
-  } else {
-    internetLabel = "\uDB82\uDD2F";
-  }
-  const internetStatusLabel = Label6({
-    className: "wifi-icon-strength unset",
-    label: internetLabel
-  });
-  box.children = [ssidLabel, internetStatusLabel];
-  box.show_all();
+var { Gravity } = imports.gi.Gdk;
+var Audio = await Service.import("audio");
+var VolumeButton = () => Widget.Button({
+  className: "volume-button",
+  child: Widget.Icon({
+    icon: Audio.bind("speaker").as(({ volume }) => N2(volume * 100).with(_.number.lte(0), () => "audio-volume-muted-symbolic").with(_.number.between(0, 34), () => "audio-volume-low-symbolic").with(_.number.between(34, 67), () => "audio-volume-medium-symbolic").with(_.number.between(67, 100), () => "audio-volume-high-symbolic").with(_.number.gte(100), () => "audio-volume-overamplified-symbolic").otherwise(() => ""))
+  }),
+  onClicked: () => Utils.execAsync("pypr toggle volume")
+});
+var NetVolumeBox = () => Widget.Box({
+  className: "internet-box small-shadow unset",
+  children: [VolumeButton()]
 });
 
 // src/services/ThemeService.js
@@ -4698,7 +4684,7 @@ var MenuButton = () => Button7({
 });
 
 // src/widgets/systray.ts
-var { Gravity } = imports.gi.Gdk;
+var { Gravity: Gravity2 } = imports.gi.Gdk;
 var SystemTray = await Service.import("systemtray");
 var PanelButton = ({ className, content, ...rest }) => Widget.Button({
   className: `panel-button ${className} unset`,
@@ -4729,7 +4715,7 @@ var SysTrayItem = (item) => PanelButton({
     } catch (TypeError) {
     }
   },
-  onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null)
+  onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity2.SOUTH, Gravity2.NORTH, null)
 });
 var SysTrayBox = () => Widget.Box({
   className: "systray unset",
@@ -4737,7 +4723,7 @@ var SysTrayBox = () => Widget.Box({
     items: new Map,
     onAdded: (box, id) => {
       const item = SystemTray.getItem(id);
-      if (box.attribute.items.has(id) || !item)
+      if (config_default.systray.ignore.includes(id) || box.attribute.items.has(id) || !item)
         return;
       const widget10 = SysTrayItem(item);
       box.attribute.items.set(id, widget10);
@@ -4797,7 +4783,7 @@ var Left = () => Box9({
   spacing: 8,
   children: [
     NotificationCenterButton(),
-    NetworkInformation(),
+    NetVolumeBox(),
     SysTrayBox(),
     Clock(),
     MenuButton()
@@ -5320,7 +5306,7 @@ var OSDNotifications_default = (monitor) => Window3({
 });
 
 // src/on-screen/volume.ts
-import Audio from "resource:///com/github/Aylur/ags/service/audio.js";
+import Audio2 from "resource:///com/github/Aylur/ags/service/audio.js";
 import {
 Box as Box12,
 Icon as Icon3,
@@ -5333,7 +5319,7 @@ Window as Window4
 import App3 from "resource:///com/github/Aylur/ags/app.js";
 var isProcessing = false;
 var timeoutId;
-var ShowWindow_default = (windowName, timeout4 = 5000) => {
+var ShowWindow_default = (windowName, timeout4 = 1000) => {
   if (isProcessing) {
     clearTimeout(timeoutId);
   } else {
@@ -5361,26 +5347,26 @@ var Volume = () => Box12({
         1: Icon3("audio-volume-low-symbolic"),
         0: Icon3("audio-volume-muted-symbolic")
       }
-    }).hook(Audio, (stack) => {
-      if (!Audio.speaker)
+    }).hook(Audio2, (stack) => {
+      if (!Audio2.speaker)
         return;
-      if (Audio.speaker.is_muted) {
+      if (Audio2.speaker.is_muted) {
         stack.shown = 0;
         return;
       }
-      stack.shown = tuple(101, 67, 34, 1, 0).find((threshold) => threshold <= Audio.speaker.volume * 100) ?? 0;
+      stack.shown = tuple(101, 67, 34, 1, 0).find((threshold) => threshold <= Audio2.speaker.volume * 100) ?? 0;
     }, "speaker-changed"),
     Slider({
       hexpand: true,
       className: "unset",
       drawValue: false,
-      onChange: ({ value }) => Audio.speaker.volume = value
-    }).hook(Audio, (slider) => {
-      if (!Audio.speaker || oldValue === Audio.speaker.volume) {
+      onChange: ({ value }) => Audio2.speaker.volume = value
+    }).hook(Audio2, (slider) => {
+      if (!Audio2.speaker || oldValue === Audio2.speaker.volume) {
         return;
       }
       ShowWindow_default("vol_osd");
-      oldValue = Audio.speaker.volume;
+      oldValue = Audio2.speaker.volume;
       slider.value = oldValue;
     }, "speaker-changed")
   ]
@@ -5398,7 +5384,13 @@ var VolumeOSD = () => Window4({
 // src/config.ts
 var scss = App4.configDir + "/scss/main.scss";
 var css = App4.configDir + "/style.css";
-Utils.exec(`sassc ${scss} ${css}`);
+var compileStyles = () => Utils.exec(`sassc ${scss} ${css}`);
+compileStyles();
+Utils.monitorFile(`${App4.configDir}/scss`, () => {
+  compileStyles();
+  App4.resetCss();
+  App4.applyCss(css);
+});
 var windows = [
   VolumeOSD(),
   OSDNotifications_default(),

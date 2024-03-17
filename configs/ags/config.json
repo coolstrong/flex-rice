@@ -1,5 +1,8 @@
 {
     "workspacesPerMonitor": 4,
     "popupCloseDelay": 700,
-    "transitionDuration": 250
+    "transitionDuration": 250,
+    "systray": {
+        "ignore": []
+    }
 }

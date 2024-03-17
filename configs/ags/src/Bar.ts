@@ -1,7 +1,7 @@
 import { NotificationCenterButton } from "./widgets/menus/NotificationCenter.js";
 import { Workspaces } from "./widgets/Workspaces.js";
 import { HardwareBox } from "./widgets/hardware/all.js";
-import { NetworkInformation } from "./widgets/internet.js";
+import { NetVolumeBox } from "./widgets/internet.js";
 import { MenuButton } from "./widgets/menus/SystemMenu.js";
 import { SysTrayBox } from "./widgets/systray.js";
 
@@ -63,7 +63,7 @@ const Left = () =>
             // Volume(),
             NotificationCenterButton(),
             // Weather(),
-            NetworkInformation(),
+            NetVolumeBox(),
             SysTrayBox(),
             Clock(),
             MenuButton(),

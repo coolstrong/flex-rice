@@ -1,5 +1,5 @@
 import type { TrayItem } from "resource:///com/github/Aylur/ags/service/systemtray.js";
-
+import config from "config.json";
 const { Gravity } = imports.gi.Gdk;
 const SystemTray = await Service.import("systemtray");
 
@@ -51,7 +51,12 @@ export const SysTrayBox = () =>
             items: new Map(),
             onAdded: (box, id) => {
                 const item = SystemTray.getItem(id);
-                if (box.attribute.items.has(id) || !item) return;
+                if (
+                    config.systray.ignore.includes(id) ||
+                    box.attribute.items.has(id) ||
+                    !item
+                )
+                    return;
 
                 const widget = SysTrayItem(item);
                 box.attribute.items.set(id, widget);

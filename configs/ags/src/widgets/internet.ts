@@ -1,6 +1,10 @@
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import { exec } from "resource:///com/github/Aylur/ags/utils.js";
 import { Box, Label } from "resource:///com/github/Aylur/ags/widget.js";
+import { P, match } from "ts-pattern";
+const { Gravity } = imports.gi.Gdk;
+const Audio = await Service.import("audio");
+// const SysTray = await Service.import("systemtray");
 
 function convertToH(bytes: number) {
     let speed;
@@ -73,39 +77,65 @@ const NetSpeedMeters = () => {
     });
 };
 
-export const NetworkInformation = () =>
-    Box({
+export const VolumeButton = () =>
+    Widget.Button({
+        className: "volume-button",
+        child: Widget.Icon({
+            icon: Audio.bind("speaker").as(({ volume }) =>
+                match(volume * 100)
+                    .with(P.number.lte(0), () => "audio-volume-muted-symbolic")
+                    .with(
+                        P.number.between(0, 34),
+                        () => "audio-volume-low-symbolic"
+                    )
+                    .with(
+                        P.number.between(34, 67),
+                        () => "audio-volume-medium-symbolic"
+                    )
+                    .with(
+                        P.number.between(67, 100),
+                        () => "audio-volume-high-symbolic"
+                    )
+                    .with(
+                        P.number.gte(100),
+                        () => "audio-volume-overamplified-symbolic"
+                    )
+                    .otherwise(() => "")
+            ),
+        }),
+
+        onClicked: () => Utils.execAsync("pypr toggle volume"),
+    });
+
+const NetworkButton = () => {
+    const label = Variable("󰤯");
+
+    return Widget.Button({
+        className: "wifi-icon-strength unset",
+        label: label.bind(),
+        // onPrimaryClick: self =>
+        //     SysTray.getItem(":1.424")?.menu?.popup_at_widget(
+        //         self,
+        //         Gravity.NORTH,
+        //         Gravity.SOUTH,
+        //         null
+        //     ),
+    }).hook(
+        Network,
+        () =>
+            (label.value = match(Network)
+                .with({ wifi: { internet: "disconnected" } }, () => "󰤮")
+                .with({ connectivity: "limited" }, () => "󰤩")
+                .with({ wifi: { strength: P.number.gt(85) } }, () => "󰤨")
+                .with({ wifi: { strength: P.number.gt(70) } }, () => "󰤥")
+                .with({ wifi: { strength: P.number.gt(50) } }, () => "󰤢")
+                .with({ wifi: { strength: P.number.gt(20) } }, () => "󰤟")
+                .otherwise(() => "󰤯"))
+    );
+};
+
+export const NetVolumeBox = () =>
+    Widget.Box({
         className: "internet-box small-shadow unset",
-    }).hook(Network, box => {
-        let internetLabel;
-
-        const ssidLabel = Label({
-            className: "wifi-name-label unset",
-            label: `${Network.wifi.ssid}`,
-        });
-
-        if (Network.wifi?.internet === "disconnected") {
-            internetLabel = "󰤮";
-        } else if (Network.connectivity === "limited") {
-            internetLabel = "󰤩";
-        } else if (Network.wifi?.strength > 85) {
-            internetLabel = "󰤨";
-        } else if (Network.wifi?.strength > 70) {
-            internetLabel = "󰤥";
-        } else if (Network.wifi?.strength > 50) {
-            internetLabel = "󰤢";
-        } else if (Network.wifi?.strength > 20) {
-            internetLabel = "󰤟";
-        } else {
-            internetLabel = "󰤯";
-        }
-
-        const internetStatusLabel = Label({
-            className: "wifi-icon-strength unset",
-            label: internetLabel,
-        });
-
-        box.children = [/* NetSpeedMeters(), */ ssidLabel, internetStatusLabel];
-
-        box.show_all();
+        children: [/* NetworkButton(), */ VolumeButton()],
     });
