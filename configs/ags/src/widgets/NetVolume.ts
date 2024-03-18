@@ -1,4 +1,3 @@
-import { icons } from "@/lib/icons";
 import { getVolumeIcon } from "@/utils/shared";
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import { exec } from "resource:///com/github/Aylur/ags/utils.js";

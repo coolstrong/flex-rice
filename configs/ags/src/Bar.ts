@@ -1,11 +1,10 @@
-import { NotificationCenterButton } from "./widgets/menus/NotificationCenter.js";
+import { SysTrayBox } from "./widgets/SystemTray.js";
 import { Workspaces } from "./widgets/Workspaces.js";
 import { HardwareBox } from "./widgets/hardware/all.js";
-import { NetVolumeBox } from "./widgets/internet.js";
+import { NetVolumeBox } from "./widgets/NetVolume.js";
+import { NotificationCenterButton } from "./widgets/menus/NotificationCenter.js";
 import { MenuButton } from "./widgets/menus/SystemMenu.js";
-import { SysTrayBox } from "./widgets/systray.js";
 
-import { execAsync } from "resource:///com/github/Aylur/ags/utils.js";
 import {
     Box,
     CenterBox,
@@ -13,7 +12,6 @@ import {
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import themeService from "./services/ThemeService.js";
-// import weatherService from "./services/WeatherService.js";
 
 const Clock = () =>
     Label({
@@ -44,13 +42,7 @@ const DynamicWallpaper = () =>
 const Right = () =>
     Box({
         spacing: 8,
-        children: [
-            Workspaces(),
-            HardwareBox(),
-            DynamicWallpaper(),
-            // NotificationIndicator(),
-            // ClientTitle(),
-        ],
+        children: [Workspaces(), HardwareBox(), DynamicWallpaper()],
     });
 
 const Center = () => Box({});
@@ -60,9 +52,7 @@ const Left = () =>
         hpack: "end",
         spacing: 8,
         children: [
-            // Volume(),
             NotificationCenterButton(),
-            // Weather(),
             NetVolumeBox(),
             SysTrayBox(),
             Clock(),

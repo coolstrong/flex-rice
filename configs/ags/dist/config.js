@@ -1,6 +1,15 @@
 // src/config.ts
 import App4 from "resource:///com/github/Aylur/ags/app.js";
 import Notifications4 from "resource:///com/github/Aylur/ags/service/notifications.js";
+// config.json
+var config_default = {
+  workspacesPerMonitor: 4,
+  popupCloseDelay: 700,
+  transitionDuration: 250,
+  systray: {
+    ignore: []
+  }
+};
 
 // node_modules/@mobily/ts-belt/dist/pipe.mjs
 var pipe = function() {
@@ -3183,191 +3192,357 @@ var i = {
   isUndefined,
   isNot
 };
+// src/widgets/SystemTray.ts
+var { Gravity } = imports.gi.Gdk;
+var SystemTray = await Service.import("systemtray");
+var PanelButton = ({ className, content, ...rest }) => Widget.Button({
+  className: `panel-button ${className} unset`,
+  child: Widget.Box({ children: [content] }),
+  ...rest
+});
+var SysTrayItem = (item) => PanelButton({
+  className: "tray-btn unset",
+  content: Widget.Icon().bind("icon", item, "icon"),
+  tooltip_markup: item.bind("tooltip_markup"),
+  setup: (btn) => {
+    const menu = item.menu;
+    if (!menu)
+      return;
+    const id = item.menu?.connect("popped-up", () => {
+      btn.toggleClassName("active");
+      menu.connect("notify::visible", () => {
+        btn.toggleClassName("active", menu.visible);
+      });
+      id && menu.disconnect(id);
+    });
+    if (id)
+      btn.connect("destroy", () => item.menu?.disconnect(id));
+  },
+  onPrimaryClick: (btn) => pipe(N2.fromExecution(() => item.activate), N2.tapError(() => item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null))),
+  onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null)
+});
+var SysTrayBox = () => Widget.Box({
+  class_name: "systray unset",
+  children: SystemTray.bind("items").as((items) => items.filter(({ id }) => !config_default.systray.ignore.includes(id)).map(SysTrayItem))
+});
+
 // src/utils/common.ts
 var undef = undefined;
 var optArr = (condition, arr) => condition ? arr : [];
 var E2 = i.isNotNullable;
 
-// src/widgets/menus/NotificationCenter.ts
-import {
-Box as Box2,
-Button as Button2,
-Label as Label2,
-Scrollable
-} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/utils/helpers.ts
-async function bash(strings, ...values) {
-  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i2) => str + `${values[i2] ?? ""}`).join("");
-  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
-    console.error(cmd, err);
-    return "";
-  });
-}
-async function sh(cmd) {
-  return Utils.execAsync(cmd).catch((err) => {
-    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
-    return "";
-  });
-}
-function dependencies(...bins) {
-  const missing = bins.filter((bin) => {
-    return !Utils.exec(`which ${bin}`);
-  });
-  if (missing.length > 0) {
-    console.warn("missing dependencies:", missing.join(", "));
-    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
-  }
-  return missing.length === 0;
-}
-var local = Utils.exec(`/home/${Utils.USER}/.config/ags/scripts/lang.sh`);
-
-// src/notifications/MenuNotification.ts
-import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box,
-Button,
-EventBox,
-Icon,
-Label
-} from "resource:///com/github/Aylur/ags/widget.js";
-var { GLib } = imports.gi;
-var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
-var NotificationIcon = ({ appEntry, appIcon, image }) => {
-  if (image) {
-    return Box({
-      vpack: "start",
-      hexpand: false,
-      className: "notification-img",
-      css: `
-              background-image: url("${image}");
-              background-size: contain;
-              background-repeat: no-repeat;
-              background-position: center;
-              min-width: 78px;
-              min-height: 78px;
-              ${margin}
-              border-radius: 1rem;
-          `
-    });
-  }
-  let icon = "dialog-information-symbolic";
-  if (lookUpIcon(appIcon))
-    icon = appIcon;
-  if (lookUpIcon(appEntry))
-    icon = appEntry;
-  return Box({
-    vpack: "start",
-    hexpand: false,
-    css: `
-          min-width: 78px;
-          min-height: 78px;
-          ${margin}
-        `,
-    children: [
-      Icon({
-        icon,
-        size: 58,
-        hpack: "center",
-        hexpand: true,
-        vpack: "center",
-        vexpand: true
-      })
-    ]
-  });
+// src/lib/icons.ts
+import GLib20 from "gi://GLib";
+var substitutes = {
+  "transmission-gtk": "transmission",
+  "blueberry.py": "blueberry",
+  Caprine: "facebook-messenger",
+  "com.raggesilver.BlackBox-symbolic": "terminal-symbolic",
+  "org.wezfurlong.wezterm-symbolic": "terminal-symbolic",
+  "audio-headset-bluetooth": "audio-headphones-symbolic",
+  "audio-card-analog-usb": "audio-speakers-symbolic",
+  "audio-card-analog-pci": "audio-card-symbolic",
+  "preferences-system": "emblem-system-symbolic",
+  "com.github.Aylur.ags-symbolic": "controls-symbolic",
+  "com.github.Aylur.ags": "controls-symbolic",
+  "code-url-handler": "code"
 };
-var MenuNotification_default = (notification) => {
-  const bodyLabel = Label({
-    css: `margin-top: 1rem;`,
-    className: "notification-description",
-    hexpand: true,
-    useMarkup: true,
-    xalign: 0,
-    justification: "left",
-    wrap: true
-  });
-  try {
-    bodyLabel.label = notification.body;
-  } catch (error) {
-    bodyLabel.label = "...";
+var icons = {
+  missing: "image-missing-symbolic",
+  fallback: {
+    executable: "application-x-executable-symbolic",
+    notification: "dialog-information-symbolic",
+    video: "video-x-generic-symbolic",
+    audio: "audio-x-generic-symbolic"
+  },
+  ui: {
+    close: "window-close-symbolic",
+    colorpicker: "color-select-symbolic",
+    info: "info-symbolic",
+    link: "external-link-symbolic",
+    lock: "system-lock-screen-symbolic",
+    menu: "open-menu-symbolic",
+    refresh: "view-refresh-symbolic",
+    search: "system-search-symbolic",
+    settings: "emblem-system-symbolic",
+    themes: "preferences-desktop-theme-symbolic",
+    tick: "object-select-symbolic",
+    time: "hourglass-symbolic",
+    toolbars: "toolbars-symbolic",
+    warning: "dialog-warning-symbolic",
+    avatar: "avatar-default-symbolic",
+    arrow: {
+      right: "pan-end-symbolic",
+      left: "pan-start-symbolic",
+      down: "pan-down-symbolic",
+      up: "pan-up-symbolic"
+    }
+  },
+  audio: {
+    mic: {
+      muted: "microphone-disabled-symbolic",
+      low: "microphone-sensitivity-low-symbolic",
+      medium: "microphone-sensitivity-medium-symbolic",
+      high: "microphone-sensitivity-high-symbolic"
+    },
+    volume: {
+      muted: "audio-volume-muted-symbolic",
+      low: "audio-volume-low-symbolic",
+      medium: "audio-volume-medium-symbolic",
+      high: "audio-volume-high-symbolic",
+      overamplified: "audio-volume-overamplified-symbolic"
+    },
+    type: {
+      headset: "audio-headphones-symbolic",
+      speaker: "audio-speakers-symbolic",
+      card: "audio-card-symbolic"
+    },
+    mixer: "mixer-symbolic"
+  },
+  powerprofile: {
+    balanced: "power-profile-balanced-symbolic",
+    "power-saver": "power-profile-power-saver-symbolic",
+    performance: "power-profile-performance-symbolic"
+  },
+  asusctl: {
+    profile: {
+      Balanced: "power-profile-balanced-symbolic",
+      Quiet: "power-profile-power-saver-symbolic",
+      Performance: "power-profile-performance-symbolic"
+    },
+    mode: {
+      Integrated: "processor-symbolic",
+      Hybrid: "controller-symbolic"
+    }
+  },
+  battery: {
+    charging: "battery-flash-symbolic",
+    warning: "battery-empty-symbolic"
+  },
+  bluetooth: {
+    enabled: "bluetooth-active-symbolic",
+    disabled: "bluetooth-disabled-symbolic"
+  },
+  brightness: {
+    indicator: "display-brightness-symbolic",
+    keyboard: "keyboard-brightness-symbolic",
+    screen: "display-brightness-symbolic"
+  },
+  powermenu: {
+    sleep: "weather-clear-night-symbolic",
+    reboot: "system-reboot-symbolic",
+    logout: "system-log-out-symbolic",
+    shutdown: "system-shutdown-symbolic"
+  },
+  recorder: {
+    recording: "media-record-symbolic"
+  },
+  notifications: {
+    noisy: "org.gnome.Settings-notifications-symbolic",
+    silent: "notifications-disabled-symbolic",
+    message: "chat-bubbles-symbolic"
+  },
+  trash: {
+    full: "user-trash-full-symbolic",
+    empty: "user-trash-symbolic"
+  },
+  mpris: {
+    shuffle: {
+      enabled: "media-playlist-shuffle-symbolic",
+      disabled: "media-playlist-consecutive-symbolic"
+    },
+    loop: {
+      none: "media-playlist-repeat-symbolic",
+      track: "media-playlist-repeat-song-symbolic",
+      playlist: "media-playlist-repeat-symbolic"
+    },
+    playing: "media-playback-pause-symbolic",
+    paused: "media-playback-start-symbolic",
+    stopped: "media-playback-start-symbolic",
+    prev: "media-skip-backward-symbolic",
+    next: "media-skip-forward-symbolic"
+  },
+  system: {
+    cpu: "org.gnome.SystemMonitor-symbolic",
+    ram: "drive-harddisk-solidstate-symbolic",
+    temp: "temperature-symbolic"
+  },
+  color: {
+    dark: "dark-mode-symbolic",
+    light: "light-mode-symbolic"
+  },
+  network: {
+    wifi: {
+      0: "network-wireless-connected-00",
+      25: "network-wireless-connected-25",
+      50: "network-wireless-connected-50",
+      75: "network-wireless-connected-75",
+      100: "network-wireless-connected-100",
+      disconnected: "network-wireless-disconnected"
+    },
+    wired: {
+      connected: "network-wired",
+      disconnected: "network-wired-unavailable"
+    }
   }
-  const content = Box({
-    css: `min-width: 330px;`,
-    children: [
-      NotificationIcon(notification),
-      Box({
-        hexpand: true,
-        vertical: true,
-        children: [
-          Box({
-            children: [
-              Label({
-                className: "notification-title",
-                css: margin,
-                xalign: 0,
-                justification: "left",
-                hexpand: true,
-                maxWidthChars: 24,
-                truncate: "end",
-                wrap: true,
-                label: notification.summary,
-                useMarkup: notification.summary.startsWith("<")
-              }),
-              Label({
-                className: "notification-time",
-                css: `${margin} margin-top: 0.5rem;`,
-                vpack: "start",
-                label: GLib.DateTime.new_from_unix_local(notification.time).format("%H:%M")
-              }),
-              Button({
-                className: "notification-close-button",
-                vpack: "start",
-                child: Icon("window-close-symbolic"),
-                onClicked: () => {
-                  notification.close();
-                }
-              })
-            ]
-          }),
-          bodyLabel
-        ]
+};
+var icon = (name, fallback = icons.missing) => {
+  if (!name)
+    return fallback;
+  const icon2 = substitutes[name] ?? name;
+  return GLib20.file_test(name, GLib20.FileTest.EXISTS) || Utils.lookUpIcon(icon2) ? icon2 : fallback;
+};
+var appIcon = (s2) => icon(s2 ?? undef, icons.fallback.executable);
+
+// src/widgets/Workspaces.ts
+import Gtk30 from "gi://Gtk?version=3.0";
+import {Box, Button} from "resource:///com/github/Aylur/ags/widget.js";
+var Hyprland = await Service.import("hyprland");
+var Apps = await Service.import("applications");
+var setWorkspace = (num) => Hyprland.messageAsync(`dispatch workspace ${num}`);
+var ClientRenderer = ({ wsId }) => Widget.Box({
+  halign: Gtk30.Align.CENTER,
+  spacing: 2,
+  css: "padding: 2 0;",
+  children: Hyprland.bind("clients").as(Ra.filterMap((client) => client.workspace.id === wsId && client.mapped ? Widget.Icon({
+    icon: pipe(Apps.list.find((app2) => app2.match(client.class)), (app2) => appIcon(app2?.icon_name ?? undef)),
+    css: "font-size: 12px;"
+  }) : undef))
+});
+var MonitorWorkspaces = (monitorId = 0) => {
+  const firstWsId = config_default.workspacesPerMonitor * monitorId + 1;
+  return Box({
+    className: "unset workspaces",
+    children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor - 1).map((i2) => Button({
+      css: "min-width: 30px;",
+      onClicked: () => setWorkspace(i2),
+      className: Hyprland.active.workspace.bind("id").as((id) => id === i2 ? "unset focused" : "unset unfocused"),
+      child: ClientRenderer({
+        wsId: i2
       })
-    ]
-  });
-  const actionsbox = Box({
-    className: "notification-actions",
-    children: notification.actions.map((action) => Button({
-      css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
-      className: "action-button",
-      onClicked: () => notification.invoke(action.id),
-      hexpand: true,
-      child: Label(action.label)
     }))
   });
-  const mainbox = EventBox({
-    className: `menu-notification ${notification.urgency}`,
-    vexpand: false,
-    onPrimaryClick: () => {
-    },
-    child: Box({
-      vertical: true,
-      children: [
-        content,
-        ...optArr(notification.actions.length > 0, [actionsbox])
-      ]
-    })
+};
+var Workspaces = () => Box({
+  className: "unset workspace-box",
+  spacing: 4,
+  children: Hyprland.monitors.map((m) => MonitorWorkspaces(m.id))
+});
+
+// src/widgets/hardware/all.ts
+import {Box as Box4} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/widgets/hardware/battery.ts
+import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
+import {
+Button as Button2,
+CircularProgress,
+Label
+} from "resource:///com/github/Aylur/ags/widget.js";
+var BatteryWidget = () => {
+  const label = Label({
+    className: "battery-inner",
+    label: "\uF240"
   });
-  return mainbox;
+  const button = Button2({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  return CircularProgress({
+    className: "battery",
+    child: button,
+    startAt: 0,
+    rounded: false
+  }).hook(Battery, (batteryProgress) => {
+    if (Battery.charging) {
+      label.class_name = "battery-inner-charging";
+    } else {
+      label.class_name = "battery-inner";
+    }
+    batteryProgress.value = Battery.percent / 100;
+    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
+  });
 };
-// config.json
-var config_default = {
-  workspacesPerMonitor: 4,
-  popupCloseDelay: 700,
-  transitionDuration: 250,
-  systray: {
-    ignore: []
-  }
+
+// src/widgets/hardware/cpu.ts
+import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box2,
+Button as Button3,
+CircularProgress as CircularProgress2,
+Label as Label2
+} from "resource:///com/github/Aylur/ags/widget.js";
+var CpuWidget = () => {
+  const label = Label2({
+    className: "cpu-inner",
+    label: "\uF2DB"
+  });
+  const button = Button3({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  const progress = CircularProgress2({
+    className: "cpu",
+    child: button,
+    startAt: 0,
+    rounded: false
+  });
+  return Box2({
+    className: "bar-hw-cpu-box"
+  }).poll(1000, (box) => {
+    execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
+      progress.value = Number(val) / 100;
+      label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
+    }).catch(print);
+    box.children = [progress];
+    box.show_all();
+  });
 };
+
+// src/widgets/hardware/ram.ts
+import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box3,
+Button as Button4,
+CircularProgress as CircularProgress3,
+Label as Label3
+} from "resource:///com/github/Aylur/ags/widget.js";
+var RamWidget = () => {
+  const label = Label3({
+    className: "ram-inner",
+    label: "\uF538"
+  });
+  const button = Button4({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  const progress = CircularProgress3({
+    className: "ram",
+    startAt: 0,
+    rounded: false,
+    child: button
+  });
+  return Box3({
+    className: "bar-hw-ram-box"
+  }).poll(30000, (box) => {
+    execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
+      progress.value = Number(val) / 100;
+      label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
+    }).catch(print);
+    box.children = [progress];
+    box.show_all();
+  });
+};
+
+// src/widgets/hardware/all.ts
+var HardwareBox = () => Box4({
+  className: "hardware-box unset",
+  children: [CpuWidget(), RamWidget(), BatteryWidget()]
+});
+var showHardwareMenu = () => App.toggleWindow("hardware_menu");
 
 // node_modules/ts-pattern/dist/index.js
 var a2 = function(...t2) {
@@ -3642,6 +3817,203 @@ class $2 {
   }
 }
 
+// src/utils/shared.ts
+var getVolumeIcon = (volume) => N3(volume * 100).with(_.number.lte(0), () => icons.audio.volume.muted).with(_.number.between(0, 34), () => icons.audio.volume.low).with(_.number.between(34, 67), () => icons.audio.volume.medium).with(_.number.between(67, 100), () => icons.audio.volume.high).with(_.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
+
+// src/widgets/NetVolume.ts
+import Network from "resource:///com/github/Aylur/ags/service/network.js";
+import {exec} from "resource:///com/github/Aylur/ags/utils.js";
+import {Box as Box5, Label as Label4} from "resource:///com/github/Aylur/ags/widget.js";
+var { Gravity: Gravity2 } = imports.gi.Gdk;
+var Audio = await Service.import("audio");
+var VolumeButton = () => {
+  const icon2 = Variable(getVolumeIcon(Audio.speaker.volume));
+  return Widget.Button({
+    className: "volume-button",
+    child: Widget.Icon({
+      icon: icon2.bind()
+    }),
+    setup: (self) => self.hook(Audio.speaker, () => icon2.value = getVolumeIcon(Audio.speaker.volume), "notify::volume"),
+    onClicked: () => Utils.execAsync("pypr toggle volume")
+  });
+};
+var NetVolumeBox = () => Widget.Box({
+  className: "internet-box small-shadow unset",
+  children: [VolumeButton()]
+});
+
+// src/widgets/menus/NotificationCenter.ts
+import {
+Box as Box7,
+Button as Button6,
+Label as Label6,
+Scrollable
+} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/utils/helpers.ts
+async function bash(strings, ...values) {
+  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i3) => str + `${values[i3] ?? ""}`).join("");
+  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
+    console.error(cmd, err);
+    return "";
+  });
+}
+async function sh(cmd) {
+  return Utils.execAsync(cmd).catch((err) => {
+    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
+    return "";
+  });
+}
+function dependencies(...bins) {
+  const missing = bins.filter((bin) => {
+    return !Utils.exec(`which ${bin}`);
+  });
+  if (missing.length > 0) {
+    console.warn("missing dependencies:", missing.join(", "));
+    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
+  }
+  return missing.length === 0;
+}
+var local = "LTR";
+
+// src/notifications/MenuNotification.ts
+import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box6,
+Button as Button5,
+EventBox,
+Icon,
+Label as Label5
+} from "resource:///com/github/Aylur/ags/widget.js";
+var { GLib: GLib2 } = imports.gi;
+var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
+var NotificationIcon = ({ appEntry, appIcon: appIcon2, image }) => {
+  if (image) {
+    return Box6({
+      vpack: "start",
+      hexpand: false,
+      className: "notification-img",
+      css: `
+              background-image: url("${image}");
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+              min-width: 78px;
+              min-height: 78px;
+              ${margin}
+              border-radius: 1rem;
+          `
+    });
+  }
+  let icon2 = "dialog-information-symbolic";
+  if (lookUpIcon(appIcon2))
+    icon2 = appIcon2;
+  if (lookUpIcon(appEntry))
+    icon2 = appEntry;
+  return Box6({
+    vpack: "start",
+    hexpand: false,
+    css: `
+          min-width: 78px;
+          min-height: 78px;
+          ${margin}
+        `,
+    children: [
+      Icon({
+        icon: icon2,
+        size: 58,
+        hpack: "center",
+        hexpand: true,
+        vpack: "center",
+        vexpand: true
+      })
+    ]
+  });
+};
+var MenuNotification_default = (notification) => {
+  const bodyLabel = Label5({
+    css: `margin-top: 1rem;`,
+    className: "notification-description",
+    hexpand: true,
+    useMarkup: true,
+    xalign: 0,
+    justification: "left",
+    wrap: true
+  });
+  try {
+    bodyLabel.label = notification.body;
+  } catch (error) {
+    bodyLabel.label = "...";
+  }
+  const content = Box6({
+    css: `min-width: 330px;`,
+    children: [
+      NotificationIcon(notification),
+      Box6({
+        hexpand: true,
+        vertical: true,
+        children: [
+          Box6({
+            children: [
+              Label5({
+                className: "notification-title",
+                css: margin,
+                xalign: 0,
+                justification: "left",
+                hexpand: true,
+                maxWidthChars: 24,
+                truncate: "end",
+                wrap: true,
+                label: notification.summary,
+                useMarkup: notification.summary.startsWith("<")
+              }),
+              Label5({
+                className: "notification-time",
+                css: `${margin} margin-top: 0.5rem;`,
+                vpack: "start",
+                label: GLib2.DateTime.new_from_unix_local(notification.time).format("%H:%M")
+              }),
+              Button5({
+                className: "notification-close-button",
+                vpack: "start",
+                child: Icon("window-close-symbolic"),
+                onClicked: () => {
+                  notification.close();
+                }
+              })
+            ]
+          }),
+          bodyLabel
+        ]
+      })
+    ]
+  });
+  const actionsbox = Box6({
+    className: "notification-actions",
+    children: notification.actions.map((action) => Button5({
+      css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
+      className: "action-button",
+      onClicked: () => notification.invoke(action.id),
+      hexpand: true,
+      child: Label5(action.label)
+    }))
+  });
+  const mainbox = EventBox({
+    className: `menu-notification ${notification.urgency}`,
+    vexpand: false,
+    onPrimaryClick: () => {
+    },
+    child: Box6({
+      vertical: true,
+      children: [
+        content,
+        ...optArr(notification.actions.length > 0, [actionsbox])
+      ]
+    })
+  });
+  return mainbox;
+};
+
 // src/widgets/menus/Popup.ts
 var PopupRevealer = ({ child, name, transition }) => Widget.Revealer({
   transition,
@@ -3685,7 +4057,7 @@ var Popup = ({
 // src/widgets/menus/NotificationCenter.ts
 var Notifications = await Service.import("notifications");
 var NotificationsBox = () => {
-  return Box2({
+  return Box7({
     className: "notification-menu-header",
     vertical: true,
     children: []
@@ -3694,20 +4066,20 @@ var NotificationsBox = () => {
     const array = Notifications.notifications.reverse();
     for (let index = 0;index < array.length; index++) {
       const element = array[index];
-      const line = index !== array.length - 1 ? Box2({
+      const line = index !== array.length - 1 ? Box7({
         class_name: "horizontal-line"
       }) : undef;
       notificationList.push(MenuNotification_default(element), line);
     }
-    let noNotifications = Box2({
+    let noNotifications = Box7({
       vertical: true,
       className: "notification-this-is-all",
       children: [
-        Label2({
+        Label6({
           className: "no-notification-icon",
           label: "\uDB84\uDDE5"
         }),
-        Label2({
+        Label6({
           className: "no-notification-text",
           label: "There are no new notifications"
         })
@@ -3720,22 +4092,22 @@ var NotificationsBox = () => {
   });
 };
 var NotificationHeader = () => {
-  return Box2({
+  return Box7({
     className: "notification-header-box",
     spacing: 70,
     children: [
-      Button2({
+      Button6({
         className: "unset notification-center-header-clear",
         label: "\uEA81",
         onClicked: () => {
           Notifications.clear();
         }
       }),
-      Label2({
+      Label6({
         className: "notification-center-header-text",
         label: "Notification Center"
       }),
-      Button2({
+      Button6({
         className: "unset notification-center-header-mute",
         label: "\uDB80\uDC9A",
         onClicked: () => Notifications.dnd = !Notifications.dnd
@@ -3760,13 +4132,13 @@ var NotificationCenter = () => Popup({
   margins: [30, 200],
   anchor: ["bottom", "right"],
   transition: "slide_up",
-  child: Box2({
+  child: Box7({
     className: "left-menu-box",
     vertical: true,
     children: [NotificationHeader(), notificationContainer]
   })
 });
-var NotificationCenterButton = () => Button2({
+var NotificationCenterButton = () => Button6({
   className: "notification-center-button unset",
   label: "\uF0F3",
   onClicked: () => App.toggleWindow("notification_center"),
@@ -3779,330 +4151,6 @@ var NotificationCenterButton = () => Button2({
   } else if (Notifications.notifications.length > 0) {
     self.label = `${Notifications.notifications.length} \uEB9A`;
   }
-});
-
-// src/lib/icons.ts
-import GLib20 from "gi://GLib";
-var substitutes = {
-  "transmission-gtk": "transmission",
-  "blueberry.py": "blueberry",
-  Caprine: "facebook-messenger",
-  "com.raggesilver.BlackBox-symbolic": "terminal-symbolic",
-  "org.wezfurlong.wezterm-symbolic": "terminal-symbolic",
-  "audio-headset-bluetooth": "audio-headphones-symbolic",
-  "audio-card-analog-usb": "audio-speakers-symbolic",
-  "audio-card-analog-pci": "audio-card-symbolic",
-  "preferences-system": "emblem-system-symbolic",
-  "com.github.Aylur.ags-symbolic": "controls-symbolic",
-  "com.github.Aylur.ags": "controls-symbolic",
-  "code-url-handler": "code"
-};
-var icons = {
-  missing: "image-missing-symbolic",
-  fallback: {
-    executable: "application-x-executable-symbolic",
-    notification: "dialog-information-symbolic",
-    video: "video-x-generic-symbolic",
-    audio: "audio-x-generic-symbolic"
-  },
-  ui: {
-    close: "window-close-symbolic",
-    colorpicker: "color-select-symbolic",
-    info: "info-symbolic",
-    link: "external-link-symbolic",
-    lock: "system-lock-screen-symbolic",
-    menu: "open-menu-symbolic",
-    refresh: "view-refresh-symbolic",
-    search: "system-search-symbolic",
-    settings: "emblem-system-symbolic",
-    themes: "preferences-desktop-theme-symbolic",
-    tick: "object-select-symbolic",
-    time: "hourglass-symbolic",
-    toolbars: "toolbars-symbolic",
-    warning: "dialog-warning-symbolic",
-    avatar: "avatar-default-symbolic",
-    arrow: {
-      right: "pan-end-symbolic",
-      left: "pan-start-symbolic",
-      down: "pan-down-symbolic",
-      up: "pan-up-symbolic"
-    }
-  },
-  audio: {
-    mic: {
-      muted: "microphone-disabled-symbolic",
-      low: "microphone-sensitivity-low-symbolic",
-      medium: "microphone-sensitivity-medium-symbolic",
-      high: "microphone-sensitivity-high-symbolic"
-    },
-    volume: {
-      muted: "audio-volume-muted-symbolic",
-      low: "audio-volume-low-symbolic",
-      medium: "audio-volume-medium-symbolic",
-      high: "audio-volume-high-symbolic",
-      overamplified: "audio-volume-overamplified-symbolic"
-    },
-    type: {
-      headset: "audio-headphones-symbolic",
-      speaker: "audio-speakers-symbolic",
-      card: "audio-card-symbolic"
-    },
-    mixer: "mixer-symbolic"
-  },
-  powerprofile: {
-    balanced: "power-profile-balanced-symbolic",
-    "power-saver": "power-profile-power-saver-symbolic",
-    performance: "power-profile-performance-symbolic"
-  },
-  asusctl: {
-    profile: {
-      Balanced: "power-profile-balanced-symbolic",
-      Quiet: "power-profile-power-saver-symbolic",
-      Performance: "power-profile-performance-symbolic"
-    },
-    mode: {
-      Integrated: "processor-symbolic",
-      Hybrid: "controller-symbolic"
-    }
-  },
-  battery: {
-    charging: "battery-flash-symbolic",
-    warning: "battery-empty-symbolic"
-  },
-  bluetooth: {
-    enabled: "bluetooth-active-symbolic",
-    disabled: "bluetooth-disabled-symbolic"
-  },
-  brightness: {
-    indicator: "display-brightness-symbolic",
-    keyboard: "keyboard-brightness-symbolic",
-    screen: "display-brightness-symbolic"
-  },
-  powermenu: {
-    sleep: "weather-clear-night-symbolic",
-    reboot: "system-reboot-symbolic",
-    logout: "system-log-out-symbolic",
-    shutdown: "system-shutdown-symbolic"
-  },
-  recorder: {
-    recording: "media-record-symbolic"
-  },
-  notifications: {
-    noisy: "org.gnome.Settings-notifications-symbolic",
-    silent: "notifications-disabled-symbolic",
-    message: "chat-bubbles-symbolic"
-  },
-  trash: {
-    full: "user-trash-full-symbolic",
-    empty: "user-trash-symbolic"
-  },
-  mpris: {
-    shuffle: {
-      enabled: "media-playlist-shuffle-symbolic",
-      disabled: "media-playlist-consecutive-symbolic"
-    },
-    loop: {
-      none: "media-playlist-repeat-symbolic",
-      track: "media-playlist-repeat-song-symbolic",
-      playlist: "media-playlist-repeat-symbolic"
-    },
-    playing: "media-playback-pause-symbolic",
-    paused: "media-playback-start-symbolic",
-    stopped: "media-playback-start-symbolic",
-    prev: "media-skip-backward-symbolic",
-    next: "media-skip-forward-symbolic"
-  },
-  system: {
-    cpu: "org.gnome.SystemMonitor-symbolic",
-    ram: "drive-harddisk-solidstate-symbolic",
-    temp: "temperature-symbolic"
-  },
-  color: {
-    dark: "dark-mode-symbolic",
-    light: "light-mode-symbolic"
-  }
-};
-var icon = (name, fallback = icons.missing) => {
-  if (!name)
-    return fallback;
-  const icon2 = substitutes[name] ?? name;
-  return GLib20.file_test(name, GLib20.FileTest.EXISTS) || Utils.lookUpIcon(icon2) ? icon2 : fallback;
-};
-var appIcon = (s3) => icon(s3 ?? undef, icons.fallback.executable);
-
-// src/widgets/Workspaces.ts
-import Gtk30 from "gi://Gtk?version=3.0";
-import {Box as Box3, Button as Button3} from "resource:///com/github/Aylur/ags/widget.js";
-var Hyprland = await Service.import("hyprland");
-var Apps = await Service.import("applications");
-var setWorkspace = (num) => Hyprland.messageAsync(`dispatch workspace ${num}`);
-var ClientRenderer = ({ wsId }) => Widget.Box({
-  halign: Gtk30.Align.CENTER,
-  spacing: 2,
-  css: "padding: 2 0;",
-  children: Hyprland.bind("clients").as(Ra.filterMap((client) => client.workspace.id === wsId && client.mapped ? Widget.Icon({
-    icon: pipe(Apps.list.find((app2) => app2.match(client.class)), (app2) => appIcon(app2?.icon_name ?? undef)),
-    css: "font-size: 12px;"
-  }) : undef))
-});
-var MonitorWorkspaces = (monitorId = 0) => {
-  const firstWsId = config_default.workspacesPerMonitor * monitorId + 1;
-  return Box3({
-    className: "unset workspaces",
-    children: Ra.range(firstWsId, firstWsId + config_default.workspacesPerMonitor - 1).map((i3) => Button3({
-      css: "min-width: 30px;",
-      onClicked: () => setWorkspace(i3),
-      className: Hyprland.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
-      child: ClientRenderer({
-        wsId: i3
-      })
-    }))
-  });
-};
-var Workspaces = () => Box3({
-  className: "unset workspace-box",
-  spacing: 4,
-  children: Hyprland.monitors.map((m2) => MonitorWorkspaces(m2.id))
-});
-
-// src/widgets/hardware/all.ts
-import {Box as Box6} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/widgets/hardware/battery.ts
-import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
-import {
-Button as Button4,
-CircularProgress,
-Label as Label3
-} from "resource:///com/github/Aylur/ags/widget.js";
-var BatteryWidget = () => {
-  const label = Label3({
-    className: "battery-inner",
-    label: "\uF240"
-  });
-  const button = Button4({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  return CircularProgress({
-    className: "battery",
-    child: button,
-    startAt: 0,
-    rounded: false
-  }).hook(Battery, (batteryProgress) => {
-    if (Battery.charging) {
-      label.class_name = "battery-inner-charging";
-    } else {
-      label.class_name = "battery-inner";
-    }
-    batteryProgress.value = Battery.percent / 100;
-    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
-  });
-};
-
-// src/widgets/hardware/cpu.ts
-import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box4,
-Button as Button5,
-CircularProgress as CircularProgress2,
-Label as Label4
-} from "resource:///com/github/Aylur/ags/widget.js";
-var CpuWidget = () => {
-  const label = Label4({
-    className: "cpu-inner",
-    label: "\uF2DB"
-  });
-  const button = Button5({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  const progress = CircularProgress2({
-    className: "cpu",
-    child: button,
-    startAt: 0,
-    rounded: false
-  });
-  return Box4({
-    className: "bar-hw-cpu-box"
-  }).poll(1000, (box) => {
-    execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
-      progress.value = Number(val) / 100;
-      label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
-    }).catch(print);
-    box.children = [progress];
-    box.show_all();
-  });
-};
-
-// src/widgets/hardware/ram.ts
-import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box5,
-Button as Button6,
-CircularProgress as CircularProgress3,
-Label as Label5
-} from "resource:///com/github/Aylur/ags/widget.js";
-var RamWidget = () => {
-  const label = Label5({
-    className: "ram-inner",
-    label: "\uF538"
-  });
-  const button = Button6({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  const progress = CircularProgress3({
-    className: "ram",
-    startAt: 0,
-    rounded: false,
-    child: button
-  });
-  return Box5({
-    className: "bar-hw-ram-box"
-  }).poll(30000, (box) => {
-    execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
-      progress.value = Number(val) / 100;
-      label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
-    }).catch(print);
-    box.children = [progress];
-    box.show_all();
-  });
-};
-
-// src/widgets/hardware/all.ts
-var HardwareBox = () => Box6({
-  className: "hardware-box unset",
-  children: [CpuWidget(), RamWidget(), BatteryWidget()]
-});
-var showHardwareMenu = () => App.toggleWindow("hardware_menu");
-
-// src/utils/shared.ts
-var getVolumeIcon = (volume) => N3(volume * 100).with(_.number.lte(0), () => icons.audio.volume.muted).with(_.number.between(0, 34), () => icons.audio.volume.low).with(_.number.between(34, 67), () => icons.audio.volume.medium).with(_.number.between(67, 100), () => icons.audio.volume.high).with(_.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
-
-// src/widgets/internet.ts
-import Network from "resource:///com/github/Aylur/ags/service/network.js";
-import {exec} from "resource:///com/github/Aylur/ags/utils.js";
-import {Box as Box7, Label as Label6} from "resource:///com/github/Aylur/ags/widget.js";
-var { Gravity } = imports.gi.Gdk;
-var Audio = await Service.import("audio");
-var VolumeButton = () => {
-  const icon2 = Variable(getVolumeIcon(Audio.speaker.volume));
-  return Widget.Button({
-    className: "volume-button",
-    child: Widget.Icon({
-      icon: icon2.bind()
-    }),
-    setup: (self) => self.hook(Audio.speaker, () => icon2.value = getVolumeIcon(Audio.speaker.volume), "notify::volume"),
-    onClicked: () => Utils.execAsync("pypr toggle volume")
-  });
-};
-var NetVolumeBox = () => Widget.Box({
-  className: "internet-box small-shadow unset",
-  children: [VolumeButton()]
 });
 
 // src/services/ThemeService.js
@@ -5282,40 +5330,6 @@ var MenuButton = () => Button7({
   onClicked: () => App.toggleWindow("left_menu")
 });
 
-// src/widgets/systray.ts
-var { Gravity: Gravity2 } = imports.gi.Gdk;
-var SystemTray = await Service.import("systemtray");
-var PanelButton = ({ className, content, ...rest }) => Widget.Button({
-  className: `panel-button ${className} unset`,
-  child: Widget.Box({ children: [content] }),
-  ...rest
-});
-var SysTrayItem = (item) => PanelButton({
-  className: "tray-btn unset",
-  content: Widget.Icon().bind("icon", item, "icon"),
-  tooltip_markup: item.bind("tooltip_markup"),
-  setup: (btn) => {
-    const menu = item.menu;
-    if (!menu)
-      return;
-    const id = item.menu?.connect("popped-up", () => {
-      btn.toggleClassName("active");
-      menu.connect("notify::visible", () => {
-        btn.toggleClassName("active", menu.visible);
-      });
-      id && menu.disconnect(id);
-    });
-    if (id)
-      btn.connect("destroy", () => item.menu?.disconnect(id));
-  },
-  onPrimaryClick: (btn) => pipe(N2.fromExecution(() => item.activate), N2.tapError(() => item.menu?.popup_at_widget(btn, Gravity2.SOUTH, Gravity2.NORTH, null))),
-  onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity2.SOUTH, Gravity2.NORTH, null)
-});
-var SysTrayBox = () => Widget.Box({
-  class_name: "systray unset",
-  children: SystemTray.bind("items").as((items) => items.filter(({ id }) => !config_default.systray.ignore.includes(id)).map(SysTrayItem))
-});
-
 // src/Bar.ts
 import {
 Box as Box9,
@@ -5347,11 +5361,7 @@ var DynamicWallpaper = () => Widget.Button({
 });
 var Right = () => Box9({
   spacing: 8,
-  children: [
-    Workspaces(),
-    HardwareBox(),
-    DynamicWallpaper()
-  ]
+  children: [Workspaces(), HardwareBox(), DynamicWallpaper()]
 });
 var Center = () => Box9({});
 var Left = () => Box9({

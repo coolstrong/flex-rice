@@ -21,35 +21,14 @@ Utils.monitorFile(`${App.configDir}/scss`, () => {
 });
 
 let windows = [
-    // VolumeOSD(),
     OSD(),
     MyNotifications(),
     NotificationCenter(),
     HardwareMenu(),
-    // WeatherMenu(),
-
     Bar({ monitor: 0 }),
     SystemMenu(),
-
-    // ... Desktop widgets ... //
-    /*     ColorWidget,
-    win20Widget,
-    materialWidget,
-    unicatWidget,
-    blackHoleWidget,
-    goldenWidget,
-    harmonyWidget,
-    newCatWidget,
-    deerWidget,
-    circlesMusicWidget,
-    whiteFlowerWidget, */
 ];
 
-// export default {
-//     css,
-//     cacheNotificationActions: true,
-//     windows,
-// };
 App.config({
     style: css,
     cacheNotificationActions: true,

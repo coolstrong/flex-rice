@@ -1,11 +1,11 @@
 const MAIN_PATH = `${App.configDir}`;
 const ASSETS_PATH = `${App.configDir}/assets`;
 
-const getAssets = (path) => {
+const getAssets = path => {
     return `${ASSETS_PATH}/${path}`;
 };
 
-const getPath = (path) => {
+const getPath = path => {
     return `${MAIN_PATH}/${path}`;
 };
 
@@ -32,12 +32,6 @@ const settings = {
         mainCss: `${getPath("/scss/main.scss")}`,
         styleCss: `${getPath("/style.scss")}`,
     },
-    // weather: {
-    //     // provider is 'ar.wttr.in'
-    //     language: "ar", // Not implemented yot - only arabic is supported
-    //     location: "sanaa",
-    //     format: "j1",
-    // },
 };
 
 export default settings;

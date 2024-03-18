@@ -1,6 +1,5 @@
 //copied from https://github.com/Aylur/dotfiles/blob/main/ags/lib/icons.ts
 import { undef } from "@/utils/common";
-import { flow } from "@mobily/ts-belt";
 import GLib20 from "gi://GLib";
 export const substitutes = {
     "transmission-gtk": "transmission",
@@ -140,6 +139,20 @@ export const icons = {
     color: {
         dark: "dark-mode-symbolic",
         light: "light-mode-symbolic",
+    },
+    network: {
+        wifi: {
+            0: "network-wireless-connected-00",
+            25: "network-wireless-connected-25",
+            50: "network-wireless-connected-50",
+            75: "network-wireless-connected-75",
+            100: "network-wireless-connected-100",
+            disconnected: "network-wireless-disconnected",
+        },
+        wired: {
+            connected: "network-wired",
+            disconnected: "network-wired-unavailable",
+        },
     },
 };
 
