@@ -1,5 +1,6 @@
 import type { TrayItem } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 import config from "config.json";
+import { R, pipe } from "@mobily/ts-belt";
 const { Gravity } = imports.gi.Gdk;
 const SystemTray = await Service.import("systemtray");
 
@@ -28,56 +29,31 @@ const SysTrayItem = (item: TrayItem) =>
 
             if (id) btn.connect("destroy", () => item.menu?.disconnect(id));
         },
-        onPrimaryClick: (btn, event) => {
-            try {
-                item.activate(event);
-            } catch (TypeError) {
-                // item.menu.popup_at_widget(
-                //     btn,
-                //     Gravity.SOUTH,
-                //     Gravity.NORTH,
-                //     null
-                // );
-            }
-        },
+        onPrimaryClick: btn =>
+            pipe(
+                R.fromExecution(() => item.activate),
+                R.tapError(() =>
+                    item.menu?.popup_at_widget(
+                        btn,
+                        Gravity.SOUTH,
+                        Gravity.NORTH,
+                        null
+                    )
+                )
+            ),
+
         onSecondaryClick: btn =>
             item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null),
     });
 
 export const SysTrayBox = () =>
     Widget.Box({
-        className: "systray unset",
-        attribute: {
-            items: new Map(),
-            onAdded: (box, id) => {
-                const item = SystemTray.getItem(id);
-                if (
-                    config.systray.ignore.includes(id) ||
-                    box.attribute.items.has(id) ||
-                    !item
+        class_name: "systray unset",
+        children: SystemTray.bind("items").as(items =>
+            items
+                .filter(
+                    ({ id }) => !(<string[]>config.systray.ignore).includes(id)
                 )
-                    return;
-
-                const widget = SysTrayItem(item);
-                box.attribute.items.set(id, widget);
-                box.add(widget);
-                box.show_all();
-            },
-            onRemoved: (box, id) => {
-                if (!box.attribute.items.has(id)) return;
-
-                box.attribute.items.get(id).destroy();
-                box.attribute.items.delete(id);
-            },
-        },
-        setup: self =>
-            SystemTray.items.forEach(item =>
-                self.attribute.onAdded(self, item.id)
-            ),
-    })
-        .hook(SystemTray, (box, id) => box.attribute.onAdded(box, id), "added")
-        .hook(
-            SystemTray,
-            (box, id) => box.attribute.onRemoved(box, id),
-            "removed"
-        );
+                .map(SysTrayItem)
+        ),
+    });

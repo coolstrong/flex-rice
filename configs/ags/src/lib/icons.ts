@@ -14,6 +14,7 @@ export const substitutes = {
     "preferences-system": "emblem-system-symbolic",
     "com.github.Aylur.ags-symbolic": "controls-symbolic",
     "com.github.Aylur.ags": "controls-symbolic",
+    "code-url-handler": "code",
 };
 
 export const icons = {
@@ -156,7 +157,5 @@ export const icon = (
         : fallback;
 };
 
-export const appIcon: (appName: string | undef) => string = flow(
-    // O.map(s => s + "-symbolic"),
-    s => icon(s ?? undef, icons.fallback.executable)
-);
+export const appIcon: (appName: string | undef) => string = s =>
+    icon(s ?? undef, icons.fallback.executable);

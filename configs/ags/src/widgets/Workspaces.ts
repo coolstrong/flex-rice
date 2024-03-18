@@ -1,6 +1,6 @@
 import { appIcon } from "@/lib/icons";
 import { assert, tuple, undef } from "@/utils/common";
-import { A, pipe } from "@mobily/ts-belt";
+import { A, F, pipe } from "@mobily/ts-belt";
 import config from "config";
 import Gtk30 from "gi://Gtk?version=3.0";
 import { Box, Button } from "resource:///com/github/Aylur/ags/widget.js";
@@ -10,13 +10,6 @@ const Apps = await Service.import("applications");
 
 const setWorkspace = (num: number) =>
     Hyprland.messageAsync(`dispatch workspace ${num}`);
-
-// const WS_SIZE = tuple(20, 16);
-
-// const getScale = ({ height, width }: { width: number; height: number }) => ({
-//     width: Math.round(WS_SIZE[0] / width),
-//     height: Math.round(WS_SIZE[1] / height),
-// });
 
 const ClientRenderer = ({ wsId }: { wsId: number }) =>
     Widget.Box({
@@ -37,37 +30,6 @@ const ClientRenderer = ({ wsId }: { wsId: number }) =>
             )
         ),
     });
-// Widget.Fixed({
-//     expand: true,
-// }).hook(
-//     Hyprland,
-//     self => {
-//         self.get_children().forEach($ => $.destroy());
-
-//         Hyprland.clients
-//             .filter($ => $.workspace.id === wsId)
-//             .forEach(
-//                 client =>
-//                     client.mapped &&
-//                     self.put(
-//                         Widget.Icon({
-//                             icon: pipe(
-//                                 Apps.list.find(app =>
-//                                     app.match(client.class)
-//                                 ),
-//                                 app => appIcon(app?.icon_name ?? undef)
-//                             ),
-//                             css: "font-size: 12px;",
-//                         }),
-//                         client.at[0] * scale.width,
-//                         client.at[1] * scale.height
-//                     )
-//             );
-
-//         self.show_all();
-//     },
-//     "notify::clients"
-// );
 
 const MonitorWorkspaces = (monitorId = 0) => {
     const firstWsId = config.workspacesPerMonitor * monitorId + 1;

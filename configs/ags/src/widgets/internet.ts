@@ -1,3 +1,5 @@
+import { icons } from "@/lib/icons";
+import { getVolumeIcon } from "@/utils/shared";
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import { exec } from "resource:///com/github/Aylur/ags/utils.js";
 import { Box, Label } from "resource:///com/github/Aylur/ags/widget.js";
@@ -77,35 +79,25 @@ const NetSpeedMeters = () => {
     });
 };
 
-export const VolumeButton = () =>
-    Widget.Button({
+export const VolumeButton = () => {
+    const icon = Variable(getVolumeIcon(Audio.speaker.volume));
+
+    return Widget.Button({
         className: "volume-button",
         child: Widget.Icon({
-            icon: Audio.bind("speaker").as(({ volume }) =>
-                match(volume * 100)
-                    .with(P.number.lte(0), () => "audio-volume-muted-symbolic")
-                    .with(
-                        P.number.between(0, 34),
-                        () => "audio-volume-low-symbolic"
-                    )
-                    .with(
-                        P.number.between(34, 67),
-                        () => "audio-volume-medium-symbolic"
-                    )
-                    .with(
-                        P.number.between(67, 100),
-                        () => "audio-volume-high-symbolic"
-                    )
-                    .with(
-                        P.number.gte(100),
-                        () => "audio-volume-overamplified-symbolic"
-                    )
-                    .otherwise(() => "")
-            ),
+            icon: icon.bind(),
         }),
+
+        setup: self =>
+            self.hook(
+                Audio.speaker,
+                () => (icon.value = getVolumeIcon(Audio.speaker.volume)),
+                "notify::volume"
+            ),
 
         onClicked: () => Utils.execAsync("pypr toggle volume"),
     });
+};
 
 const NetworkButton = () => {
     const label = Variable("󰤯");

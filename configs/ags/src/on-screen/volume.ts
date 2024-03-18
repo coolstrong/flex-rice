@@ -1,75 +1,84 @@
-import { tuple } from "@/utils/common";
+import { icons } from "@/lib/icons";
+import brightness from "@/services/brightness";
+import { getVolumeIcon } from "@/utils/shared";
 import Audio from "resource:///com/github/Aylur/ags/service/audio.js";
-import {
-    Box,
-    Icon,
-    Slider,
-    Stack,
-    Window,
-} from "resource:///com/github/Aylur/ags/widget.js";
+import { Icon, Window } from "resource:///com/github/Aylur/ags/widget.js";
+import { match } from "ts-pattern";
 import ShowWindow from "../utils/ShowWindow";
 
-var oldValue = 0;
+export const OSD = () => {
+    const progress = Variable(Audio.speaker.volume);
+    type OSDType = "volume" | "br-screen" | "br-keyboard";
+    const type = Variable<OSDType>("volume");
 
-export const Volume = () =>
-    Box({
-        className: "vol-osd shadow",
-        css: "min-width: 140px",
-        children: [
-            Stack({
-                className: "vol-stack",
-                children: {
-                    // tuples of [string, Widget]
-                    101: Icon("audio-volume-overamplified-symbolic"),
-                    67: Icon("audio-volume-high-symbolic"),
-                    34: Icon("audio-volume-medium-symbolic"),
-                    1: Icon("audio-volume-low-symbolic"),
-                    0: Icon("audio-volume-muted-symbolic"),
-                },
-            }).hook(
-                Audio,
-                (stack) => {
-                    if (!Audio.speaker) return;
-                    if (Audio.speaker.is_muted) {
-                        stack.shown = 0;
-                        return;
-                    }
+    const icon = Utils.derive([type, progress], (type, progress) =>
+        match(type)
+            .with("volume", () => getVolumeIcon(progress))
+            .with("br-screen", () => icons.brightness.screen)
+            .with("br-keyboard", () => icons.brightness.keyboard)
+            .exhaustive()
+    );
 
-                    stack.shown =
-                        tuple(101, 67, 34, 1, 0).find(
-                            (threshold) =>
-                                threshold <= Audio.speaker.volume * 100
-                        ) ?? 0;
-                },
-                "speaker-changed"
-            ),
-            Slider({
-                hexpand: true,
-                className: "unset",
-                drawValue: false,
-                onChange: ({ value }) => (Audio.speaker.volume = value),
-            }).hook(
-                Audio,
-                (slider) => {
-                    if (!Audio.speaker || oldValue === Audio.speaker.volume) {
-                        return;
-                    }
-                    ShowWindow("vol_osd");
-                    oldValue = Audio.speaker.volume;
-                    slider.value = oldValue;
-                },
-                "speaker-changed"
-            ),
-        ],
-    });
+    const show = (value: number, osdType: OSDType) => {
+        progress.value = value;
+        type.value = osdType;
+        ShowWindow("osd");
+    };
 
-export const VolumeOSD = () =>
-    Window({
-        name: `vol_osd`,
+    return Window({
+        name: `osd`,
         focusable: false,
         margins: [0, 0, 140, 0],
         layer: "overlay",
-        popup: true,
         anchor: ["bottom"],
-        child: Volume(),
+
+        setup: self =>
+            self
+                .hook(
+                    Audio.speaker,
+                    () => show(Audio.speaker.volume, "volume"),
+                    "notify::volume"
+                )
+                .hook(
+                    brightness,
+                    () => show(brightness.screen, "br-screen"),
+                    "notify::screen"
+                )
+                .hook(
+                    brightness,
+                    () => show(brightness.screen, "br-keyboard"),
+                    "notify::kbd"
+                ),
+
+        child: Widget.Box({
+            className: "vol-osd shadow",
+            css: "min-width: 140px",
+            children: [
+                Widget.Box({
+                    className: "vol-stack",
+                    child: Icon({
+                        icon: icon.bind(),
+                    }),
+                }),
+                Widget.Slider({
+                    hexpand: true,
+                    className: "unset",
+                    drawValue: false,
+                    value: progress.bind(),
+                    onChange: ({ value }) =>
+                        match(type.value)
+                            .with(
+                                "volume",
+                                () => (Audio.speaker.volume = value)
+                            )
+                            .with(
+                                "br-screen",
+                                () => (brightness.screen = value)
+                            )
+                            .with("br-keyboard", () => (brightness.kbd = value))
+                            .exhaustive(),
+                }),
+            ],
+        }),
     });
+};
