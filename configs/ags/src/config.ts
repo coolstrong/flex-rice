@@ -4,7 +4,7 @@ import { Bar } from "./Bar.js";
 import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
 import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
-import { OSD } from "./on-screen/volume.js";
+import { OSD } from "./widgets/OSD.js";
 import { SystemMenu } from "./widgets/menus/SystemMenu.js";
 
 // in config.js

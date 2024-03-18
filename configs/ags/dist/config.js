@@ -5941,7 +5941,7 @@ class Brightness extends Service {
 }
 var brightness_default = new Brightness;
 
-// src/on-screen/volume.ts
+// src/widgets/OSD.ts
 import Audio2 from "resource:///com/github/Aylur/ags/service/audio.js";
 import {Icon as Icon3, Window as Window4} from "resource:///com/github/Aylur/ags/widget.js";
 
@@ -5962,7 +5962,7 @@ var ShowWindow_default = (windowName, timeout4 = 1000) => {
   isProcessing = true;
 };
 
-// src/on-screen/volume.ts
+// src/widgets/OSD.ts
 var OSD = () => {
   const progress = Variable(Audio2.speaker.volume);
   const type = Variable("volume");
