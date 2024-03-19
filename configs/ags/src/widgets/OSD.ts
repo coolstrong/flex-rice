@@ -46,7 +46,7 @@ export const OSD = () => {
                 )
                 .hook(
                     brightness,
-                    () => show(brightness.screen, "br-keyboard"),
+                    () => show(brightness.kbd, "br-keyboard"),
                     "notify::kbd"
                 ),
 

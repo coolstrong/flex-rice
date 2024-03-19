@@ -43,31 +43,30 @@ const ThemeButton = ({
     theme,
     label_css = "theme-btn-label",
     icon_css = "theme-btn-icon",
-    end = local === "RTL" ? "margin-left: 1.1rem;" : "margin-right: 1.1rem;",
+
     css = `
-        min-width: 5rem;
         min-height: 2rem;
-        ${end}
         border-radius: 1rem;
     `,
 }) => {
     const _label = Label({
         className: `unset ${label_css}`,
-        // hpack: "start",
+        hpack: "start",
         label: label,
     });
 
     const _icon = Label({
         className: `unset ${icon_css}`,
+        css: `min-width: 1.5rem;`,
         label: icon,
         xalign: 0.5,
     });
 
     const box = Box({
         className: "unset theme-btn-box",
-        hexpand: true,
-        homogeneous: true,
-        children: [_label, _icon],
+        // hexpand: true,
+        // homogeneous: true,
+        children: [_label, Widget.Box({ hexpand: true }), _icon],
     });
 
     const button = Button({
@@ -133,7 +132,7 @@ const ThemesButtonsRowOne = () => {
     });
 
     const darkTheme = ThemeButton({
-        label: "dark",
+        label: "Dark",
         icon: "󱀝",
         theme: DARK_THEME,
     });
@@ -205,7 +204,6 @@ const ThemesButtonsRowOne = () => {
                 border-top-right-radius: 0rem;
                 border-bottom-right-radius: 0rem;
             `,
-                end: "",
             }),
         ],
     });
@@ -215,35 +213,40 @@ const ThemesButtonsRowOne = () => {
     // --------------------------
     const row1 = Box({
         homogeneous: true,
-        children: [blackHoleTheme, deerTheme],
+        children: [materialYouTheme, win20Theme],
+        spacing: 8,
     });
     const row2 = Box({
         homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [siberianTheme, materialYouTheme /* win20Theme */],
+        spacing: 8,
+        children: [siberianTheme, blackHoleTheme],
     });
     const row3 = Box({
         homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [win20Theme, darkTheme],
+        spacing: 8,
+        children: [deerTheme, darkTheme],
     });
     const row4 = Box({
         homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [newCatTheme, colorTheme /* goldenTheme, harmonyTheme */],
+        spacing: 8,
+        children: [newCatTheme, circlesTheme],
     });
     const row5 = Box({
         homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        children: [circlesTheme, unicatTheme /* whiteFlower, dynamicTheme */],
+        spacing: 8,
+        children: [colorTheme, unicatTheme],
     });
 
     return Box({

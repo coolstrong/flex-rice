@@ -26,7 +26,7 @@ const black_hole = {
 };
 
 const win_20 = {
-    wallpaper: `${WALLPAPER_PATH}/win20.png`,
+    wallpaper: `${WALLPAPER_PATH}/win30.jpg`,
     css_theme: "win20.scss",
     plasma_color: "ArcMidnightDark.colors",
     qt_style_theme: "Breeze",

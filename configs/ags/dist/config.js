@@ -4223,7 +4223,7 @@ var black_hole = {
   dynamic: false
 };
 var win_20 = {
-  wallpaper: `${WALLPAPER_PATH}/win20.png`,
+  wallpaper: `${WALLPAPER_PATH}/win30.jpg`,
   css_theme: "win20.scss",
   plasma_color: "ArcMidnightDark.colors",
   qt_style_theme: "Breeze",
@@ -5077,28 +5077,25 @@ var ThemeButton = ({
   theme,
   label_css = "theme-btn-label",
   icon_css = "theme-btn-icon",
-  end = local === "RTL" ? "margin-left: 1.1rem;" : "margin-right: 1.1rem;",
   css = `
-        min-width: 5rem;
         min-height: 2rem;
-        ${end}
         border-radius: 1rem;
     `
 }) => {
   const _label = Label7({
     className: `unset ${label_css}`,
+    hpack: "start",
     label
   });
   const _icon = Label7({
     className: `unset ${icon_css}`,
+    css: `min-width: 1.5rem;`,
     label: icon2,
     xalign: 0.5
   });
   const box = Box8({
     className: "unset theme-btn-box",
-    hexpand: true,
-    homogeneous: true,
-    children: [_label, _icon]
+    children: [_label, Widget.Box({ hexpand: true }), _icon]
   });
   const button = Button7({
     css,
@@ -5149,7 +5146,7 @@ var ThemesButtonsRowOne = () => {
     theme: GAME_THEME
   });
   const darkTheme = ThemeButton({
-    label: "dark",
+    label: "Dark",
     icon: "\uDB84\uDC1D",
     theme: DARK_THEME
   });
@@ -5213,42 +5210,46 @@ var ThemesButtonsRowOne = () => {
 
                 border-top-right-radius: 0rem;
                 border-bottom-right-radius: 0rem;
-            `,
-        end: ""
+            `
       })
     ]
   });
   const row1 = Box8({
     homogeneous: true,
-    children: [blackHoleTheme, deerTheme]
+    children: [materialYouTheme, win20Theme],
+    spacing: 8
   });
   const row2 = Box8({
     homogeneous: true,
     css: `
             margin-top: 1rem;
         `,
-    children: [siberianTheme, materialYouTheme]
+    spacing: 8,
+    children: [siberianTheme, blackHoleTheme]
   });
   const row3 = Box8({
     homogeneous: true,
     css: `
             margin-top: 1rem;
         `,
-    children: [win20Theme, darkTheme]
+    spacing: 8,
+    children: [deerTheme, darkTheme]
   });
   const row4 = Box8({
     homogeneous: true,
     css: `
             margin-top: 1rem;
         `,
-    children: [newCatTheme, colorTheme]
+    spacing: 8,
+    children: [newCatTheme, circlesTheme]
   });
   const row5 = Box8({
     homogeneous: true,
     css: `
             margin-top: 1rem;
         `,
-    children: [circlesTheme, unicatTheme]
+    spacing: 8,
+    children: [colorTheme, unicatTheme]
   });
   return Box8({
     className: "themes-box",
@@ -5988,7 +5989,7 @@ var OSD = () => {
     margins: [0, 0, 140, 0],
     layer: "overlay",
     anchor: ["bottom"],
-    setup: (self) => self.hook(Audio2.speaker, () => show(Audio2.speaker.volume, "volume"), "notify::volume").hook(brightness_default, () => show(brightness_default.screen, "br-screen"), "notify::screen").hook(brightness_default, () => show(brightness_default.screen, "br-keyboard"), "notify::kbd"),
+    setup: (self) => self.hook(Audio2.speaker, () => show(Audio2.speaker.volume, "volume"), "notify::volume").hook(brightness_default, () => show(brightness_default.screen, "br-screen"), "notify::screen").hook(brightness_default, () => show(brightness_default.kbd, "br-keyboard"), "notify::kbd"),
     child: Widget.Box({
       className: "vol-osd shadow",
       css: "min-width: 140px",
