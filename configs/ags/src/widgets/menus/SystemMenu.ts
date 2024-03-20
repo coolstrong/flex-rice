@@ -214,14 +214,14 @@ const ThemesButtonsRowOne = () => {
     const row1 = Box({
         homogeneous: true,
         children: [materialYouTheme, win20Theme],
-        spacing: 8,
+        spacing: 20,
     });
     const row2 = Box({
         homogeneous: true,
         css: `
             margin-top: 1rem;
         `,
-        spacing: 8,
+        spacing: 20,
         children: [siberianTheme, blackHoleTheme],
     });
     const row3 = Box({
@@ -229,7 +229,7 @@ const ThemesButtonsRowOne = () => {
         css: `
             margin-top: 1rem;
         `,
-        spacing: 8,
+        spacing: 20,
         children: [deerTheme, darkTheme],
     });
     const row4 = Box({
@@ -237,7 +237,7 @@ const ThemesButtonsRowOne = () => {
         css: `
             margin-top: 1rem;
         `,
-        spacing: 8,
+        spacing: 20,
         children: [newCatTheme, circlesTheme],
     });
     const row5 = Box({
@@ -245,7 +245,7 @@ const ThemesButtonsRowOne = () => {
         css: `
             margin-top: 1rem;
         `,
-        spacing: 8,
+        spacing: 20,
         children: [colorTheme, unicatTheme],
     });
 

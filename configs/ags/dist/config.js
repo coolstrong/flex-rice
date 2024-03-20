@@ -4015,16 +4015,25 @@ var MenuNotification_default = (notification) => {
 };
 
 // src/widgets/menus/Popup.ts
-var PopupRevealer = ({ child, name, transition }) => Widget.Revealer({
+var PopupRevealer = ({
+  child,
+  name,
+  transition,
+  onOpen
+}) => Widget.Revealer({
   transition,
   child,
   transitionDuration: config_default.transitionDuration,
-  setup: (self) => self.hook(App, (_2, ...args) => N3(args).with([name, _.boolean], ([_3, visible]) => self.revealChild = visible), "window-toggled")
+  setup: (self) => self.hook(App, (_2, ...args) => N3(args).with([name, _.boolean], ([_3, visible]) => {
+    onOpen?.();
+    self.revealChild = visible;
+  }), "window-toggled")
 });
 var Popup = ({
   transition,
   name,
   child,
+  onOpen,
   ...props
 }) => {
   const closing = l.makeControlledDebounce(() => App.closeWindow(name), {
@@ -4047,7 +4056,8 @@ var Popup = ({
         child: PopupRevealer({
           transition,
           name,
-          child
+          child,
+          onOpen
         })
       })
     })
@@ -5217,14 +5227,14 @@ var ThemesButtonsRowOne = () => {
   const row1 = Box8({
     homogeneous: true,
     children: [materialYouTheme, win20Theme],
-    spacing: 8
+    spacing: 20
   });
   const row2 = Box8({
     homogeneous: true,
     css: `
             margin-top: 1rem;
         `,
-    spacing: 8,
+    spacing: 20,
     children: [siberianTheme, blackHoleTheme]
   });
   const row3 = Box8({
@@ -5232,7 +5242,7 @@ var ThemesButtonsRowOne = () => {
     css: `
             margin-top: 1rem;
         `,
-    spacing: 8,
+    spacing: 20,
     children: [deerTheme, darkTheme]
   });
   const row4 = Box8({
@@ -5240,7 +5250,7 @@ var ThemesButtonsRowOne = () => {
     css: `
             margin-top: 1rem;
         `,
-    spacing: 8,
+    spacing: 20,
     children: [newCatTheme, circlesTheme]
   });
   const row5 = Box8({
@@ -5248,7 +5258,7 @@ var ThemesButtonsRowOne = () => {
     css: `
             margin-top: 1rem;
         `,
-    spacing: 8,
+    spacing: 20,
     children: [colorTheme, unicatTheme]
   });
   return Box8({
@@ -5331,18 +5341,18 @@ var MenuButton = () => Button7({
   onClicked: () => App.toggleWindow("left_menu")
 });
 
-// src/Bar.ts
+// src/widgets/Bar.ts
 import {
 Box as Box9,
 CenterBox,
-Label as Label8,
 Window as Window2
 } from "resource:///com/github/Aylur/ags/widget.js";
-var Clock = () => Label8({
+var Clock = () => Widget.Button({
   className: "clock small-shadow unset",
   label: Variable("", {
     poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]]
-  }).bind()
+  }).bind(),
+  onClicked: () => App.toggleWindow("calendar-menu")
 });
 var DynamicWallpaper = () => Widget.Button({
   className: "unset dynamic-wallpaper",
@@ -6012,6 +6022,53 @@ var OSD = () => {
   });
 };
 
+// src/reactions/battery.ts
+var Battery3 = await Service.import("battery");
+var batteryReaction = () => {
+  let isCritical = false;
+  return {
+    object: Battery3,
+    signal: "notify::percent",
+    callback: () => {
+      if (Battery3.percent <= 10 && !isCritical) {
+        Utils.execAsync([
+          `notify-send -u critical -i "battery-010" -t 10000`,
+          `"Battery low"`,
+          `"Battery is at critical level (10%). Connect laptop to charger."`
+        ]).then(() => isCritical = true);
+      } else if (Battery3.percent > 10 && isCritical) {
+        isCritical = false;
+      }
+    }
+  };
+};
+
+// src/widgets/menus/CalendarMenu.ts
+var CalendarMenu = () => {
+  const date = Variable(new Date);
+  return Popup({
+    transition: "slide_up",
+    anchor: ["bottom", "right"],
+    name: "calendar-menu",
+    margins: [40, 50],
+    child: Widget.Box({
+      className: "menu calendar-menu",
+      child: Widget.Calendar({
+        expand: true,
+        className: "calendar",
+        year: date.bind().as((d3) => d3.getFullYear()),
+        month: date.bind().as((d3) => d3.getMonth()),
+        day: date.bind().as((d3) => d3.getDate())
+      })
+    }),
+    onOpen: () => {
+      const newDate = new Date;
+      if (date.value.getDay() !== newDate.getDay())
+        date.value = newDate;
+    }
+  });
+};
+
 // src/config.ts
 var scss = App4.configDir + "/scss/main.scss";
 var css = App4.configDir + "/style.css";
@@ -6022,17 +6079,18 @@ Utils.monitorFile(`${App4.configDir}/scss`, () => {
   App4.resetCss();
   App4.applyCss(css);
 });
-var windows = [
-  OSD(),
-  OSDNotifications_default(),
-  NotificationCenter(),
-  HardwareMenu(),
-  Bar({ monitor: 0 }),
-  SystemMenu()
-];
+var br = batteryReaction();
 App4.config({
   style: css,
   cacheNotificationActions: true,
-  windows
+  windows: [
+    OSD(),
+    OSDNotifications_default(),
+    NotificationCenter(),
+    HardwareMenu(),
+    CalendarMenu(),
+    Bar({ monitor: 0 }).hook(br.object, br.callback, br.signal),
+    SystemMenu()
+  ]
 });
 globalThis.getNot = () => Notifications4;

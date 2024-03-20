@@ -1,4 +1,4 @@
-@import './themes/deer.scss';
+@import './themes/material-you.scss';
 
 .unset {
     all: unset;
@@ -1379,4 +1379,29 @@ menuitem:hover {
 
 .weather-menu-min-max {
     font-size: 1.3rem;
+}
+
+.calendar-menu {
+    padding: 0.5rem;
+}
+
+.menu {
+    border-radius: $border-radius;
+    border: $border-size solid $menu-box-borders;
+    background-color: $bg-one;
+}
+
+.calendar {
+    background-color: $bg-one;
+    border-width: 0;
+    all: unset;
+
+    &:selected {
+        background-color: $fg-one;
+        border-radius: 2px;
+    }
+
+    &:indeterminate {
+        color: transparentize($color: $text-color, $amount: 0.8);
+    }
 }

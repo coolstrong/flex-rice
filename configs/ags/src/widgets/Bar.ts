@@ -1,9 +1,9 @@
-import { SysTrayBox } from "./widgets/SystemTray.js";
-import { Workspaces } from "./widgets/Workspaces.js";
-import { HardwareBox } from "./widgets/hardware/all.js";
-import { NetVolumeBox } from "./widgets/NetVolume.js";
-import { NotificationCenterButton } from "./widgets/menus/NotificationCenter.js";
-import { MenuButton } from "./widgets/menus/SystemMenu.js";
+import { SysTrayBox } from "./SystemTray.js";
+import { Workspaces } from "./Workspaces.js";
+import { HardwareBox } from "./hardware/all.js";
+import { NetVolumeBox } from "./NetVolume.js";
+import { NotificationCenterButton } from "./menus/NotificationCenter.js";
+import { MenuButton } from "./menus/SystemMenu.js";
 
 import {
     Box,
@@ -11,14 +11,15 @@ import {
     Label,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
-import themeService from "./services/ThemeService.js";
+import themeService from "../services/ThemeService.js";
 
 const Clock = () =>
-    Label({
+    Widget.Button({
         className: "clock small-shadow unset",
         label: Variable("", {
             poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]],
         }).bind(),
+        onClicked: () => App.toggleWindow("calendar-menu"),
     });
 
 const DynamicWallpaper = () =>

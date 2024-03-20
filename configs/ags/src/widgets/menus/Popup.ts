@@ -7,8 +7,14 @@ type PopupRevealerProps = {
     name: string;
     child: WindowProps["child"];
     transition: Transition;
+    onOpen?: () => void;
 };
-const PopupRevealer = ({ child, name, transition }: PopupRevealerProps) =>
+const PopupRevealer = ({
+    child,
+    name,
+    transition,
+    onOpen,
+}: PopupRevealerProps) =>
     Widget.Revealer({
         transition,
         child,
@@ -18,10 +24,10 @@ const PopupRevealer = ({ child, name, transition }: PopupRevealerProps) =>
             self.hook(
                 App,
                 (_, ...args) =>
-                    match(args).with(
-                        [name, P.boolean],
-                        ([_, visible]) => (self.revealChild = visible)
-                    ),
+                    match(args).with([name, P.boolean], ([_, visible]) => {
+                        onOpen?.();
+                        self.revealChild = visible;
+                    }),
                 "window-toggled"
             ),
     });
@@ -30,8 +36,13 @@ export const Popup = ({
     transition,
     name,
     child,
+    onOpen,
     ...props
-}: WindowProps & { name: string; transition: Transition }) => {
+}: WindowProps & {
+    name: string;
+    transition: Transition;
+    onOpen?: () => void;
+}) => {
     const closing = F.makeControlledDebounce(() => App.closeWindow(name), {
         delay: config.popupCloseDelay,
         leading: false,
@@ -54,6 +65,7 @@ export const Popup = ({
                     transition,
                     name,
                     child,
+                    onOpen,
                 }),
             }),
         }),

@@ -1,11 +1,13 @@
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
-import { Bar } from "./Bar.js";
+import { Bar } from "./widgets/Bar.js";
 import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
 import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
 import { OSD } from "./widgets/OSD.js";
 import { SystemMenu } from "./widgets/menus/SystemMenu.js";
+import { batteryReaction } from "./reactions/battery.js";
+import { CalendarMenu } from "./widgets/menus/CalendarMenu.js";
 
 // in config.js
 const scss = App.configDir + "/scss/main.scss";
@@ -20,19 +22,20 @@ Utils.monitorFile(`${App.configDir}/scss`, () => {
     App.applyCss(css);
 });
 
-let windows = [
-    OSD(),
-    MyNotifications(),
-    NotificationCenter(),
-    HardwareMenu(),
-    Bar({ monitor: 0 }),
-    SystemMenu(),
-];
+const br = batteryReaction();
 
 App.config({
     style: css,
     cacheNotificationActions: true,
-    windows,
+    windows: [
+        OSD(),
+        MyNotifications(),
+        NotificationCenter(),
+        HardwareMenu(),
+        CalendarMenu(),
+        Bar({ monitor: 0 }).hook(br.object, br.callback, br.signal),
+        SystemMenu(),
+    ],
 });
 
 globalThis.getNot = () => Notifications;
