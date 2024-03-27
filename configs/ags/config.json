@@ -1,8 +1,15 @@
 {
-    "workspacesPerMonitor": 4,
     "popupCloseDelay": 700,
     "transitionDuration": 250,
     "systray": {
         "ignore": []
+    },
+    "workspace": {
+        "ignore": [
+            "wofi",
+            "kitty-dropterm",
+            "org.kde.polkit-kde-authentication-agent-1"
+        ],
+        "perMonitor": 4
     }
 }

@@ -1,6 +1,9 @@
 //copied from https://github.com/Aylur/dotfiles/blob/main/ags/lib/icons.ts
-import { undef } from "@/utils/common";
-import GLib20 from "gi://GLib";
+import { E, undef } from "@/utils/common";
+import type { Client } from "@/types/service/hyprland";
+import { O } from "@mobily/ts-belt";
+import { Application } from "@/types/service/applications";
+
 export const substitutes = {
     "transmission-gtk": "transmission",
     "blueberry.py": "blueberry",
@@ -19,7 +22,8 @@ export const substitutes = {
 export const icons = {
     missing: "image-missing-symbolic",
     fallback: {
-        executable: "application-x-executable-symbolic",
+        executable: "exec",
+        // executable: "application-x-executable-symbolic",
         notification: "dialog-information-symbolic",
         video: "video-x-generic-symbolic",
         audio: "audio-x-generic-symbolic",
@@ -156,19 +160,33 @@ export const icons = {
     },
 };
 
-export const icon = (
-    name: string | undef,
-    fallback = icons.missing
-): string => {
-    if (!name) return fallback;
 
-    const icon = substitutes[name] ?? name;
+const Apps = await Service.import("applications");
 
-    return GLib20.file_test(name, GLib20.FileTest.EXISTS) ||
-        Utils.lookUpIcon(icon)
-        ? icon
-        : fallback;
-};
+ const directClassMatch = {
+    "code-url-handler": "visual-studio-code",
+    "com.intellij.idea.Main": "webstorm",
+    "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
+} ;
 
-export const appIcon: (appName: string | undef) => string = s =>
-    icon(s ?? undef, icons.fallback.executable);
+const resolveWindowIcon = (client: Client) : string | undef => {
+    if (client.initialTitle.startsWith("Spotify"))
+        return "spotify";
+
+    let directMatch: string | undefined;
+    if (E(directMatch = directClassMatch[client.class]))
+        return directMatch;
+    
+    let app: Application | undef;
+    if (E(app = Apps.list.find(app => app.match(client.class))))
+        return app.icon_name ?? undef
+}
+
+export const windowIcon = (client: Client) => {
+    const icon = resolveWindowIcon(client);
+
+    if (O.flatMap(icon, Utils.lookUpIcon))
+        return icon!;
+    
+    return icons.fallback.executable;
+}
