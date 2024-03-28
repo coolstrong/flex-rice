@@ -1,13 +1,14 @@
 import Gtk from "gi://Gtk";
+
 export const RoundedCorner = (
     place: string,
-    props: Parameters<typeof Widget.DrawingArea>[0]
+    props: Parameters<typeof Widget.DrawingArea>[0],
 ) =>
     Widget.DrawingArea({
         ...props,
         hpack: place.includes("left") ? "start" : "end",
         vpack: place.includes("top") ? "start" : "end",
-        setup: (widget) => {
+        setup: widget => {
             const r = 25; //widget.get_style_context().get_property('border-radius', Gtk.StateFlags.NORMAL);
             widget.set_size_request(r, r);
             widget.on("draw", (widget, cr) => {
@@ -51,7 +52,7 @@ export const RoundedCorner = (
 export const RoundedAngleEnd = (place: any, props) =>
     Widget.DrawingArea({
         ...props,
-        setup: (widget) => {
+        setup: widget => {
             const ratio = 1.5;
             const r = widget.get_allocated_height();
             widget.set_size_request(ratio * r, r);
@@ -59,14 +60,14 @@ export const RoundedAngleEnd = (place: any, props) =>
                 const context = widget.get_style_context();
                 const c = context.get_property(
                     "background-color",
-                    Gtk.StateFlags.NORMAL
+                    Gtk.StateFlags.NORMAL,
                 );
                 const border_color = context.get_property(
                     "color",
-                    Gtk.StateFlags.NORMAL
+                    Gtk.StateFlags.NORMAL,
                 );
                 const border_width = context.get_border(
-                    Gtk.StateFlags.NORMAL
+                    Gtk.StateFlags.NORMAL,
                 ).bottom;
                 const r = widget.get_allocated_height();
                 widget.set_size_request(ratio * r, r);
@@ -79,7 +80,7 @@ export const RoundedAngleEnd = (place: any, props) =>
                             (ratio * r) / 2,
                             r,
                             ratio * r,
-                            r
+                            r,
                         );
                         cr.lineTo(ratio * r, 0);
 
@@ -90,7 +91,7 @@ export const RoundedAngleEnd = (place: any, props) =>
                             (ratio * r) / 2,
                             r,
                             ratio * r,
-                            r
+                            r,
                         );
                         cr.lineTo(ratio * r, 0);
                         cr.closePath();
@@ -104,14 +105,14 @@ export const RoundedAngleEnd = (place: any, props) =>
                             (ratio * r) / 2,
                             r,
                             ratio * r,
-                            r
+                            r,
                         );
                         cr.setLineWidth(border_width * 2);
                         cr.setSourceRGBA(
                             border_color.red,
                             border_color.green,
                             border_color.blue,
-                            border_color.alpha
+                            border_color.alpha,
                         );
                         cr.stroke();
                         break;
@@ -124,7 +125,7 @@ export const RoundedAngleEnd = (place: any, props) =>
                             (ratio * r) / 2,
                             r,
                             0,
-                            r
+                            r,
                         );
                         cr.lineTo(0, 0);
                         cr.closePath();
@@ -138,14 +139,14 @@ export const RoundedAngleEnd = (place: any, props) =>
                             (ratio * r) / 2,
                             r,
                             0,
-                            r
+                            r,
                         );
                         cr.setLineWidth(border_width * 2);
                         cr.setSourceRGBA(
                             border_color.red,
                             border_color.green,
                             border_color.blue,
-                            border_color.alpha
+                            border_color.alpha,
                         );
                         cr.stroke();
                         break;

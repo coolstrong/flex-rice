@@ -16,7 +16,7 @@ export const OSD = () => {
             .with("volume", () => getVolumeIcon(progress))
             .with("br-screen", () => icons.brightness.screen)
             .with("br-keyboard", () => icons.brightness.keyboard)
-            .exhaustive()
+            .exhaustive(),
     );
 
     const show = (value: number, osdType: OSDType) => {
@@ -37,17 +37,17 @@ export const OSD = () => {
                 .hook(
                     Audio.speaker,
                     () => show(Audio.speaker.volume, "volume"),
-                    "notify::volume"
+                    "notify::volume",
                 )
                 .hook(
                     brightness,
                     () => show(brightness.screen, "br-screen"),
-                    "notify::screen"
+                    "notify::screen",
                 )
                 .hook(
                     brightness,
                     () => show(brightness.kbd, "br-keyboard"),
-                    "notify::kbd"
+                    "notify::kbd",
                 ),
 
         child: Widget.Box({
@@ -69,11 +69,11 @@ export const OSD = () => {
                         match(type.value)
                             .with(
                                 "volume",
-                                () => (Audio.speaker.volume = value)
+                                () => (Audio.speaker.volume = value),
                             )
                             .with(
                                 "br-screen",
-                                () => (brightness.screen = value)
+                                () => (brightness.screen = value),
                             )
                             .with("br-keyboard", () => (brightness.kbd = value))
                             .exhaustive(),

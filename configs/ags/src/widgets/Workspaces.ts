@@ -21,12 +21,11 @@ const ClientRenderer = ({ wsId }: { wsId: number }) =>
                 client.workspace.id === wsId &&
                 client.mapped
                     ? Widget.Icon({
-                          
-                        icon: windowIcon(client),
+                          icon: windowIcon(client),
                           css: "font-size: 12px;",
                       })
-                    : undef
-            )
+                    : undef,
+            ),
         ),
     });
 
@@ -37,7 +36,7 @@ const MonitorWorkspaces = (monitorId = 0) => {
         className: "unset workspaces",
         children: A.range(
             firstWsId,
-            firstWsId + config.workspace.perMonitor - 1
+            firstWsId + config.workspace.perMonitor - 1,
         ).map(i =>
             Button({
                 css: "min-width: 30px;",
@@ -48,7 +47,7 @@ const MonitorWorkspaces = (monitorId = 0) => {
                 child: ClientRenderer({
                     wsId: i,
                 }),
-            })
+            }),
         ),
     });
 };

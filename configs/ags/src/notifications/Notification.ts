@@ -61,7 +61,7 @@ const NotificationIcon = ({ appEntry, appIcon, image }) => {
     });
 };
 
-export default (notification) => {
+export default notification => {
     //fixme IDK what "_block" means
     const hovered = Variable(false) as ReturnType<typeof Variable<boolean>> & {
         _block: boolean;
@@ -134,7 +134,7 @@ export default (notification) => {
                                 css: `${rtlMargin} margin-top: 0.5rem;`,
                                 vpack: "start",
                                 label: GLib.DateTime.new_from_unix_local(
-                                    notification.time
+                                    notification.time,
                                 ).format("%H:%M"),
                             }),
                             // Notification Close Button
@@ -162,7 +162,7 @@ export default (notification) => {
             onHover: hover,
             child: Box({
                 className: "notification-actions",
-                children: notification.actions.map((action) =>
+                children: notification.actions.map(action =>
                     Button({
                         onHover: hover,
                         css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
@@ -170,11 +170,11 @@ export default (notification) => {
                         onClicked: () =>
                             Notifications.InvokeAction(
                                 notification.id,
-                                action.id
+                                action.id,
                             ),
                         hexpand: true,
                         child: Label(action.label),
-                    })
+                    }),
                 ),
             }),
         }),

@@ -4,13 +4,11 @@ import {
     Box,
     Button,
     Label,
-    Revealer,
     Scrollable,
-    Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import Notification from "../../notifications/MenuNotification";
-import { local } from "@/utils/helpers";
 import { Popup } from "./Popup";
+
 const Notifications = await Service.import("notifications");
 
 const NotificationsBox = () => {

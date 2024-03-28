@@ -1,5 +1,6 @@
 import Gdk from "gi://Gdk";
 import { local } from "../utils/helpers";
+
 const Mpris = await Service.import("mpris");
 
 export var selectedMusicPlayer = null;
@@ -17,7 +18,7 @@ class PlayersMenu {
             event,
             Gdk.Gravity.SOUTH,
             Gdk.Gravity.NORTH,
-            null
+            null,
         );
     }
 
@@ -82,7 +83,7 @@ const RowOne = () => {
                             selectedMusicPlayer = element.name;
                             Mpris.emit("changed");
                         },
-                    })
+                    }),
                 );
             }
         }

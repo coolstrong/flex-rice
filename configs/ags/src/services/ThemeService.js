@@ -1,10 +1,10 @@
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Service from "resource:///com/github/Aylur/ags/service.js";
 import {
-    USER,
     exec,
     execAsync,
     timeout,
+    USER,
 } from "resource:///com/github/Aylur/ags/utils.js";
 import settings from "../settings.js";
 import ThemesDictionary, { UNICAT_THEME } from "../theme/themes.js";
@@ -17,7 +17,7 @@ class ThemeService extends Service {
             {
                 dynamicWallpaperIsOn: ["boolean", "r"],
                 isDynamicTheme: ["boolean", "r"],
-            }
+            },
         );
     }
 
@@ -51,7 +51,7 @@ class ThemeService extends Service {
             this.setDynamicWallpapers(
                 theme.wallpaper_path,
                 theme.gtk_mode,
-                theme.interval
+                theme.interval,
             );
         } else {
             this.changeCss(theme.css_theme);
@@ -63,7 +63,7 @@ class ThemeService extends Service {
         this.changeGTKTheme(
             theme.gtk_theme,
             theme.gtk_mode,
-            theme.gtk_icon_theme
+            theme.gtk_icon_theme,
         );
 
         // this.changeQtStyle(theme.qt_style_theme);
@@ -80,7 +80,7 @@ class ThemeService extends Service {
             hypr.rounding,
             hypr.drop_shadow,
             hypr.kitty,
-            hypr.konsole
+            hypr.konsole,
         );
 
         this.selectedTheme = selectedTheme;
@@ -176,7 +176,7 @@ class ThemeService extends Service {
         this.setDynamicWallpapers(
             theme.wallpaper_path,
             theme.gtk_mode,
-            theme.interval
+            theme.interval,
         );
         this.cacheVariables();
         this.emit("changed");
@@ -224,7 +224,7 @@ class ThemeService extends Service {
     changePlasmaColor(plasmaColor) {
         // execAsync([...plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
         execAsync(
-            `cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`
+            `cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`,
         ).catch(print);
     }
 
@@ -279,7 +279,7 @@ class ThemeService extends Service {
         rounding,
         drop_shadow,
         kittyConfig,
-        konsoleTheme
+        konsoleTheme,
     ) {
         // const kittyBind = `bind = $mainMod, Return, exec, kitty -c ${App.configDir}/modules/theme/kitty/${kittyConfig}`;
         // const konsoleBind = `bind = $mainMod, Return, exec, konsole --profile ${konsoleTheme}`;
@@ -295,21 +295,21 @@ class ThemeService extends Service {
             .then(() => {
                 timeout(1000, () => {
                     execAsync(
-                        `hyprctl keyword general:border_size ${border_width}`
+                        `hyprctl keyword general:border_size ${border_width}`,
                     );
                     execAsync(
-                        `hyprctl keyword general:col.active_border ${active_border}`
+                        `hyprctl keyword general:col.active_border ${active_border}`,
                     );
                     execAsync(
-                        `hyprctl keyword general:col.inactive_border ${inactive_border}`
+                        `hyprctl keyword general:col.inactive_border ${inactive_border}`,
                     );
                     execAsync(
                         `hyprctl keyword decoration:drop_shadow ${
                             drop_shadow ? "yes" : "no"
-                        }`
+                        }`,
                     );
                     execAsync(
-                        `hyprctl keyword decoration:rounding ${rounding}`
+                        `hyprctl keyword decoration:rounding ${rounding}`,
                     );
                     // execAsync(`hyprctl setcursor material_light_cursors 24 `);
                 });
@@ -381,7 +381,7 @@ class ThemeService extends Service {
         };
         Utils.writeFile(
             JSON.stringify(newData, null, 2),
-            this.CACHE_FILE_PATH
+            this.CACHE_FILE_PATH,
         ).catch(err => print(err));
     }
 

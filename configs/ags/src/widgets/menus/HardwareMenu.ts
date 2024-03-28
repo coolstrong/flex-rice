@@ -2,8 +2,8 @@
 
 import { local } from "@/utils/helpers";
 import Gtk from "gi://Gtk";
-import { Popup } from "./Popup";
 import Gtk30 from "gi://Gtk";
+import { Popup } from "./Popup";
 
 const Battery = await Service.import("battery");
 
@@ -216,7 +216,7 @@ const hardwareUsageTable = ({
                                     appName: element["process"],
                                     percentage: element["%"],
                                     deviceName: deviceName,
-                                })
+                                }),
                             );
                         }
                         self.children = children;
@@ -243,7 +243,7 @@ const tablesBox = () => {
         deviceName: batDeviceName,
     }).hook(Battery, self => {
         Utils.execAsync(
-            `/home/${Utils.USER}/.config/ags/scripts/hardware_info.sh`
+            `/home/${Utils.USER}/.config/ags/scripts/hardware_info.sh`,
         )
             .then(val => {
                 let data = JSON.parse(val);

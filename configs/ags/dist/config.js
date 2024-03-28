@@ -364,13 +364,6 @@ var some = function(_) {
     return _;
   }
 };
-var nullable_to_opt = function(_) {
-  if (_ == null) {
-    return;
-  } else {
-    return some(_);
-  }
-};
 var valFromOption = function(_) {
   if (_ === null || _.BS_PRIVATE_NESTED_SOME_NONE === undefined) {
     return _;
@@ -828,15 +821,6 @@ var n = {
 };
 
 // node_modules/@mobily/ts-belt/dist/belt_Option-91f3b350.mjs
-var getExn2 = function(t) {
-  if (t !== undefined) {
-    return valFromOption(t);
-  }
-  throw {
-    RE_EXN_ID: "Not_found",
-    Error: new Error
-  };
-};
 var mapWithDefaultU = function(t, i, a) {
   if (t !== undefined) {
     return a(valFromOption(t));
@@ -844,31 +828,8 @@ var mapWithDefaultU = function(t, i, a) {
     return i;
   }
 };
-var mapU2 = function(t, a) {
-  if (t !== undefined) {
-    return some(a(valFromOption(t)));
-  }
-};
-var flatMapU = function(t, i) {
-  if (t !== undefined) {
-    return i(valFromOption(t));
-  }
-};
-var flatMap = function(n2, i) {
-  return flatMapU(n2, __1(i));
-};
-var getWithDefault = function(t, i) {
-  if (t !== undefined) {
-    return valFromOption(t);
-  } else {
-    return i;
-  }
-};
 var isSome = function(t) {
   return t !== undefined;
-};
-var isNone = function(t) {
-  return t === undefined;
 };
 
 // node_modules/@mobily/ts-belt/dist/caml_js_exceptions-5c6894a5.mjs
@@ -2522,7 +2483,7 @@ var sample = function(n2) {
 var _flatMap = function(n2, t) {
   return flat(mapU(n2, t));
 };
-var flatMap2 = function() {
+var flatMap = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t) {
@@ -2661,7 +2622,7 @@ var Ra = {
   union,
   intersection,
   sample,
-  flatMap: flatMap2
+  flatMap
 };
 // node_modules/@mobily/ts-belt/dist/Promise.bs-06a7bae6.mjs
 var $$catch = function(r, s2) {
@@ -2675,7 +2636,7 @@ var $$catch = function(r, s2) {
 var t = create("Promise.JsError");
 
 // node_modules/@mobily/ts-belt/dist/belt_Result-a4eb468a.mjs
-var getExn3 = function(r) {
+var getExn2 = function(r) {
   if (r.TAG === 0) {
     return r._0;
   }
@@ -2691,7 +2652,7 @@ var mapWithDefaultU2 = function(r, t2, e) {
     return t2;
   }
 };
-var mapU3 = function(r, t2) {
+var mapU2 = function(r, t2) {
   if (r.TAG === 0) {
     return {
       TAG: 0,
@@ -2704,7 +2665,7 @@ var mapU3 = function(r, t2) {
     };
   }
 };
-var flatMapU2 = function(r, t2) {
+var flatMapU = function(r, t2) {
   if (r.TAG === 0) {
     return t2(r._0);
   } else {
@@ -2714,10 +2675,10 @@ var flatMapU2 = function(r, t2) {
     };
   }
 };
-var flatMap3 = function(t2, e) {
-  return flatMapU2(t2, __1(e));
+var flatMap2 = function(t2, e) {
+  return flatMapU(t2, __1(e));
 };
-var getWithDefault2 = function(r, t2) {
+var getWithDefault = function(r, t2) {
   if (r.TAG === 0) {
     return r._0;
   } else {
@@ -2810,7 +2771,7 @@ var fromFalsy = function() {
   return _fromFalsy(arguments[0], arguments[1]);
 };
 var _fromPredicate = function(r, n2, t2) {
-  return flatMap3(fromNullable(r, t2), function(r2) {
+  return flatMap2(fromNullable(r, t2), function(r2) {
     if (n2(r2)) {
       return {
         TAG: 0,
@@ -2878,7 +2839,7 @@ var mapWithDefault = function() {
   }
   return A(arguments[0], arguments[1], arguments[2]);
 };
-var flatMap4 = function() {
+var flatMap3 = function() {
   if (arguments.length === 1) {
     const r = arguments;
     return function fn(n2) {
@@ -2887,7 +2848,7 @@ var flatMap4 = function() {
   }
   return G2(arguments[0], arguments[1]);
 };
-var getWithDefault3 = function() {
+var getWithDefault2 = function() {
   if (arguments.length === 1) {
     const r = arguments;
     return function fn(n2) {
@@ -2897,10 +2858,10 @@ var getWithDefault3 = function() {
   return d(arguments[0], arguments[1]);
 };
 var toUndefined = function(r) {
-  return getWithDefault2(r, undefined);
+  return getWithDefault(r, undefined);
 };
 var toNullable = function(r) {
-  return getWithDefault2(r, null);
+  return getWithDefault(r, null);
 };
 var toOption = function(r) {
   if (r.TAG === 0) {
@@ -3040,7 +3001,7 @@ var flip2 = function(r) {
   }
 };
 var _filter2 = function(r, n2) {
-  return flatMapU2(r, function(r2) {
+  return flatMapU(r, function(r2) {
     if (n2(r2)) {
       return {
         TAG: 0,
@@ -3087,7 +3048,7 @@ var all2 = function(r) {
     TAG: 0,
     _0: []
   }, function(r2, n2) {
-    return flatMapU2(r2, function(r3) {
+    return flatMapU(r2, function(r3) {
       if (n2.TAG === 0) {
         return {
           TAG: 0,
@@ -3106,11 +3067,11 @@ var all2 = function(r) {
   });
 };
 var h = create("Result.ResultError");
-var E = mapU3;
+var E = mapU2;
 var A = mapWithDefaultU2;
-var G2 = flatMapU2;
-var T = getExn3;
-var d = getWithDefault2;
+var G2 = flatMapU;
+var T = getExn2;
+var d = getWithDefault;
 var g = isError;
 var v = isOk;
 
@@ -3138,9 +3099,9 @@ var N2 = {
   fromPromise,
   map: map2,
   mapWithDefault,
-  flatMap: flatMap4,
+  flatMap: flatMap3,
   getExn: T,
-  getWithDefault: getWithDefault3,
+  getWithDefault: getWithDefault2,
   toUndefined,
   toNullable,
   toOption,
@@ -3238,290 +3199,6 @@ var i = {
   isUndefined,
   isNot
 };
-// node_modules/@mobily/ts-belt/dist/index-c1cc4c86.mjs
-var placeholder3 = function(n2) {
-};
-var makeSome = function(n2) {
-  return some(n2);
-};
-var makeNone = function(n2) {
-};
-var fromNullable2 = function(n2) {
-  if (n2 == null) {
-    return;
-  } else {
-    return some(n2);
-  }
-};
-var fromFalsy2 = function(n2) {
-  if (n2) {
-    return n2;
-  }
-};
-var _fromPredicate2 = function(n2, t2) {
-  return flatMap(n2 == null ? undefined : some(n2), function(n3) {
-    if (t2(n3)) {
-      return some(n3);
-    }
-  });
-};
-var fromPredicate2 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _fromPredicate2(t2, n2[0]);
-    };
-  }
-  return _fromPredicate2(arguments[0], arguments[1]);
-};
-var fromExecution2 = function(n2) {
-  try {
-    return some(n2(undefined));
-  } catch (n3) {
-    return;
-  }
-};
-var fromPromise2 = function(t2) {
-  return $$catch(t2.then(function(n2) {
-    return some(n2);
-  }), function(n2) {
-    return Promise.resolve(undefined);
-  });
-};
-var map3 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return h2(t2, n2[0]);
-    };
-  }
-  return h2(arguments[0], arguments[1]);
-};
-var flatMap5 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _(t2, n2[0]);
-    };
-  }
-  return _(arguments[0], arguments[1]);
-};
-var mapWithDefault2 = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return v2(t2, n2[0], n2[1]);
-    };
-  }
-  return v2(arguments[0], arguments[1], arguments[2]);
-};
-var _mapNullable = function(n2, t2) {
-  if (n2 !== undefined) {
-    return nullable_to_opt(t2(valFromOption(n2)));
-  }
-};
-var mapNullable = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _mapNullable(t2, n2[0]);
-    };
-  }
-  return _mapNullable(arguments[0], arguments[1]);
-};
-var _filter3 = function(n2, t2) {
-  return flatMapU(n2, function(n3) {
-    if (t2(n3)) {
-      return some(n3);
-    }
-  });
-};
-var filter3 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _filter3(t2, n2[0]);
-    };
-  }
-  return _filter3(arguments[0], arguments[1]);
-};
-var getWithDefault4 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return g2(t2, n2[0]);
-    };
-  }
-  return g2(arguments[0], arguments[1]);
-};
-var toNullable2 = function(n2) {
-  return getWithDefault(n2, null);
-};
-var toUndefined2 = function(n2) {
-  return getWithDefault(n2, undefined);
-};
-var _toResult = function(n2, t2) {
-  if (n2 !== undefined) {
-    return {
-      TAG: 0,
-      _0: valFromOption(n2)
-    };
-  } else {
-    return {
-      TAG: 1,
-      _0: t2
-    };
-  }
-};
-var toResult = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _toResult(t2, n2[0]);
-    };
-  }
-  return _toResult(arguments[0], arguments[1]);
-};
-var _match2 = function(n2, t2, r) {
-  if (n2 !== undefined) {
-    return t2(valFromOption(n2));
-  } else {
-    return r(undefined);
-  }
-};
-var match2 = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _match2(t2, n2[0], n2[1]);
-    };
-  }
-  return _match2(arguments[0], arguments[1], arguments[2]);
-};
-var _tap4 = function(n2, t2) {
-  if (n2 !== undefined) {
-    t2(valFromOption(n2));
-    return n2;
-  } else {
-    return n2;
-  }
-};
-var tap4 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _tap4(t2, n2[0]);
-    };
-  }
-  return _tap4(arguments[0], arguments[1]);
-};
-var _contains = function(n2, r) {
-  return mapWithDefaultU(n2, false, function(n3) {
-    return equal(n3, r);
-  });
-};
-var contains = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _contains(t2, n2[0]);
-    };
-  }
-  return _contains(arguments[0], arguments[1]);
-};
-var _zip = function(n2, t2) {
-  if (n2 !== undefined && t2 !== undefined) {
-    return [valFromOption(n2), valFromOption(t2)];
-  }
-};
-var zip3 = function() {
-  if (arguments.length === 1) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _zip(t2, n2[0]);
-    };
-  }
-  return _zip(arguments[0], arguments[1]);
-};
-var _zipWith = function(n2, t2, r) {
-  if (n2 !== undefined && t2 !== undefined) {
-    return some(r(valFromOption(n2), valFromOption(t2)));
-  }
-};
-var zipWith2 = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _zipWith(t2, n2[0], n2[1]);
-    };
-  }
-  return _zipWith(arguments[0], arguments[1], arguments[2]);
-};
-var _fold2 = function(n2, t2, r) {
-  if (n2 !== undefined) {
-    return t2(valFromOption(n2));
-  } else {
-    return r(undefined);
-  }
-};
-var fold2 = function() {
-  if (arguments.length === 2) {
-    const n2 = arguments;
-    return function fn(t2) {
-      return _fold2(t2, n2[0], n2[1]);
-    };
-  }
-  return _fold2(arguments[0], arguments[1], arguments[2]);
-};
-var all3 = function(n2) {
-  return reduceU(n2, [], function(n3, t2) {
-    return flatMapU(n3, function(n4) {
-      if (t2 !== undefined) {
-        return concat(n4, [valFromOption(t2)]);
-      }
-    });
-  });
-};
-var h2 = mapU2;
-var _ = flatMapU;
-var v2 = mapWithDefaultU;
-var g2 = getWithDefault;
-var N3 = getExn2;
-var b = isNone;
-var z2 = isSome;
-var Some = (n2) => n2;
-var P2 = {
-  __proto__: null,
-  Some,
-  None: undefined,
-  placeholder: placeholder3,
-  makeSome,
-  makeNone,
-  fromNullable: fromNullable2,
-  fromFalsy: fromFalsy2,
-  fromPredicate: fromPredicate2,
-  fromExecution: fromExecution2,
-  fromPromise: fromPromise2,
-  map: map3,
-  flatMap: flatMap5,
-  mapWithDefault: mapWithDefault2,
-  mapNullable,
-  filter: filter3,
-  getWithDefault: getWithDefault4,
-  getExn: N3,
-  toNullable: toNullable2,
-  toUndefined: toUndefined2,
-  toResult,
-  match: match2,
-  isNone: b,
-  isSome: z2,
-  tap: tap4,
-  contains,
-  zip: zip3,
-  zipWith: zipWith2,
-  fold: fold2,
-  all: all3
-};
 // src/widgets/SystemTray.ts
 var { Gravity } = imports.gi.Gdk;
 var SystemTray = await Service.import("systemtray");
@@ -3565,7 +3242,7 @@ var E2 = i.isNotNullable;
 var icons = {
   missing: "image-missing-symbolic",
   fallback: {
-    executable: "exec",
+    executable: "application-x-executable",
     notification: "dialog-information-symbolic",
     video: "video-x-generic-symbolic",
     audio: "audio-x-generic-symbolic"
@@ -3707,22 +3384,14 @@ var directClassMatch = {
   "com.intellij.idea.Main": "webstorm",
   "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp"
 };
-var resolveWindowIcon = (client) => {
-  if (client.initialTitle.startsWith("Spotify"))
-    return "spotify";
-  let directMatch;
-  if (E2(directMatch = directClassMatch[client.class]))
-    return directMatch;
-  let app2;
-  if (E2(app2 = Apps.list.find((app3) => app3.match(client.class))))
-    return app2.icon_name ?? undef;
-};
-var windowIcon = (client) => {
-  const icon = resolveWindowIcon(client);
-  if (P2.flatMap(icon, Utils.lookUpIcon))
-    return icon;
-  return icons.fallback.executable;
-};
+var iconResolvers = [
+  (c) => c.initialTitle.startsWith("Spotify") ? "spotify" : undef,
+  (c) => c.initialTitle.startsWith("Spotify") ? "spotify-launcher" : undef,
+  (c) => directClassMatch[c.class],
+  (c) => Apps.list.find((app2) => app2.match(c.class))?.icon_name
+];
+var ensureIconExist = (icon) => icon && Utils.lookUpIcon(icon) ? icon : undef;
+var windowIcon = (client) => iconResolvers.reduce((acc, resolver) => acc ?? ensureIconExist(resolver(client)), undef) ?? icons.fallback.executable;
 
 // src/widgets/Workspaces.ts
 import Gtk30 from "gi://Gtk?version=3.0";
@@ -3890,7 +3559,7 @@ var a2 = function(...t2) {
 var u = function(t2) {
   return Object.assign(t2, { optional: () => l2(t2), and: (e) => m(t2, e), or: (e) => d2(t2, e), select: (e) => e === undefined ? p(t2) : p(e, t2) });
 };
-var h3 = function(t2) {
+var h2 = function(t2) {
   return Object.assign(((t3) => Object.assign(t3, { [Symbol.iterator]() {
     let n2 = 0;
     const r = [{ value: Object.assign(t3, { [e]: true }), done: false }, { done: true, value: undefined }];
@@ -3898,7 +3567,7 @@ var h3 = function(t2) {
       var t4;
       return (t4 = r[n2++]) != null ? t4 : r.at(-1);
     } };
-  } }))(t2), { optional: () => h3(l2(t2)), select: (e) => h3(e === undefined ? p(t2) : p(e, t2)) });
+  } }))(t2), { optional: () => h2(l2(t2)), select: (e) => h2(e === undefined ? p(t2) : p(e, t2)) });
 };
 var l2 = function(e) {
   return u({ [t2]: () => ({ match: (t2) => {
@@ -3939,16 +3608,16 @@ var p = function(...e) {
     }), selections: e2 };
   }, getSelectionKeys: () => [r != null ? r : n2].concat(i2 === undefined ? [] : o(i2)) }) });
 };
-var v3 = function(t2) {
+var v2 = function(t2) {
   return typeof t2 == "number";
 };
-var b2 = function(t2) {
+var b = function(t2) {
   return typeof t2 == "string";
 };
 var w = function(t2) {
   return typeof t2 == "bigint";
 };
-var N4 = function(t2) {
+var N3 = function(t2) {
   return new $2(t2, W);
 };
 var t2 = Symbol.for("@ts-pattern/matcher");
@@ -4001,7 +3670,7 @@ var f2 = (t3, e2) => {
       return false;
   return true;
 };
-var g3 = (t3, e2) => {
+var g2 = (t3, e2) => {
   for (const [n3, r2] of t3.entries())
     if (!e2(r2, n3))
       return false;
@@ -4012,23 +3681,23 @@ var S2 = u(y(function(t3) {
 }));
 var O2 = S2;
 var j = (t3) => Object.assign(u(t3), { startsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.startsWith(n3)))));
+  return j(m(t3, (n3 = e2, y((t4) => b(t4) && t4.startsWith(n3)))));
   var n3;
 }, endsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.endsWith(n3)))));
+  return j(m(t3, (n3 = e2, y((t4) => b(t4) && t4.endsWith(n3)))));
   var n3;
-}, minLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length >= t4))(e2))), maxLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length <= t4))(e2))), includes: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.includes(n3)))));
+}, minLength: (e2) => j(m(t3, ((t4) => y((e3) => b(e3) && e3.length >= t4))(e2))), maxLength: (e2) => j(m(t3, ((t4) => y((e3) => b(e3) && e3.length <= t4))(e2))), includes: (e2) => {
+  return j(m(t3, (n3 = e2, y((t4) => b(t4) && t4.includes(n3)))));
   var n3;
 }, regex: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && Boolean(t4.match(n3))))));
+  return j(m(t3, (n3 = e2, y((t4) => b(t4) && Boolean(t4.match(n3))))));
   var n3;
 } });
-var E3 = j(y(b2));
-var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v3(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v3(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v3(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v3(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v3(t4) && t4 < 0))) });
-var x = K2(y(v3));
+var E3 = j(y(b));
+var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v2(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v2(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v2(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v2(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v2(t4) && t4 < 0))) });
+var x = K2(y(v2));
 var A2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => A2(m(t3, ((t4, e3) => y((n4) => w(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 < t4))(e2))), gt: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 > t4))(e2))), lte: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 <= t4))(e2))), gte: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 >= t4))(e2))), positive: () => A2(m(t3, y((t4) => w(t4) && t4 > 0))), negative: () => A2(m(t3, y((t4) => w(t4) && t4 < 0))) });
-var P3 = A2(y(w));
+var P2 = A2(y(w));
 var T2 = u(y(function(t3) {
   return typeof t3 == "boolean";
 }));
@@ -4038,8 +3707,8 @@ var k = u(y(function(t3) {
 var B = u(y(function(t3) {
   return t3 == null;
 }));
-var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
-  return h3({ [t2]: () => ({ match: (t3) => {
+var _ = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
+  return h2({ [t2]: () => ({ match: (t3) => {
     if (!Array.isArray(t3))
       return { matched: false };
     if (e2.length === 0)
@@ -4085,7 +3754,7 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     if (e2.length === 1)
       throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
     const [o2, c2] = e2;
-    return { matched: g3(t3, (t4, e3) => {
+    return { matched: g2(t3, (t4, e3) => {
       const n4 = s2(o2, e3, r2), i4 = s2(c2, t4, r2);
       return n4 && i4;
     }), selections: n3 };
@@ -4093,7 +3762,7 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
 }, intersection: m, union: d2, not: function(e2) {
   return u({ [t2]: () => ({ match: (t3) => ({ matched: !s2(e2, t3, () => {
   }) }), getSelectionKeys: () => [], matcherType: "not" }) });
-}, when: y, select: p, any: S2, _: O2, string: E3, number: x, bigint: P3, boolean: T2, symbol: k, nullish: B, instanceOf: function(t3) {
+}, when: y, select: p, any: S2, _: O2, string: E3, number: x, bigint: P2, boolean: T2, symbol: k, nullish: B, instanceOf: function(t3) {
   return u(y(function(t4) {
     return (e2) => e2 instanceof t4;
   }(t3)));
@@ -4147,7 +3816,7 @@ class $2 {
 }
 
 // src/utils/shared.ts
-var getVolumeIcon = (volume) => N4(volume * 100).with(_2.number.lte(0), () => icons.audio.volume.muted).with(_2.number.between(0, 34), () => icons.audio.volume.low).with(_2.number.between(34, 67), () => icons.audio.volume.medium).with(_2.number.between(67, 100), () => icons.audio.volume.high).with(_2.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
+var getVolumeIcon = (volume) => N3(volume * 100).with(_.number.lte(0), () => icons.audio.volume.muted).with(_.number.between(0, 34), () => icons.audio.volume.low).with(_.number.between(34, 67), () => icons.audio.volume.medium).with(_.number.between(67, 100), () => icons.audio.volume.high).with(_.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
 
 // src/widgets/NetVolume.ts
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
@@ -4353,7 +4022,7 @@ var PopupRevealer = ({
   transition,
   child,
   transitionDuration: config_default.transitionDuration,
-  setup: (self) => self.hook(App, (_3, ...args) => N4(args).with([name, _2.boolean], ([_4, visible]) => {
+  setup: (self) => self.hook(App, (_2, ...args) => N3(args).with([name, _.boolean], ([_3, visible]) => {
     onOpen?.();
     self.revealChild = visible;
   }), "window-toggled")
@@ -4496,10 +4165,10 @@ var NotificationCenterButton = () => Button6({
 import App2 from "resource:///com/github/Aylur/ags/app.js";
 import Service2 from "resource:///com/github/Aylur/ags/service.js";
 import {
-USER,
 exec as exec2,
 execAsync as execAsync3,
-timeout
+timeout,
+USER
 } from "resource:///com/github/Aylur/ags/utils.js";
 
 // src/settings.js
@@ -5674,7 +5343,7 @@ var MenuButton = () => Button7({
 import {
 Box as Box9,
 CenterBox,
-Window as Window2
+Window
 } from "resource:///com/github/Aylur/ags/widget.js";
 var Clock = () => Widget.Button({
   className: "clock small-shadow unset",
@@ -5715,7 +5384,7 @@ var Left = () => Box9({
     MenuButton()
   ]
 });
-var Bar = ({ monitor } = {}) => Window2({
+var Bar = ({ monitor } = {}) => Window({
   name: `bar${monitor || ""}`,
   className: "bar-bg unset",
   monitor,
@@ -6005,8 +5674,8 @@ import Notifications3 from "resource:///com/github/Aylur/ags/service/notificatio
 import {timeout as timeout3} from "resource:///com/github/Aylur/ags/utils.js";
 import {
 Box as Box11,
-Revealer as Revealer3,
-Window as Window3
+Revealer as Revealer2,
+Window as Window2
 } from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/notifications/Notification.ts
@@ -6018,8 +5687,8 @@ Box as Box10,
 Button as Button8,
 EventBox as EventBox2,
 Icon as Icon2,
-Label as Label9,
-Revealer as Revealer2
+Label as Label8,
+Revealer
 } from "resource:///com/github/Aylur/ags/widget.js";
 var { GLib: GLib2 } = imports.gi;
 var rtlMargin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
@@ -6069,7 +5738,7 @@ var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
 var Notification_default = (notification) => {
   const hovered = Variable2(false);
   let timeoutId;
-  const bodyLabel = Label9({
+  const bodyLabel = Label8({
     css: `margin-top: 1rem;`,
     className: "notification-description",
     hexpand: true,
@@ -6106,7 +5775,7 @@ var Notification_default = (notification) => {
         children: [
           Box10({
             children: [
-              Label9({
+              Label8({
                 className: "notification-title",
                 css: `${rtlMargin}`,
                 xalign: 0,
@@ -6118,7 +5787,7 @@ var Notification_default = (notification) => {
                 label: notification.summary,
                 useMarkup: notification.summary.startsWith("<")
               }),
-              Label9({
+              Label8({
                 className: "notification-time",
                 css: `${rtlMargin} margin-top: 0.5rem;`,
                 vpack: "start",
@@ -6140,7 +5809,7 @@ var Notification_default = (notification) => {
       })
     ]
   });
-  const actionsbox = Revealer2({
+  const actionsbox = Revealer({
     transition: "slide_up",
     child: EventBox2({
       onHover: hover,
@@ -6152,7 +5821,7 @@ var Notification_default = (notification) => {
           className: "action-button",
           onClicked: () => Notifications2.InvokeAction(notification.id, action.id),
           hexpand: true,
-          child: Label9(action.label)
+          child: Label8(action.label)
         }))
       })
     })
@@ -6215,13 +5884,13 @@ var PopupList = ({ transition = "slide_up" } = {}) => Box11({
         min-width: 1.2px;
     `,
   children: [
-    Revealer3({
+    Revealer2({
       transition,
       child: Popups()
     })
   ]
 });
-var OSDNotifications_default = (monitor) => Window3({
+var OSDNotifications_default = (monitor) => Window2({
   monitor,
   layer: "overlay",
   name: `notifications${monitor}`,
@@ -6278,13 +5947,13 @@ class Brightness extends Service {
     const screenPath = `/sys/class/backlight/${screen}/brightness`;
     const kbdPath = `/sys/class/leds/${kbd}/brightness`;
     Utils.monitorFile(screenPath, async (f3) => {
-      const v4 = await Utils.readFileAsync(f3);
-      this.#screen = Number(v4) / this.#screenMax;
+      const v3 = await Utils.readFileAsync(f3);
+      this.#screen = Number(v3) / this.#screenMax;
       this.changed("screen");
     });
     Utils.monitorFile(kbdPath, async (f3) => {
-      const v4 = await Utils.readFileAsync(f3);
-      this.#kbd = Number(v4) / this.#kbdMax;
+      const v3 = await Utils.readFileAsync(f3);
+      this.#kbd = Number(v3) / this.#kbdMax;
       this.changed("kbd");
     });
   }
@@ -6293,7 +5962,7 @@ var brightness_default = new Brightness;
 
 // src/widgets/OSD.ts
 import Audio2 from "resource:///com/github/Aylur/ags/service/audio.js";
-import {Icon as Icon3, Window as Window4} from "resource:///com/github/Aylur/ags/widget.js";
+import {Icon as Icon3, Window as Window3} from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/utils/ShowWindow.ts
 import App3 from "resource:///com/github/Aylur/ags/app.js";
@@ -6316,13 +5985,13 @@ var ShowWindow_default = (windowName, timeout4 = 1000) => {
 var OSD = () => {
   const progress = Variable(Audio2.speaker.volume);
   const type = Variable("volume");
-  const icon = Utils.derive([type, progress], (type2, progress2) => N4(type2).with("volume", () => getVolumeIcon(progress2)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
+  const icon = Utils.derive([type, progress], (type2, progress2) => N3(type2).with("volume", () => getVolumeIcon(progress2)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
   const show = (value, osdType) => {
     progress.value = value;
     type.value = osdType;
     ShowWindow_default("osd");
   };
-  return Window4({
+  return Window3({
     name: `osd`,
     focusable: false,
     margins: [0, 0, 140, 0],
@@ -6344,7 +6013,7 @@ var OSD = () => {
           className: "unset",
           drawValue: false,
           value: progress.bind(),
-          onChange: ({ value }) => N4(type.value).with("volume", () => Audio2.speaker.volume = value).with("br-screen", () => brightness_default.screen = value).with("br-keyboard", () => brightness_default.kbd = value).exhaustive()
+          onChange: ({ value }) => N3(type.value).with("volume", () => Audio2.speaker.volume = value).with("br-screen", () => brightness_default.screen = value).with("br-keyboard", () => brightness_default.kbd = value).exhaustive()
         })
       ]
     })

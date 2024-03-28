@@ -1,5 +1,5 @@
 import { icons } from "@/lib/icons";
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 
 export const getVolumeIcon = (volume: number) =>
     match(volume * 100)

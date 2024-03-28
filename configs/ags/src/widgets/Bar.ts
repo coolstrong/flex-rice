@@ -8,7 +8,6 @@ import { MenuButton } from "./menus/SystemMenu.js";
 import {
     Box,
     CenterBox,
-    Label,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import themeService from "../services/ThemeService.js";

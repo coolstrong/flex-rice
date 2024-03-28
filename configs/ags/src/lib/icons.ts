@@ -1,8 +1,6 @@
 //copied from https://github.com/Aylur/dotfiles/blob/main/ags/lib/icons.ts
-import { E, undef } from "@/utils/common";
+import { undef } from "@/utils/common";
 import type { Client } from "@/types/service/hyprland";
-import { O } from "@mobily/ts-belt";
-import { Application } from "@/types/service/applications";
 
 export const substitutes = {
     "transmission-gtk": "transmission",
@@ -18,12 +16,10 @@ export const substitutes = {
     "com.github.Aylur.ags": "controls-symbolic",
     "code-url-handler": "code",
 };
-
 export const icons = {
     missing: "image-missing-symbolic",
     fallback: {
-        executable: "exec",
-        // executable: "application-x-executable-symbolic",
+        executable: "application-x-executable",
         notification: "dialog-information-symbolic",
         video: "video-x-generic-symbolic",
         audio: "audio-x-generic-symbolic",
@@ -160,33 +156,27 @@ export const icons = {
     },
 };
 
-
 const Apps = await Service.import("applications");
 
- const directClassMatch = {
+const directClassMatch = {
     "code-url-handler": "visual-studio-code",
     "com.intellij.idea.Main": "webstorm",
     "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
-} ;
+};
 
-const resolveWindowIcon = (client: Client) : string | undef => {
-    if (client.initialTitle.startsWith("Spotify"))
-        return "spotify";
+const iconResolvers: Array<(client: Client) => string | undef> = [
+    c => (c.initialTitle.startsWith("Spotify") ? "spotify" : undef),
+    c => (c.initialTitle.startsWith("Spotify") ? "spotify-launcher" : undef),
 
-    let directMatch: string | undefined;
-    if (E(directMatch = directClassMatch[client.class]))
-        return directMatch;
-    
-    let app: Application | undef;
-    if (E(app = Apps.list.find(app => app.match(client.class))))
-        return app.icon_name ?? undef
-}
+    c => directClassMatch[c.class],
+    c => Apps.list.find(app => app.match(c.class))?.icon_name,
+];
 
-export const windowIcon = (client: Client) => {
-    const icon = resolveWindowIcon(client);
+const ensureIconExist = (icon: string | undef) =>
+    icon && Utils.lookUpIcon(icon) ? icon : undef;
 
-    if (O.flatMap(icon, Utils.lookUpIcon))
-        return icon!;
-    
-    return icons.fallback.executable;
-}
+export const windowIcon = (client: Client): string =>
+    iconResolvers.reduce(
+        (acc, resolver) => acc ?? ensureIconExist(resolver(client)),
+        undef as string | undef,
+    ) ?? icons.fallback.executable;

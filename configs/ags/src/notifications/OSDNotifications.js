@@ -40,7 +40,7 @@ const Popups = () =>
                 // box.attribute.map.delete(id);
                 box.attribute.map.set(
                     id,
-                    MyNotification(Notifications.getNotification(id))
+                    MyNotification(Notifications.getNotification(id)),
                 );
 
                 box.children = Array.from(box.attribute.map.values());
@@ -52,17 +52,17 @@ const Popups = () =>
         .hook(
             Notifications,
             (box, id) => box.attribute.notify(box, id),
-            "notified"
+            "notified",
         )
         .hook(
             Notifications,
             (box, id) => box.attribute.dismiss(box, id),
-            "dismissed"
+            "dismissed",
         )
         .hook(
             Notifications,
             (box, id) => box.attribute.dismiss(box, id, true),
-            "closed"
+            "closed",
         );
 
 const OSDNotification = () =>
@@ -85,7 +85,7 @@ const OSDNotification = () =>
 
                 box.get_parent().revealChild = true;
             },
-            "notified"
+            "notified",
         )
         .hook(
             Notifications,
@@ -95,7 +95,7 @@ const OSDNotification = () =>
                     box.children = [];
                 }
             },
-            "dismissed"
+            "dismissed",
         )
         .hook(
             Notifications,
@@ -105,7 +105,7 @@ const OSDNotification = () =>
                     box.children = [];
                 }
             },
-            "closed"
+            "closed",
         );
 
 const PopupList = ({ transition = "slide_up" } = {}) =>

@@ -1,7 +1,7 @@
 import type { WindowProps } from "@/types/widgets/window";
 import { F } from "@mobily/ts-belt";
 import config from "config";
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 
 type PopupRevealerProps = {
     name: string;
@@ -28,7 +28,7 @@ const PopupRevealer = ({
                         onOpen?.();
                         self.revealChild = visible;
                     }),
-                "window-toggled"
+                "window-toggled",
             ),
     });
 

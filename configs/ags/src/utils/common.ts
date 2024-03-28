@@ -19,5 +19,5 @@ export const raise = (e: unknown) => {
 
 export const assert = <T>(
     value: Option<T>,
-    message = "Value was null or undefined"
+    message = "Value was null or undefined",
 ) => (E(value) ? value : raise(new Error(message)));

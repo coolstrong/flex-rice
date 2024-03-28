@@ -2,7 +2,8 @@ import { getVolumeIcon } from "@/utils/shared";
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import { exec } from "resource:///com/github/Aylur/ags/utils.js";
 import { Box, Label } from "resource:///com/github/Aylur/ags/widget.js";
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
+
 const { Gravity } = imports.gi.Gdk;
 const Audio = await Service.import("audio");
 // const SysTray = await Service.import("systemtray");
@@ -42,10 +43,10 @@ const NetSpeedMeters = () => {
 
     return Box().poll(TIMEOUT, box => {
         const receivedBytes = Number(
-            exec("cat /sys/class/net/wlp0s20f3/statistics/rx_bytes")
+            exec("cat /sys/class/net/wlp0s20f3/statistics/rx_bytes"),
         );
         const transmittedBytes = Number(
-            exec("cat /sys/class/net/wlp0s20f3/statistics/tx_bytes")
+            exec("cat /sys/class/net/wlp0s20f3/statistics/tx_bytes"),
         );
 
         const download = Label({
@@ -91,7 +92,7 @@ export const VolumeButton = () => {
             self.hook(
                 Audio.speaker,
                 () => (icon.value = getVolumeIcon(Audio.speaker.volume)),
-                "notify::volume"
+                "notify::volume",
             ),
 
         onClicked: () => Utils.execAsync("pypr toggle volume"),
@@ -121,7 +122,7 @@ const NetworkButton = () => {
                 .with({ wifi: { strength: P.number.gt(70) } }, () => "󰤥")
                 .with({ wifi: { strength: P.number.gt(50) } }, () => "󰤢")
                 .with({ wifi: { strength: P.number.gt(20) } }, () => "󰤟")
-                .otherwise(() => "󰤯"))
+                .otherwise(() => "󰤯")),
     );
 };
 

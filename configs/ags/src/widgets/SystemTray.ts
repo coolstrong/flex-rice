@@ -1,6 +1,7 @@
 import type { TrayItem } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 import config from "config.json";
-import { R, pipe } from "@mobily/ts-belt";
+import { pipe, R } from "@mobily/ts-belt";
+
 const { Gravity } = imports.gi.Gdk;
 const SystemTray = await Service.import("systemtray");
 
@@ -37,9 +38,9 @@ const SysTrayItem = (item: TrayItem) =>
                         btn,
                         Gravity.SOUTH,
                         Gravity.NORTH,
-                        null
-                    )
-                )
+                        null,
+                    ),
+                ),
             ),
 
         onSecondaryClick: btn =>
@@ -52,8 +53,8 @@ export const SysTrayBox = () =>
         children: SystemTray.bind("items").as(items =>
             items
                 .filter(
-                    ({ id }) => !(<string[]>config.systray.ignore).includes(id)
+                    ({ id }) => !(<string[]>config.systray.ignore).includes(id),
                 )
-                .map(SysTrayItem)
+                .map(SysTrayItem),
         ),
     });

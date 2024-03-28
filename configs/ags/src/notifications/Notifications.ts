@@ -43,7 +43,7 @@ const Popups = () =>
                 box.attribute.map.delete(id);
                 box.attribute.map.set(
                     id,
-                    MyNotification(Notifications.getNotification(id))
+                    MyNotification(Notifications.getNotification(id)),
                 );
                 let children: Gtk30.Widget[] = [];
                 const mapValues = Array.from(box.attribute.map.values());
@@ -64,17 +64,17 @@ const Popups = () =>
         .hook(
             Notifications,
             (box, id) => box.attribute.notify(box, id),
-            "notified"
+            "notified",
         )
         .hook(
             Notifications,
             (box, id) => box.attribute.dismiss(box, id),
-            "dismissed"
+            "dismissed",
         )
         .hook(
             Notifications,
             (box, id) => box.attribute.dismiss(box, id, true),
-            "closed"
+            "closed",
         );
 
 const PopupList = ({ transition = <Transition>"slide_up" } = {}) =>
@@ -88,7 +88,7 @@ const PopupList = ({ transition = <Transition>"slide_up" } = {}) =>
         ],
     });
 
-export default (monitor) =>
+export default monitor =>
     Window({
         monitor,
         layer: "overlay",

@@ -57,7 +57,7 @@ const NotificationIcon = ({ appEntry, appIcon, image }) => {
     });
 };
 
-export default (notification) => {
+export default notification => {
     const bodyLabel = Label({
         css: `margin-top: 1rem;`,
         className: "notification-description",
@@ -103,7 +103,7 @@ export default (notification) => {
                                 css: `${margin} margin-top: 0.5rem;`,
                                 vpack: "start",
                                 label: GLib.DateTime.new_from_unix_local(
-                                    notification.time
+                                    notification.time,
                                 ).format("%H:%M"),
                             }),
                             // Notification Close Button
@@ -126,7 +126,7 @@ export default (notification) => {
     // Notification Action Button
     const actionsbox = Box({
         className: "notification-actions",
-        children: notification.actions.map((action) =>
+        children: notification.actions.map(action =>
             Button({
                 // onHover: hover,
                 css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
@@ -134,7 +134,7 @@ export default (notification) => {
                 onClicked: () => notification.invoke(action.id),
                 hexpand: true,
                 child: Label(action.label),
-            })
+            }),
         ),
     });
 

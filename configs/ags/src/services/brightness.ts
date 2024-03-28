@@ -16,7 +16,7 @@ class Brightness extends Service {
             {
                 screen: ["float", "rw"],
                 kbd: ["int", "rw"],
-            }
+            },
         );
     }
 
