@@ -22,8 +22,6 @@ Utils.monitorFile(`${App.configDir}/scss`, () => {
     App.applyCss(css);
 });
 
-const br = batteryReaction();
-
 App.config({
     style: css,
     cacheNotificationActions: true,
@@ -33,7 +31,7 @@ App.config({
         NotificationCenter(),
         HardwareMenu(),
         CalendarMenu(),
-        Bar({ monitor: 0 }).hook(br.object, br.callback, br.signal),
+        Bar({ monitor: 0 }),
         SystemMenu(),
     ],
 });

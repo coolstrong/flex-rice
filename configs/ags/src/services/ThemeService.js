@@ -103,20 +103,8 @@ class ThemeService extends Service {
     }
 
     changeCss(cssTheme) {
-        // const scss = App.configDir + '/scss/main.scss';
-        const scss = settings.theme.mainCss;
-        // const css = App.configDir + '/style.css';
-        const css = settings.theme.styleCss;
-
         const newTh = `@import './themes/${cssTheme}';`;
-
-        execAsync(["sed", "-i", `1s|.*|${newTh}|`, scss])
-            .then(() => {
-                exec(`sassc ${scss} ${css}`);
-                App.resetCss();
-                App.applyCss(css);
-            })
-            .catch(print);
+        Utils.writeFile(newTh, `${App.configDir}/scss/theme.scss`).catch(print);
     }
 
     get dynamicWallpaperIsOn() {

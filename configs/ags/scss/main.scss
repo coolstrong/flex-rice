@@ -1,4 +1,5 @@
-@import './themes/newCat.scss';
+@import "theme";
+@import "widgets";
 
 .unset {
     all: unset;
@@ -23,7 +24,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 /* --------------------------------------------- */
 .workspaces button:active {
     color: $active-workspace-btn;
-    border-radius: 0px;
+    border-radius: 0;
 }
 
 .workspaces {
@@ -45,45 +46,31 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 .dynamic-wallpaper {
     margin-top: $bar-top-margin;
     margin-bottom: $bar-bottom-margin;
-    padding: 0rem 0.8rem;
+    padding: 0 0.8rem;
 }
-
-// .workspaces:dir(rtl) {
-//   margin-right: 0.4rem;
-//   margin-left: $top-bar-widget-margins;
-// }
-
-// .workspaces:dir(ltr) {
-//   margin-right: $top-bar-widget-margins;
-//   margin-left: 0.4rem;
-// }
 
 .workspaces button {
     background: $workspace-background;
     color: $workspace-btn;
-    border: 0rem;
+    border: 0;
     padding: 0 2px;
 }
-
-// .workspaces button {
-//     max-width: 35px;
-// }
 
 .workspaces button.focused {
     border-bottom: 1px solid $workspace-focused-bottom;
     color: $workspace-focused;
     font-family: $icon-font-family;
-    border-radius: 0px;
-    padding-top: 0px;
-    padding-bottom: 0px;
+    border-radius: 0;
+    padding-top: 0;
+    padding-bottom: 0;
     font-size: large;
 }
 
 .workspaces button.unfocused {
     font-family: $icon-font-family;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    border-radius: 0px;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 0;
     font-size: large;
 }
 
@@ -99,7 +86,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 .clock {
     // font-size: 1em;
     // font-family: "VEXA light R";
-    // font-family: "ae_Ostorah";
+    font-family: "ae_Ostorah";
     background: $clock-background;
     color: $clock-color;
     border-radius: $border-radius;
@@ -116,10 +103,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
     background: $bar-weather-background;
     color: $bar-weather-color;
     border-radius: $border-radius;
-    margin-top: $bar-top-margin;
-    margin-bottom: $bar-top-margin;
-    margin-left: $top-bar-widget-margins;
-    margin-right: $top-bar-widget-margins;
+    margin: $bar-top-margin $top-bar-widget-margins;
 }
 
 .bar-weather-box:dir(rtl) {
@@ -158,7 +142,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 .bar-bg {
     background: rgba(#000000, 0);
     min-height: 8px;
-    border-radius: 0rem;
+    border-radius: 0;
 }
 
 .bar {
@@ -293,7 +277,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 }
 
 .tray-btn {
-    border: 0rem;
+    border: 0;
 }
 
 /* ------------------------------------- */
@@ -399,10 +383,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 /* ------------------------------------------ */
 .hardware-box {
     background: $hardware-box-color;
-    padding-top: 0.2em;
-    padding-bottom: 0.2em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    padding: 0.2em 0.5em;
     border-radius: $border-radius;
     margin-top: $bar-top-margin;
     margin-bottom: $bar-bottom-margin;
@@ -467,10 +448,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
     padding-right: 1.5rem;
 }
 
-// scale trough {
-//     border-radius: $border-radius;
-//     background: $scale-highlight-background;
-// }
+
 scale trough highlight {
     border-radius: $border-radius;
     background: $scale-highlight-background;
@@ -498,12 +476,12 @@ scale slider {
 
 .notifications-revealer-box:dir(rtl) {
     margin-left: 0.7rem;
-    margin-right: 0rem;
+    margin-right: 0;
 }
 
 .notifications-revealer-box:dir(ltr) {
     margin-right: 0.7rem;
-    margin-left: 0rem;
+    margin-left: 0;
 }
 
 .notification-popups {
@@ -530,6 +508,7 @@ scale slider {
 //     background: $primary-color;
 // }
 
+//noinspection CssInvalidHtmlTagReference
 window {
     border-radius: $border-radius;
     background: rgba(0, 0, 0, 0);
@@ -557,7 +536,7 @@ window {
 .left-menu-box:dir(ltr) {
     margin-right: 0.45rem;
     margin-left: 1rem;
-    box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
 }
 
 .left-menu-header {
@@ -601,7 +580,6 @@ window {
     border-radius: $border-radius;
     background: $menu-btn-background;
     border-color: $menu-btn-background;
-    border-radius: $border-radius;
     transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -631,14 +609,10 @@ window {
     border-radius: $border-radius;
     margin-top: $bar-top-margin;
     margin-bottom: $bar-bottom-margin;
-    border: 0px;
-    padding-top: 0rem;
-    padding-bottom: 0rem;
-
+    border: 0;
     background: $menu-btn-background;
     font-family: $icon-font-family;
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
+    padding: 0 0.8rem;
 }
 
 .menu-button:dir(rtl) {
@@ -691,10 +665,7 @@ window {
     color: $notifications-bar-btn-fg;
     font-family: $icon-font-family;
     border-radius: $border-radius;
-    padding-top: 0rem;
-    padding-bottom: 0rem;
-    padding-right: 0.8rem;
-    padding-left: 0.8rem;
+    padding: 0 0.8rem;
 }
 
 .notification-center-button:hover {
@@ -735,12 +706,9 @@ window {
 }
 
 .notification-center-header-mute {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
     font-family: $icon-font-family;
     border-radius: $border-radius;
-    padding-left: 1rem;
-    padding-right: 1.2rem;
+    padding: 0.5rem 1.2rem 0.5rem 1rem;
     margin-right: 0.5rem;
 }
 
@@ -754,12 +722,9 @@ window {
 // }
 
 .notification-center-header-clear {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
     font-family: $icon-font-family;
     border-radius: $border-radius;
-    padding-left: 1rem;
-    padding-right: 1.2rem;
+    padding: 0.5rem 1.2rem 0.5rem 1rem;
 }
 
 .notification-center-header-clear:dir(rtl) {
@@ -1119,10 +1084,7 @@ window {
 }
 
 .hardware-cpu-table-row {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
 }
 
 // --------- RAM Table ---------
@@ -1142,17 +1104,13 @@ window {
 }
 
 .hardware-ram-table-row {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
 }
 
 // --------- HW ---------
 .hardware-menu-tables-box {
     background: $hardware-menu-tables-box-background;
-    padding: 0.8rem;
-    padding-top: 0rem;
+    padding: 0 0.8rem 0.8rem;
     margin-top: 0.8rem;
     border-radius: $border-radius;
 }
@@ -1176,10 +1134,7 @@ window {
 }
 
 .hardware-bat-table-row {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
 }
 
 // --------- OS Table ---------
@@ -1201,24 +1156,17 @@ window {
 }
 
 .hardware-os-table-row {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
 }
 
 button {
     background: $btn-background;
     color: $btn-color;
-    border-color: $btn-background;
     border-radius: $border-radius;
 
     padding: 4px 14px;
-    // font-size: 16px;
-    // font-weight: bold;
 
-    border: none;
-    // box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border: none $btn-background;
     transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
@@ -1283,18 +1231,17 @@ menuitem:hover {
         color: $weather-menu-box-fg;
     }
 
-    padding: 1rem 1rem;
-    padding-top: 2rem;
+    padding: 2rem 1rem 1rem;
     border: $border-size solid $border-color;
     border-radius: $border-radius;
 }
 
 .weather-menu-general-information-box {
-    margin: 0rem 1rem;
+    margin: 0 1rem;
 }
 
 .weather-menu-detail-box {
-    margin: 0rem 1rem;
+    margin: 0 1rem;
 }
 
 .weather-menu-today-box {
@@ -1308,7 +1255,7 @@ menuitem:hover {
 .weather-menu-icon {
     font-family: $icon-font-family;
     font-size: 7rem;
-    margin: 0rem 1rem;
+    margin: 0 1rem;
 }
 
 .weather-menu-city {
@@ -1327,7 +1274,7 @@ menuitem:hover {
 .weather-menu-sunrise-icon {
     font-size: 1.1rem;
     font-family: $icon-font-family;
-    margin: 0rem 0.5rem;
+    margin: 0 0.5rem;
 }
 
 .weather-menu-sunset {
@@ -1337,7 +1284,7 @@ menuitem:hover {
 .weather-menu-sunset-icon {
     font-size: 1.1rem;
     font-family: $icon-font-family;
-    margin: 0rem 0.5rem;
+    margin: 0 0.5rem;
 }
 
 .weather-menu-today-time {
@@ -1345,7 +1292,7 @@ menuitem:hover {
 }
 .weather-menu-today-weather {
     font-size: 1.1rem;
-    padding: 0rem 1.2rem;
+    padding: 0 1.2rem;
 }
 
 .weather-menu-today-temp {
@@ -1396,6 +1343,7 @@ menuitem:hover {
     border-width: 0;
     all: unset;
 
+    //noinspection CssInvalidPseudoSelector
     &:selected {
         background-color: $fg-one;
         border-radius: 2px;

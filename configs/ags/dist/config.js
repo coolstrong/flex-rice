@@ -3393,7 +3393,7 @@ var iconResolvers = [
 var ensureIconExist = (icon) => icon && Utils.lookUpIcon(icon) ? icon : undef;
 var windowIcon = (client) => iconResolvers.reduce((acc, resolver) => acc ?? ensureIconExist(resolver(client)), undef) ?? icons.fallback.executable;
 
-// src/widgets/Workspaces.ts
+// src/widgets/Workspaces/index.ts
 import Gtk30 from "gi://Gtk?version=3.0";
 import {Box, Button} from "resource:///com/github/Aylur/ags/widget.js";
 var Hyprland = await Service.import("hyprland");
@@ -4652,14 +4652,8 @@ class ThemeService extends Service2 {
     ]).catch(print);
   }
   changeCss(cssTheme) {
-    const scss = settings_default.theme.mainCss;
-    const css = settings_default.theme.styleCss;
     const newTh = `@import './themes/${cssTheme}';`;
-    execAsync3(["sed", "-i", `1s|.*|${newTh}|`, scss]).then(() => {
-      exec2(`sassc ${scss} ${css}`);
-      App2.resetCss();
-      App2.applyCss(css);
-    }).catch(print);
+    Utils.writeFile(newTh, `${App2.configDir}/scss/theme.scss`).catch(print);
   }
   get dynamicWallpaperIsOn() {
     return this.dynamicWallpaperStatus;
@@ -6020,27 +6014,6 @@ var OSD = () => {
   });
 };
 
-// src/reactions/battery.ts
-var Battery3 = await Service.import("battery");
-var batteryReaction = () => {
-  let isCritical = false;
-  return {
-    object: Battery3,
-    signal: "notify::percent",
-    callback: () => {
-      if (Battery3.percent <= 10 && !isCritical) {
-        Utils.execAsync([
-          `notify-send -u critical -i "battery-010" -t 10000`,
-          `"Battery low"`,
-          `"Battery is at critical level (10%). Connect laptop to charger."`
-        ]).then(() => isCritical = true);
-      } else if (Battery3.percent > 10 && isCritical) {
-        isCritical = false;
-      }
-    }
-  };
-};
-
 // src/widgets/menus/CalendarMenu.ts
 var CalendarMenu = () => {
   const date = Variable(new Date);
@@ -6077,7 +6050,6 @@ Utils.monitorFile(`${App4.configDir}/scss`, () => {
   App4.resetCss();
   App4.applyCss(css);
 });
-var br = batteryReaction();
 App4.config({
   style: css,
   cacheNotificationActions: true,
@@ -6087,7 +6059,7 @@ App4.config({
     NotificationCenter(),
     HardwareMenu(),
     CalendarMenu(),
-    Bar({ monitor: 0 }).hook(br.object, br.callback, br.signal),
+    Bar({ monitor: 0 }),
     SystemMenu()
   ]
 });

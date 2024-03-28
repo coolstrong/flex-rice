@@ -1,5 +1,5 @@
-import { windowIcon } from "@/lib/icons";
-import { undef } from "@/utils/common";
+import { windowIcon } from "@/lib/icons.ts";
+import { undef } from "@/utils/common.ts";
 import { A } from "@mobily/ts-belt";
 import config from "config";
 import Gtk30 from "gi://Gtk?version=3.0";

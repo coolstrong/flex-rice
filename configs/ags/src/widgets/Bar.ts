@@ -1,5 +1,5 @@
 import { SysTrayBox } from "./SystemTray.js";
-import { Workspaces } from "./Workspaces.js";
+import { Workspaces } from "./Workspaces";
 import { HardwareBox } from "./hardware/all.js";
 import { NetVolumeBox } from "./NetVolume.js";
 import { NotificationCenterButton } from "./menus/NotificationCenter.js";

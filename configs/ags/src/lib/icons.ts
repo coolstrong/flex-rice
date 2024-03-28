@@ -160,7 +160,10 @@ const Apps = await Service.import("applications");
 
 const directClassMatch = {
     "code-url-handler": "visual-studio-code",
+    //jetbrains IDE's on wayland (experimental currently)
+    //don't acquire correct window class (I use mostly webstorm so...)
     "com.intellij.idea.Main": "webstorm",
+    //whatsapp PWA
     "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
 };
 
