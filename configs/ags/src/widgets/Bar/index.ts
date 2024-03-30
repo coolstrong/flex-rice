@@ -1,16 +1,17 @@
-import { SysTrayBox } from "./SystemTray.js";
-import { Workspaces } from "./Workspaces";
-import { HardwareBox } from "./hardware/all.js";
-import { NetVolumeBox } from "./NetVolume.js";
-import { NotificationCenterButton } from "./menus/NotificationCenter.js";
-import { MenuButton } from "./menus/SystemMenu.js";
+import { SysTrayBox } from "../SystemTray.js";
+import { Workspaces } from "../Workspaces";
+import { HardwareBox } from "../hardware/all.js";
+import { NetVolumeBox } from "../NetVolume.js";
+import { NotificationCenterButton } from "../menus/NotificationCenter.js";
+import { MenuButton } from "../menus/SystemMenu.js";
 
 import {
     Box,
     CenterBox,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
-import themeService from "../services/ThemeService.js";
+import themeService from "../../services/ThemeService.js";
+import { KeyboardLayout } from "@/widgets/Bar/KeyboardLayout.ts";
 
 const Clock = () =>
     Widget.Button({
@@ -39,7 +40,7 @@ const DynamicWallpaper = () =>
     });
 
 // layout of the bar
-const Right = () =>
+const Start = () =>
     Box({
         spacing: 8,
         children: [Workspaces(), HardwareBox(), DynamicWallpaper()],
@@ -47,7 +48,7 @@ const Right = () =>
 
 const Center = () => Box({});
 
-const Left = () =>
+const End = () =>
     Box({
         hpack: "end",
         spacing: 8,
@@ -56,6 +57,7 @@ const Left = () =>
             NetVolumeBox(),
             SysTrayBox(),
             Clock(),
+            KeyboardLayout(),
             MenuButton(),
         ],
     });
@@ -69,8 +71,8 @@ export const Bar = ({ monitor }: { monitor?: number } | undef = {}) =>
         exclusivity: "exclusive",
         child: CenterBox({
             className: "bar shadow",
-            startWidget: Right(),
+            startWidget: Start(),
             centerWidget: Center(),
-            endWidget: Left(),
+            endWidget: End(),
         }),
     });

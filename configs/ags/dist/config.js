@@ -15,6 +15,12 @@ var config_default = {
       "org.kde.polkit-kde-authentication-agent-1"
     ],
     perMonitor: 4
+  },
+  keyboard: {
+    default: {
+      name: "compx-2.4g-wireless-receiver-keyboard",
+      keymap: "en"
+    }
   }
 };
 
@@ -25,6 +31,17 @@ var pipe = function() {
     e = arguments[t](e);
   }
   return e;
+};
+// node_modules/@mobily/ts-belt/dist/flow.mjs
+var flow = function() {
+  let l = arguments;
+  return function() {
+    let t = l[0].apply(null, arguments);
+    for (let n = 1, e = l.length;n < e; n++) {
+      t = l[n](t);
+    }
+    return t;
+  };
 };
 // node_modules/@mobily/ts-belt/dist/caml-aa4fccd9.mjs
 var int_compare = function(e, r) {
@@ -362,6 +379,13 @@ var some = function(_) {
     };
   } else {
     return _;
+  }
+};
+var nullable_to_opt = function(_) {
+  if (_ == null) {
+    return;
+  } else {
+    return some(_);
   }
 };
 var valFromOption = function(_) {
@@ -821,6 +845,15 @@ var n = {
 };
 
 // node_modules/@mobily/ts-belt/dist/belt_Option-91f3b350.mjs
+var getExn2 = function(t) {
+  if (t !== undefined) {
+    return valFromOption(t);
+  }
+  throw {
+    RE_EXN_ID: "Not_found",
+    Error: new Error
+  };
+};
 var mapWithDefaultU = function(t, i, a) {
   if (t !== undefined) {
     return a(valFromOption(t));
@@ -828,8 +861,31 @@ var mapWithDefaultU = function(t, i, a) {
     return i;
   }
 };
+var mapU2 = function(t, a) {
+  if (t !== undefined) {
+    return some(a(valFromOption(t)));
+  }
+};
+var flatMapU = function(t, i) {
+  if (t !== undefined) {
+    return i(valFromOption(t));
+  }
+};
+var flatMap = function(n2, i) {
+  return flatMapU(n2, __1(i));
+};
+var getWithDefault = function(t, i) {
+  if (t !== undefined) {
+    return valFromOption(t);
+  } else {
+    return i;
+  }
+};
 var isSome = function(t) {
   return t !== undefined;
+};
+var isNone = function(t) {
+  return t === undefined;
 };
 
 // node_modules/@mobily/ts-belt/dist/caml_js_exceptions-5c6894a5.mjs
@@ -2483,7 +2539,7 @@ var sample = function(n2) {
 var _flatMap = function(n2, t) {
   return flat(mapU(n2, t));
 };
-var flatMap = function() {
+var flatMap2 = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t) {
@@ -2622,7 +2678,7 @@ var Ra = {
   union,
   intersection,
   sample,
-  flatMap
+  flatMap: flatMap2
 };
 // node_modules/@mobily/ts-belt/dist/Promise.bs-06a7bae6.mjs
 var $$catch = function(r, s2) {
@@ -2636,7 +2692,7 @@ var $$catch = function(r, s2) {
 var t = create("Promise.JsError");
 
 // node_modules/@mobily/ts-belt/dist/belt_Result-a4eb468a.mjs
-var getExn2 = function(r) {
+var getExn3 = function(r) {
   if (r.TAG === 0) {
     return r._0;
   }
@@ -2652,7 +2708,7 @@ var mapWithDefaultU2 = function(r, t2, e) {
     return t2;
   }
 };
-var mapU2 = function(r, t2) {
+var mapU3 = function(r, t2) {
   if (r.TAG === 0) {
     return {
       TAG: 0,
@@ -2665,7 +2721,7 @@ var mapU2 = function(r, t2) {
     };
   }
 };
-var flatMapU = function(r, t2) {
+var flatMapU2 = function(r, t2) {
   if (r.TAG === 0) {
     return t2(r._0);
   } else {
@@ -2675,10 +2731,10 @@ var flatMapU = function(r, t2) {
     };
   }
 };
-var flatMap2 = function(t2, e) {
-  return flatMapU(t2, __1(e));
+var flatMap3 = function(t2, e) {
+  return flatMapU2(t2, __1(e));
 };
-var getWithDefault = function(r, t2) {
+var getWithDefault2 = function(r, t2) {
   if (r.TAG === 0) {
     return r._0;
   } else {
@@ -2771,7 +2827,7 @@ var fromFalsy = function() {
   return _fromFalsy(arguments[0], arguments[1]);
 };
 var _fromPredicate = function(r, n2, t2) {
-  return flatMap2(fromNullable(r, t2), function(r2) {
+  return flatMap3(fromNullable(r, t2), function(r2) {
     if (n2(r2)) {
       return {
         TAG: 0,
@@ -2839,7 +2895,7 @@ var mapWithDefault = function() {
   }
   return A(arguments[0], arguments[1], arguments[2]);
 };
-var flatMap3 = function() {
+var flatMap4 = function() {
   if (arguments.length === 1) {
     const r = arguments;
     return function fn(n2) {
@@ -2848,7 +2904,7 @@ var flatMap3 = function() {
   }
   return G2(arguments[0], arguments[1]);
 };
-var getWithDefault2 = function() {
+var getWithDefault3 = function() {
   if (arguments.length === 1) {
     const r = arguments;
     return function fn(n2) {
@@ -2858,10 +2914,10 @@ var getWithDefault2 = function() {
   return d(arguments[0], arguments[1]);
 };
 var toUndefined = function(r) {
-  return getWithDefault(r, undefined);
+  return getWithDefault2(r, undefined);
 };
 var toNullable = function(r) {
-  return getWithDefault(r, null);
+  return getWithDefault2(r, null);
 };
 var toOption = function(r) {
   if (r.TAG === 0) {
@@ -3001,7 +3057,7 @@ var flip2 = function(r) {
   }
 };
 var _filter2 = function(r, n2) {
-  return flatMapU(r, function(r2) {
+  return flatMapU2(r, function(r2) {
     if (n2(r2)) {
       return {
         TAG: 0,
@@ -3048,7 +3104,7 @@ var all2 = function(r) {
     TAG: 0,
     _0: []
   }, function(r2, n2) {
-    return flatMapU(r2, function(r3) {
+    return flatMapU2(r2, function(r3) {
       if (n2.TAG === 0) {
         return {
           TAG: 0,
@@ -3067,11 +3123,11 @@ var all2 = function(r) {
   });
 };
 var h = create("Result.ResultError");
-var E = mapU2;
+var E = mapU3;
 var A = mapWithDefaultU2;
-var G2 = flatMapU;
-var T = getExn2;
-var d = getWithDefault;
+var G2 = flatMapU2;
+var T = getExn3;
+var d = getWithDefault2;
 var g = isError;
 var v = isOk;
 
@@ -3099,9 +3155,9 @@ var N2 = {
   fromPromise,
   map: map2,
   mapWithDefault,
-  flatMap: flatMap3,
+  flatMap: flatMap4,
   getExn: T,
-  getWithDefault: getWithDefault2,
+  getWithDefault: getWithDefault3,
   toUndefined,
   toNullable,
   toOption,
@@ -3198,6 +3254,290 @@ var i = {
   isNull,
   isUndefined,
   isNot
+};
+// node_modules/@mobily/ts-belt/dist/index-c1cc4c86.mjs
+var placeholder3 = function(n2) {
+};
+var makeSome = function(n2) {
+  return some(n2);
+};
+var makeNone = function(n2) {
+};
+var fromNullable2 = function(n2) {
+  if (n2 == null) {
+    return;
+  } else {
+    return some(n2);
+  }
+};
+var fromFalsy2 = function(n2) {
+  if (n2) {
+    return n2;
+  }
+};
+var _fromPredicate2 = function(n2, t2) {
+  return flatMap(n2 == null ? undefined : some(n2), function(n3) {
+    if (t2(n3)) {
+      return some(n3);
+    }
+  });
+};
+var fromPredicate2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _fromPredicate2(t2, n2[0]);
+    };
+  }
+  return _fromPredicate2(arguments[0], arguments[1]);
+};
+var fromExecution2 = function(n2) {
+  try {
+    return some(n2(undefined));
+  } catch (n3) {
+    return;
+  }
+};
+var fromPromise2 = function(t2) {
+  return $$catch(t2.then(function(n2) {
+    return some(n2);
+  }), function(n2) {
+    return Promise.resolve(undefined);
+  });
+};
+var map3 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return h2(t2, n2[0]);
+    };
+  }
+  return h2(arguments[0], arguments[1]);
+};
+var flatMap5 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _(t2, n2[0]);
+    };
+  }
+  return _(arguments[0], arguments[1]);
+};
+var mapWithDefault2 = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return v2(t2, n2[0], n2[1]);
+    };
+  }
+  return v2(arguments[0], arguments[1], arguments[2]);
+};
+var _mapNullable = function(n2, t2) {
+  if (n2 !== undefined) {
+    return nullable_to_opt(t2(valFromOption(n2)));
+  }
+};
+var mapNullable = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _mapNullable(t2, n2[0]);
+    };
+  }
+  return _mapNullable(arguments[0], arguments[1]);
+};
+var _filter3 = function(n2, t2) {
+  return flatMapU(n2, function(n3) {
+    if (t2(n3)) {
+      return some(n3);
+    }
+  });
+};
+var filter3 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _filter3(t2, n2[0]);
+    };
+  }
+  return _filter3(arguments[0], arguments[1]);
+};
+var getWithDefault4 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return g2(t2, n2[0]);
+    };
+  }
+  return g2(arguments[0], arguments[1]);
+};
+var toNullable2 = function(n2) {
+  return getWithDefault(n2, null);
+};
+var toUndefined2 = function(n2) {
+  return getWithDefault(n2, undefined);
+};
+var _toResult = function(n2, t2) {
+  if (n2 !== undefined) {
+    return {
+      TAG: 0,
+      _0: valFromOption(n2)
+    };
+  } else {
+    return {
+      TAG: 1,
+      _0: t2
+    };
+  }
+};
+var toResult = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _toResult(t2, n2[0]);
+    };
+  }
+  return _toResult(arguments[0], arguments[1]);
+};
+var _match2 = function(n2, t2, r) {
+  if (n2 !== undefined) {
+    return t2(valFromOption(n2));
+  } else {
+    return r(undefined);
+  }
+};
+var match2 = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _match2(t2, n2[0], n2[1]);
+    };
+  }
+  return _match2(arguments[0], arguments[1], arguments[2]);
+};
+var _tap4 = function(n2, t2) {
+  if (n2 !== undefined) {
+    t2(valFromOption(n2));
+    return n2;
+  } else {
+    return n2;
+  }
+};
+var tap4 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _tap4(t2, n2[0]);
+    };
+  }
+  return _tap4(arguments[0], arguments[1]);
+};
+var _contains = function(n2, r) {
+  return mapWithDefaultU(n2, false, function(n3) {
+    return equal(n3, r);
+  });
+};
+var contains = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _contains(t2, n2[0]);
+    };
+  }
+  return _contains(arguments[0], arguments[1]);
+};
+var _zip = function(n2, t2) {
+  if (n2 !== undefined && t2 !== undefined) {
+    return [valFromOption(n2), valFromOption(t2)];
+  }
+};
+var zip3 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _zip(t2, n2[0]);
+    };
+  }
+  return _zip(arguments[0], arguments[1]);
+};
+var _zipWith = function(n2, t2, r) {
+  if (n2 !== undefined && t2 !== undefined) {
+    return some(r(valFromOption(n2), valFromOption(t2)));
+  }
+};
+var zipWith2 = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _zipWith(t2, n2[0], n2[1]);
+    };
+  }
+  return _zipWith(arguments[0], arguments[1], arguments[2]);
+};
+var _fold2 = function(n2, t2, r) {
+  if (n2 !== undefined) {
+    return t2(valFromOption(n2));
+  } else {
+    return r(undefined);
+  }
+};
+var fold2 = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _fold2(t2, n2[0], n2[1]);
+    };
+  }
+  return _fold2(arguments[0], arguments[1], arguments[2]);
+};
+var all3 = function(n2) {
+  return reduceU(n2, [], function(n3, t2) {
+    return flatMapU(n3, function(n4) {
+      if (t2 !== undefined) {
+        return concat(n4, [valFromOption(t2)]);
+      }
+    });
+  });
+};
+var h2 = mapU2;
+var _ = flatMapU;
+var v2 = mapWithDefaultU;
+var g2 = getWithDefault;
+var N3 = getExn2;
+var b = isNone;
+var z2 = isSome;
+var Some = (n2) => n2;
+var P2 = {
+  __proto__: null,
+  Some,
+  None: undefined,
+  placeholder: placeholder3,
+  makeSome,
+  makeNone,
+  fromNullable: fromNullable2,
+  fromFalsy: fromFalsy2,
+  fromPredicate: fromPredicate2,
+  fromExecution: fromExecution2,
+  fromPromise: fromPromise2,
+  map: map3,
+  flatMap: flatMap5,
+  mapWithDefault: mapWithDefault2,
+  mapNullable,
+  filter: filter3,
+  getWithDefault: getWithDefault4,
+  getExn: N3,
+  toNullable: toNullable2,
+  toUndefined: toUndefined2,
+  toResult,
+  match: match2,
+  isNone: b,
+  isSome: z2,
+  tap: tap4,
+  contains,
+  zip: zip3,
+  zipWith: zipWith2,
+  fold: fold2,
+  all: all3
 };
 // src/widgets/SystemTray.ts
 var { Gravity } = imports.gi.Gdk;
@@ -3382,7 +3722,8 @@ var Apps = await Service.import("applications");
 var directClassMatch = {
   "code-url-handler": "visual-studio-code",
   "com.intellij.idea.Main": "webstorm",
-  "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp"
+  "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
+  "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist"
 };
 var iconResolvers = [
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify" : undef,
@@ -3559,7 +3900,7 @@ var a2 = function(...t2) {
 var u = function(t2) {
   return Object.assign(t2, { optional: () => l2(t2), and: (e) => m(t2, e), or: (e) => d2(t2, e), select: (e) => e === undefined ? p(t2) : p(e, t2) });
 };
-var h2 = function(t2) {
+var h3 = function(t2) {
   return Object.assign(((t3) => Object.assign(t3, { [Symbol.iterator]() {
     let n2 = 0;
     const r = [{ value: Object.assign(t3, { [e]: true }), done: false }, { done: true, value: undefined }];
@@ -3567,7 +3908,7 @@ var h2 = function(t2) {
       var t4;
       return (t4 = r[n2++]) != null ? t4 : r.at(-1);
     } };
-  } }))(t2), { optional: () => h2(l2(t2)), select: (e) => h2(e === undefined ? p(t2) : p(e, t2)) });
+  } }))(t2), { optional: () => h3(l2(t2)), select: (e) => h3(e === undefined ? p(t2) : p(e, t2)) });
 };
 var l2 = function(e) {
   return u({ [t2]: () => ({ match: (t2) => {
@@ -3608,16 +3949,16 @@ var p = function(...e) {
     }), selections: e2 };
   }, getSelectionKeys: () => [r != null ? r : n2].concat(i2 === undefined ? [] : o(i2)) }) });
 };
-var v2 = function(t2) {
+var v3 = function(t2) {
   return typeof t2 == "number";
 };
-var b = function(t2) {
+var b2 = function(t2) {
   return typeof t2 == "string";
 };
 var w = function(t2) {
   return typeof t2 == "bigint";
 };
-var N3 = function(t2) {
+var N4 = function(t2) {
   return new $2(t2, W);
 };
 var t2 = Symbol.for("@ts-pattern/matcher");
@@ -3670,7 +4011,7 @@ var f2 = (t3, e2) => {
       return false;
   return true;
 };
-var g2 = (t3, e2) => {
+var g3 = (t3, e2) => {
   for (const [n3, r2] of t3.entries())
     if (!e2(r2, n3))
       return false;
@@ -3681,23 +4022,23 @@ var S2 = u(y(function(t3) {
 }));
 var O2 = S2;
 var j = (t3) => Object.assign(u(t3), { startsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b(t4) && t4.startsWith(n3)))));
+  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.startsWith(n3)))));
   var n3;
 }, endsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b(t4) && t4.endsWith(n3)))));
+  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.endsWith(n3)))));
   var n3;
-}, minLength: (e2) => j(m(t3, ((t4) => y((e3) => b(e3) && e3.length >= t4))(e2))), maxLength: (e2) => j(m(t3, ((t4) => y((e3) => b(e3) && e3.length <= t4))(e2))), includes: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b(t4) && t4.includes(n3)))));
+}, minLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length >= t4))(e2))), maxLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length <= t4))(e2))), includes: (e2) => {
+  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.includes(n3)))));
   var n3;
 }, regex: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b(t4) && Boolean(t4.match(n3))))));
+  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && Boolean(t4.match(n3))))));
   var n3;
 } });
-var E3 = j(y(b));
-var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v2(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v2(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v2(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v2(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v2(t4) && t4 < 0))) });
-var x = K2(y(v2));
+var E3 = j(y(b2));
+var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v3(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v3(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v3(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v3(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v3(t4) && t4 < 0))) });
+var x = K2(y(v3));
 var A2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => A2(m(t3, ((t4, e3) => y((n4) => w(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 < t4))(e2))), gt: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 > t4))(e2))), lte: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 <= t4))(e2))), gte: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 >= t4))(e2))), positive: () => A2(m(t3, y((t4) => w(t4) && t4 > 0))), negative: () => A2(m(t3, y((t4) => w(t4) && t4 < 0))) });
-var P2 = A2(y(w));
+var P3 = A2(y(w));
 var T2 = u(y(function(t3) {
   return typeof t3 == "boolean";
 }));
@@ -3707,8 +4048,8 @@ var k = u(y(function(t3) {
 var B = u(y(function(t3) {
   return t3 == null;
 }));
-var _ = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
-  return h2({ [t2]: () => ({ match: (t3) => {
+var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
+  return h3({ [t2]: () => ({ match: (t3) => {
     if (!Array.isArray(t3))
       return { matched: false };
     if (e2.length === 0)
@@ -3754,7 +4095,7 @@ var _ = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     if (e2.length === 1)
       throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
     const [o2, c2] = e2;
-    return { matched: g2(t3, (t4, e3) => {
+    return { matched: g3(t3, (t4, e3) => {
       const n4 = s2(o2, e3, r2), i4 = s2(c2, t4, r2);
       return n4 && i4;
     }), selections: n3 };
@@ -3762,7 +4103,7 @@ var _ = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
 }, intersection: m, union: d2, not: function(e2) {
   return u({ [t2]: () => ({ match: (t3) => ({ matched: !s2(e2, t3, () => {
   }) }), getSelectionKeys: () => [], matcherType: "not" }) });
-}, when: y, select: p, any: S2, _: O2, string: E3, number: x, bigint: P2, boolean: T2, symbol: k, nullish: B, instanceOf: function(t3) {
+}, when: y, select: p, any: S2, _: O2, string: E3, number: x, bigint: P3, boolean: T2, symbol: k, nullish: B, instanceOf: function(t3) {
   return u(y(function(t4) {
     return (e2) => e2 instanceof t4;
   }(t3)));
@@ -3816,7 +4157,7 @@ class $2 {
 }
 
 // src/utils/shared.ts
-var getVolumeIcon = (volume) => N3(volume * 100).with(_.number.lte(0), () => icons.audio.volume.muted).with(_.number.between(0, 34), () => icons.audio.volume.low).with(_.number.between(34, 67), () => icons.audio.volume.medium).with(_.number.between(67, 100), () => icons.audio.volume.high).with(_.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
+var getVolumeIcon = (volume) => N4(volume * 100).with(_2.number.lte(0), () => icons.audio.volume.muted).with(_2.number.between(0, 34), () => icons.audio.volume.low).with(_2.number.between(34, 67), () => icons.audio.volume.medium).with(_2.number.between(67, 100), () => icons.audio.volume.high).with(_2.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
 
 // src/widgets/NetVolume.ts
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
@@ -4022,7 +4363,7 @@ var PopupRevealer = ({
   transition,
   child,
   transitionDuration: config_default.transitionDuration,
-  setup: (self) => self.hook(App, (_2, ...args) => N3(args).with([name, _.boolean], ([_3, visible]) => {
+  setup: (self) => self.hook(App, (_3, ...args) => N4(args).with([name, _2.boolean], ([_4, visible]) => {
     onOpen?.();
     self.revealChild = visible;
   }), "window-toggled")
@@ -5333,12 +5674,41 @@ var MenuButton = () => Button7({
   onClicked: () => App.toggleWindow("left_menu")
 });
 
-// src/widgets/Bar.ts
+// src/widgets/Bar/index.ts
 import {
 Box as Box9,
 CenterBox,
 Window
 } from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/widgets/Bar/KeyboardLayout.ts
+import hyprland2 from "resource:///com/github/Aylur/ags/service/hyprland.js";
+import Gtk from "gi://Gtk?version=3.0";
+var hyprctlDevicesPattern = {
+  keyboards: _2.array({
+    name: _2.string,
+    active_keymap: _2.string
+  }).select()
+};
+var getInitialKeymap = () => N4(JSON.parse(Utils.exec("hyprctl devices -j"))).with(hyprctlDevicesPattern, (keyboards) => pipe(keyboards.find((kb) => kb.name === config_default.keyboard.default.name), P2.map(flow((kb) => kb.active_keymap, parseKeymap)))).otherwise(() => undef) ?? config_default.keyboard.default.keymap;
+var parseKeymap = (keymap) => keymap.slice(0, 2).toLowerCase();
+var KeyboardLayout2 = () => {
+  let activeKeyboard = Variable(config_default.keyboard.default.name);
+  const currentLayout = Variable(getInitialKeymap());
+  return Widget.Button({
+    className: "keyboardLayout",
+    label: currentLayout.bind(),
+    valign: Gtk.Align.CENTER,
+    onClicked: () => Utils.execAsync(`hyprctl switchxkblayout ${activeKeyboard.value} next`),
+    tooltipMarkup: activeKeyboard.bind().as((name) => `Current keyboard: <span weight="bold">${name}</span>`),
+    setup: (self) => self.hook(hyprland2, (_3, ...args) => N4(args).with([_2.string, _2.string], ([kbname, layout]) => {
+      activeKeyboard.value = kbname;
+      currentLayout.value = parseKeymap(layout);
+    }), "keyboard-layout")
+  });
+};
+
+// src/widgets/Bar/index.ts
 var Clock = () => Widget.Button({
   className: "clock small-shadow unset",
   label: Variable("", {
@@ -5362,12 +5732,12 @@ var DynamicWallpaper = () => Widget.Button({
   else
     btn.label = "\uE3F4";
 });
-var Right = () => Box9({
+var Start = () => Box9({
   spacing: 8,
   children: [Workspaces(), HardwareBox(), DynamicWallpaper()]
 });
 var Center = () => Box9({});
-var Left = () => Box9({
+var End = () => Box9({
   hpack: "end",
   spacing: 8,
   children: [
@@ -5375,6 +5745,7 @@ var Left = () => Box9({
     NetVolumeBox(),
     SysTrayBox(),
     Clock(),
+    KeyboardLayout2(),
     MenuButton()
   ]
 });
@@ -5386,9 +5757,9 @@ var Bar = ({ monitor } = {}) => Window({
   exclusivity: "exclusive",
   child: CenterBox({
     className: "bar shadow",
-    startWidget: Right(),
+    startWidget: Start(),
     centerWidget: Center(),
-    endWidget: Left()
+    endWidget: End()
   })
 });
 
@@ -5941,13 +6312,13 @@ class Brightness extends Service {
     const screenPath = `/sys/class/backlight/${screen}/brightness`;
     const kbdPath = `/sys/class/leds/${kbd}/brightness`;
     Utils.monitorFile(screenPath, async (f3) => {
-      const v3 = await Utils.readFileAsync(f3);
-      this.#screen = Number(v3) / this.#screenMax;
+      const v4 = await Utils.readFileAsync(f3);
+      this.#screen = Number(v4) / this.#screenMax;
       this.changed("screen");
     });
     Utils.monitorFile(kbdPath, async (f3) => {
-      const v3 = await Utils.readFileAsync(f3);
-      this.#kbd = Number(v3) / this.#kbdMax;
+      const v4 = await Utils.readFileAsync(f3);
+      this.#kbd = Number(v4) / this.#kbdMax;
       this.changed("kbd");
     });
   }
@@ -5979,7 +6350,7 @@ var ShowWindow_default = (windowName, timeout4 = 1000) => {
 var OSD = () => {
   const progress = Variable(Audio2.speaker.volume);
   const type = Variable("volume");
-  const icon = Utils.derive([type, progress], (type2, progress2) => N3(type2).with("volume", () => getVolumeIcon(progress2)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
+  const icon = Utils.derive([type, progress], (type2, progress2) => N4(type2).with("volume", () => getVolumeIcon(progress2)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
   const show = (value, osdType) => {
     progress.value = value;
     type.value = osdType;
@@ -6007,7 +6378,7 @@ var OSD = () => {
           className: "unset",
           drawValue: false,
           value: progress.bind(),
-          onChange: ({ value }) => N3(type.value).with("volume", () => Audio2.speaker.volume = value).with("br-screen", () => brightness_default.screen = value).with("br-keyboard", () => brightness_default.kbd = value).exhaustive()
+          onChange: ({ value }) => N4(type.value).with("volume", () => Audio2.speaker.volume = value).with("br-screen", () => brightness_default.screen = value).with("br-keyboard", () => brightness_default.kbd = value).exhaustive()
         })
       ]
     })

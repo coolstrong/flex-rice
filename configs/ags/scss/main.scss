@@ -525,19 +525,20 @@ window {
     margin-bottom: 1rem;
     transition-property: background;
     transition-duration: 1.5s;
-}
-
-.left-menu-box:dir(rtl) {
-    margin-left: 0.45rem;
-    margin-right: 1rem;
-    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.left-menu-box:dir(ltr) {
-    margin-right: 0.45rem;
-    margin-left: 1rem;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
 }
+
+//.left-menu-box:dir(rtl) {
+//    margin-left: 0.45rem;
+//    margin-right: 1rem;
+//    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.3);
+//}
+//
+//.left-menu-box:dir(ltr) {
+//    margin-right: 0.45rem;
+//    margin-left: 1rem;
+//    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
+//}
 
 .left-menu-header {
     background-size: cover;

@@ -165,6 +165,7 @@ const directClassMatch = {
     "com.intellij.idea.Main": "webstorm",
     //whatsapp PWA
     "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
+    "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist",
 };
 
 const iconResolvers: Array<(client: Client) => string | undef> = [

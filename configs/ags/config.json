@@ -11,5 +11,11 @@
             "org.kde.polkit-kde-authentication-agent-1"
         ],
         "perMonitor": 4
+    },
+    "keyboard": {
+        "default": {
+            "name": "compx-2.4g-wireless-receiver-keyboard",
+            "keymap": "en"
+        }
     }
 }

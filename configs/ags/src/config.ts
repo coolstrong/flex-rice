@@ -1,6 +1,6 @@
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
-import { Bar } from "./widgets/Bar.js";
+import { Bar } from "./widgets/Bar";
 import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
 import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import MyNotifications from "./notifications/OSDNotifications.js";

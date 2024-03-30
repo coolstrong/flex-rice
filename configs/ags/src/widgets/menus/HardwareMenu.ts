@@ -6,13 +6,11 @@ import Gtk30 from "gi://Gtk";
 import { Popup } from "./Popup";
 
 const Battery = await Service.import("battery");
-
-var menuIsOpen: boolean | null = null;
-var cpuIsInitialized = false;
-var ramIsInitialized = false;
-
-var ramUsage = 0;
-var cpuUsage = 0;
+let menuIsOpen: boolean | null = null,
+    cpuIsInitialized = false,
+    ramIsInitialized = false,
+    ramUsage = 0,
+    cpuUsage = 0;
 
 const cpuProgress = Widget.CircularProgress({
     className: "menu-cpu",

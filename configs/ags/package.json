@@ -9,8 +9,8 @@
         "typescript": "^5.0.0"
     },
     "scripts": {
-        "build": "bun ./bun/build.ts",
-        "watch": "bun ./bun/build.ts watch"
+        "build": "bun run ./bun/build.ts",
+        "watch": "bun run ./bun/build.ts watch"
     },
     "dependencies": {
         "@mobily/ts-belt": "next",
