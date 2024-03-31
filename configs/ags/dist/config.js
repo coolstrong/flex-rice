@@ -4948,7 +4948,7 @@ class ThemeService extends Service2 {
   qtFilePath = `/home/${USER}/.config/qt5ct/qt5ct.conf`;
   plasmaColorChanger = App2.configDir + "/modules/theme/bin/plasma-theme";
   plasmaColorsPath = App2.configDir + "/modules/theme/plasma-colors/";
-  selectedTheme = UNICAT_THEME;
+  selectedTheme = BLACK_HOLE_THEME;
   rofiFilePath = `/home/${USER}/.config/rofi/config.rasi`;
   wallpapersList = [];
   CACHE_FILE_PATH = `/home/${USER}/.cache/ahmed-hyprland-conf.temp`;
@@ -5682,29 +5682,56 @@ Window
 } from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/widgets/Bar/KeyboardLayout.ts
-import hyprland2 from "resource:///com/github/Aylur/ags/service/hyprland.js";
 import Gtk from "gi://Gtk?version=3.0";
+
+// src/services/keyboard.ts
+import {hyprland as hyprland2} from "resource:///com/github/Aylur/ags/service/hyprland.js";
 var hyprctlDevicesPattern = {
   keyboards: _2.array({
     name: _2.string,
     active_keymap: _2.string
   }).select()
 };
-var getInitialKeymap = () => N4(JSON.parse(Utils.exec("hyprctl devices -j"))).with(hyprctlDevicesPattern, (keyboards) => pipe(keyboards.find((kb) => kb.name === config_default.keyboard.default.name), P2.map(flow((kb) => kb.active_keymap, parseKeymap)))).otherwise(() => undef) ?? config_default.keyboard.default.keymap;
 var parseKeymap = (keymap) => keymap.slice(0, 2).toLowerCase();
+var getInitialKeymap = () => N4(JSON.parse(Utils.exec("hyprctl devices -j"))).with(hyprctlDevicesPattern, (keyboards) => pipe(keyboards.find((kb) => kb.name === config_default.keyboard.default.name), P2.map(flow((kb) => kb.active_keymap, parseKeymap)))).otherwise(() => undef) ?? config_default.keyboard.default.keymap;
+
+class KeyboardService extends Service {
+  static {
+    Service.register(this, {}, {
+      kbname: ["string", "r"],
+      layout: ["string", "r"]
+    });
+  }
+  #kbName = config_default.keyboard.default.name;
+  #layout = getInitialKeymap();
+  get kbname() {
+    return this.#kbName;
+  }
+  get layout() {
+    return this.#layout;
+  }
+  constructor() {
+    super();
+    hyprland2.connect("keyboard-layout", (_3, ...args) => N4(args).with([_2.string, _2.string], ([kbname, layout]) => {
+      this.#kbName = kbname;
+      this.changed("kbname");
+      this.#layout = parseKeymap(layout);
+      this.changed("layout");
+    }));
+  }
+  nextLayout() {
+    return hyprland2.messageAsync(`switchxkblayout ${this.#kbName} next`);
+  }
+}
+var keyboard_default = new KeyboardService;
+// src/widgets/Bar/KeyboardLayout.ts
 var KeyboardLayout2 = () => {
-  let activeKeyboard = Variable(config_default.keyboard.default.name);
-  const currentLayout = Variable(getInitialKeymap());
   return Widget.Button({
     className: "keyboardLayout",
-    label: currentLayout.bind(),
+    label: keyboard_default.bind("layout"),
     valign: Gtk.Align.CENTER,
-    onClicked: () => Utils.execAsync(`hyprctl switchxkblayout ${activeKeyboard.value} next`),
-    tooltipMarkup: activeKeyboard.bind().as((name) => `Current keyboard: <span weight="bold">${name}</span>`),
-    setup: (self) => self.hook(hyprland2, (_3, ...args) => N4(args).with([_2.string, _2.string], ([kbname, layout]) => {
-      activeKeyboard.value = kbname;
-      currentLayout.value = parseKeymap(layout);
-    }), "keyboard-layout")
+    onClicked: () => keyboard_default.nextLayout(),
+    tooltipMarkup: keyboard_default.bind("kbname").as((name) => `Current keyboard: <span weight="bold">${name}</span>`)
   });
 };
 
