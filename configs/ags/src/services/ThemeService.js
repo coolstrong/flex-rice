@@ -9,7 +9,15 @@ import {
 import settings from "../settings.js";
 import ThemesDictionary, {
     BLACK_HOLE_THEME,
+    CIRCLES_THEME,
+    COLOR_THEME,
+    DARK_THEME,
+    DEER_THEME,
+    MATERIAL_YOU,
+    NEW_CAT_THEME,
+    SIBERIAN_THEME,
     UNICAT_THEME,
+    WIN_20,
 } from "../theme/themes.js";
 
 class ThemeService extends Service {
@@ -20,7 +28,7 @@ class ThemeService extends Service {
             {
                 dynamicWallpaperIsOn: ["boolean", "r"],
                 isDynamicTheme: ["boolean", "r"],
-            }
+            },
         );
     }
 
@@ -36,6 +44,10 @@ class ThemeService extends Service {
     selectedLightWallpaper = 0;
     selectedDarkWallpaper = 0;
     dynamicWallpaperStatus = true;
+
+    get themeConfig() {
+        return ThemesDictionary[this.selectedTheme];
+    }
 
     constructor() {
         super();
@@ -54,7 +66,7 @@ class ThemeService extends Service {
             this.setDynamicWallpapers(
                 theme.wallpaper_path,
                 theme.gtk_mode,
-                theme.interval
+                theme.interval,
             );
         } else {
             this.changeCss(theme.css_theme);
@@ -66,7 +78,7 @@ class ThemeService extends Service {
         this.changeGTKTheme(
             theme.gtk_theme,
             theme.gtk_mode,
-            theme.gtk_icon_theme
+            theme.gtk_icon_theme,
         );
 
         // this.changeQtStyle(theme.qt_style_theme);
@@ -83,7 +95,7 @@ class ThemeService extends Service {
             hypr.rounding,
             hypr.drop_shadow,
             hypr.kitty,
-            hypr.konsole
+            hypr.konsole,
         );
 
         this.selectedTheme = selectedTheme;
@@ -167,7 +179,7 @@ class ThemeService extends Service {
         this.setDynamicWallpapers(
             theme.wallpaper_path,
             theme.gtk_mode,
-            theme.interval
+            theme.interval,
         );
         this.cacheVariables();
         this.emit("changed");
@@ -215,7 +227,7 @@ class ThemeService extends Service {
     changePlasmaColor(plasmaColor) {
         // execAsync([...plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
         execAsync(
-            `cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`
+            `cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`,
         ).catch(print);
     }
 
@@ -270,7 +282,7 @@ class ThemeService extends Service {
         rounding,
         drop_shadow,
         kittyConfig,
-        konsoleTheme
+        konsoleTheme,
     ) {
         // const kittyBind = `bind = $mainMod, Return, exec, kitty -c ${App.configDir}/modules/theme/kitty/${kittyConfig}`;
         // const konsoleBind = `bind = $mainMod, Return, exec, konsole --profile ${konsoleTheme}`;
@@ -286,21 +298,21 @@ class ThemeService extends Service {
             .then(() => {
                 timeout(1000, () => {
                     execAsync(
-                        `hyprctl keyword general:border_size ${border_width}`
+                        `hyprctl keyword general:border_size ${border_width}`,
                     );
                     execAsync(
-                        `hyprctl keyword general:col.active_border ${active_border}`
+                        `hyprctl keyword general:col.active_border ${active_border}`,
                     );
                     execAsync(
-                        `hyprctl keyword general:col.inactive_border ${inactive_border}`
+                        `hyprctl keyword general:col.inactive_border ${inactive_border}`,
                     );
                     execAsync(
                         `hyprctl keyword decoration:drop_shadow ${
                             drop_shadow ? "yes" : "no"
-                        }`
+                        }`,
                     );
                     execAsync(
-                        `hyprctl keyword decoration:rounding ${rounding}`
+                        `hyprctl keyword decoration:rounding ${rounding}`,
                     );
                     // execAsync(`hyprctl setcursor material_light_cursors 24 `);
                 });
@@ -372,7 +384,7 @@ class ThemeService extends Service {
         };
         Utils.writeFile(
             JSON.stringify(newData, null, 2),
-            this.CACHE_FILE_PATH
+            this.CACHE_FILE_PATH,
         ).catch(err => print(err));
     }
 
@@ -396,5 +408,25 @@ class ThemeService extends Service {
 // the singleton instance
 const themeService = new ThemeService();
 
-// export to use in other modules
+//hook for changing themes with external scripts
+/**
+ * @param {string} theme
+ */
+globalThis.changeTheme = theme => {
+    const dictionary = {
+        "Black hole": BLACK_HOLE_THEME,
+        Deer: DEER_THEME,
+        Color: COLOR_THEME,
+        Gradient: SIBERIAN_THEME,
+        Pastel: MATERIAL_YOU,
+        Windows: WIN_20,
+        Dark: DARK_THEME,
+        Unicat: UNICAT_THEME,
+        "New cat": NEW_CAT_THEME,
+        Circles: CIRCLES_THEME,
+    };
+
+    if (theme in dictionary) themeService.changeTheme(dictionary[theme]);
+};
+
 export default themeService;

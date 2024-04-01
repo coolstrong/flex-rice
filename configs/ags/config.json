@@ -17,5 +17,6 @@
             "name": "compx-2.4g-wireless-receiver-keyboard",
             "keymap": "en"
         }
-    }
+    },
+    "gapsOut": 6
 }

@@ -4,18 +4,18 @@ import { A } from "@mobily/ts-belt";
 import config from "config";
 import Gtk30 from "gi://Gtk?version=3.0";
 import { Box, Button } from "resource:///com/github/Aylur/ags/widget.js";
-
-const Hyprland = await Service.import("hyprland");
+import { hyprland } from "resource:///com/github/Aylur/ags/service/hyprland.js";
+import { hyprext } from "@/services/hyprext.ts";
 
 const setWorkspace = (num: number) =>
-    Hyprland.messageAsync(`dispatch workspace ${num}`);
+    hyprland.messageAsync(`dispatch workspace ${num}`);
 
 const ClientRenderer = ({ wsId }: { wsId: number }) =>
     Widget.Box({
         halign: Gtk30.Align.CENTER,
         spacing: 2,
         css: "padding: 2 0;",
-        children: Hyprland.bind("clients").as(
+        children: hyprland.bind("clients").as(
             A.filterMap(client =>
                 !config.workspace.ignore.includes(client.class) &&
                 client.workspace.id === wsId &&
@@ -41,7 +41,7 @@ const MonitorWorkspaces = (monitorId = 0) => {
             Button({
                 css: "min-width: 30px;",
                 onClicked: () => setWorkspace(i),
-                className: Hyprland.active.workspace
+                className: hyprland.active.workspace
                     .bind("id")
                     .as(id => (id === i ? "unset focused" : "unset unfocused")),
                 child: ClientRenderer({
@@ -52,10 +52,25 @@ const MonitorWorkspaces = (monitorId = 0) => {
     });
 };
 
-export const Workspaces = () =>
-    Box({
+export const Workspaces = () => {
+    const createChildren = () =>
+        hyprland.monitors.map(m => MonitorWorkspaces(m.id));
+
+    return Box({
         className: "unset workspace-box",
 
         spacing: 4,
-        children: Hyprland.monitors.map(m => MonitorWorkspaces(m.id)),
+        children: createChildren(),
+
+        setup: self =>
+            self.hook(
+                hyprext,
+                //when number of monitors changed - rebuild widget
+                () => {
+                    self.children.forEach(c => c.destroy());
+                    self.children = createChildren();
+                },
+                "monitors-changed",
+            ),
     });
+};

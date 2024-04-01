@@ -1,5 +1,6 @@
 import { G } from "@mobily/ts-belt";
 import { Option } from "@mobily/ts-belt/Option";
+import clsx from "clsx";
 
 export const undef = undefined;
 
@@ -19,5 +20,8 @@ export const raise = (e: unknown) => {
 
 export const assert = <T>(
     value: Option<T>,
-    message = "Value was null or undefined",
+    message = "Value was null or undefined"
 ) => (E(value) ? value : raise(new Error(message)));
+
+export const cssState = (baseClass: string, states: string[]) =>
+    clsx(baseClass, ...states.map(s => `${baseClass}--${s}`));

@@ -139,27 +139,6 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
     }
 }
 
-.bar-bg {
-    background: rgba(#000000, 0);
-    min-height: 8px;
-    border-radius: 0;
-}
-
-.bar {
-    background: $bar-background;
-    color: $bar-color;
-    min-height: 8px;
-
-    padding-left: 6px;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    margin-bottom: 4px; // Add some margin to show shadows
-
-    margin-left: 6px;
-    margin-right: 6px;
-    border-radius: 6px;
-}
-
 .small-shadow {
     transition-property: background;
     transition-duration: 0.5s;
@@ -447,7 +426,6 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 .vol-osd:dir(ltr) {
     padding-right: 1.5rem;
 }
-
 
 scale trough highlight {
     border-radius: $border-radius;

@@ -163,6 +163,7 @@ const directClassMatch = {
     //jetbrains IDE's on wayland (experimental currently)
     //don't acquire correct window class (I use mostly webstorm so...)
     "com.intellij.idea.Main": "webstorm",
+    Notion: "notion",
     //whatsapp PWA
     "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
     "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist",
@@ -182,5 +183,5 @@ const ensureIconExist = (icon: string | undef) =>
 export const windowIcon = (client: Client): string =>
     iconResolvers.reduce(
         (acc, resolver) => acc ?? ensureIconExist(resolver(client)),
-        undef as string | undef,
+        undef as string | undef
     ) ?? icons.fallback.executable;

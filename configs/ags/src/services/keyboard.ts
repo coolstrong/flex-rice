@@ -1,5 +1,5 @@
 import { undef } from "@/utils/common";
-import { O, flow, pipe } from "@mobily/ts-belt";
+import { B, F, O, S, flow, pipe } from "@mobily/ts-belt";
 import config from "config";
 import { hyprland } from "resource:///com/github/Aylur/ags/service/hyprland.js";
 import { P, match } from "ts-pattern";
@@ -18,8 +18,8 @@ const getInitialKeymap = () =>
         .with(hyprctlDevicesPattern, keyboards =>
             pipe(
                 keyboards.find(kb => kb.name === config.keyboard.default.name),
-                O.map(flow(kb => kb.active_keymap, parseKeymap))
-            )
+                O.map(flow(kb => kb.active_keymap, parseKeymap)),
+            ),
         )
         .otherwise(() => undef) ?? config.keyboard.default.keymap;
 
@@ -31,7 +31,7 @@ class KeyboardService extends Service {
             {
                 kbname: ["string", "r"],
                 layout: ["string", "r"],
-            }
+            },
         );
     }
 
@@ -54,12 +54,16 @@ class KeyboardService extends Service {
 
                 this.#layout = parseKeymap(layout);
                 this.changed("layout");
-            })
+            }),
         );
     }
 
-    nextLayout() {
-        return hyprland.messageAsync(`switchxkblayout ${this.#kbname} next`);
+    async nextLayout() {
+        const msg = await hyprland.messageAsync(
+            `switchxkblayout ${this.#kbname} next`,
+        );
+
+        return msg.trim() === "ok";
     }
 }
 

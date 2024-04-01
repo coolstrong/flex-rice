@@ -1,28 +1,6 @@
 // src/config.ts
 import App4 from "resource:///com/github/Aylur/ags/app.js";
 import Notifications4 from "resource:///com/github/Aylur/ags/service/notifications.js";
-// config.json
-var config_default = {
-  popupCloseDelay: 700,
-  transitionDuration: 250,
-  systray: {
-    ignore: []
-  },
-  workspace: {
-    ignore: [
-      "wofi",
-      "kitty-dropterm",
-      "org.kde.polkit-kde-authentication-agent-1"
-    ],
-    perMonitor: 4
-  },
-  keyboard: {
-    default: {
-      name: "compx-2.4g-wireless-receiver-keyboard",
-      keymap: "en"
-    }
-  }
-};
 
 // node_modules/@mobily/ts-belt/dist/pipe.mjs
 var pipe = function() {
@@ -3539,39 +3517,27 @@ var P2 = {
   fold: fold2,
   all: all3
 };
-// src/widgets/SystemTray.ts
-var { Gravity } = imports.gi.Gdk;
-var SystemTray = await Service.import("systemtray");
-var PanelButton = ({ className, content, ...rest }) => Widget.Button({
-  className: `panel-button ${className} unset`,
-  child: Widget.Box({ children: [content] }),
-  ...rest
-});
-var SysTrayItem = (item) => PanelButton({
-  className: "tray-btn unset",
-  content: Widget.Icon().bind("icon", item, "icon"),
-  tooltip_markup: item.bind("tooltip_markup"),
-  setup: (btn) => {
-    const menu = item.menu;
-    if (!menu)
-      return;
-    const id = item.menu?.connect("popped-up", () => {
-      btn.toggleClassName("active");
-      menu.connect("notify::visible", () => {
-        btn.toggleClassName("active", menu.visible);
-      });
-      id && menu.disconnect(id);
-    });
-    if (id)
-      btn.connect("destroy", () => item.menu?.disconnect(id));
-  },
-  onPrimaryClick: (btn) => pipe(N2.fromExecution(() => item.activate), N2.tapError(() => item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null))),
-  onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null)
-});
-var SysTrayBox = () => Widget.Box({
-  class_name: "systray unset",
-  children: SystemTray.bind("items").as((items) => items.filter(({ id }) => !config_default.systray.ignore.includes(id)).map(SysTrayItem))
-});
+// node_modules/clsx/dist/clsx.mjs
+var r = function(e) {
+  var t2, f2, n2 = "";
+  if (typeof e == "string" || typeof e == "number")
+    n2 += e;
+  else if (typeof e == "object")
+    if (Array.isArray(e)) {
+      var o = e.length;
+      for (t2 = 0;t2 < o; t2++)
+        e[t2] && (f2 = r(e[t2])) && (n2 && (n2 += " "), n2 += f2);
+    } else
+      for (f2 in e)
+        e[f2] && (n2 && (n2 += " "), n2 += f2);
+  return n2;
+};
+function clsx() {
+  for (var e, t2, f2 = 0, n2 = "", o = arguments.length;f2 < o; f2++)
+    (e = arguments[f2]) && (t2 = r(e)) && (n2 && (n2 += " "), n2 += t2);
+  return n2;
+}
+var clsx_default = clsx;
 
 // src/utils/common.ts
 var undef = undefined;
@@ -3722,6 +3688,7 @@ var Apps = await Service.import("applications");
 var directClassMatch = {
   "code-url-handler": "visual-studio-code",
   "com.intellij.idea.Main": "webstorm",
+  Notion: "notion",
   "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
   "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist"
 };
@@ -3733,155 +3700,6 @@ var iconResolvers = [
 ];
 var ensureIconExist = (icon) => icon && Utils.lookUpIcon(icon) ? icon : undef;
 var windowIcon = (client) => iconResolvers.reduce((acc, resolver) => acc ?? ensureIconExist(resolver(client)), undef) ?? icons.fallback.executable;
-
-// src/widgets/Workspaces/index.ts
-import Gtk30 from "gi://Gtk?version=3.0";
-import {Box, Button} from "resource:///com/github/Aylur/ags/widget.js";
-var Hyprland = await Service.import("hyprland");
-var setWorkspace = (num) => Hyprland.messageAsync(`dispatch workspace ${num}`);
-var ClientRenderer = ({ wsId }) => Widget.Box({
-  halign: Gtk30.Align.CENTER,
-  spacing: 2,
-  css: "padding: 2 0;",
-  children: Hyprland.bind("clients").as(Ra.filterMap((client) => !config_default.workspace.ignore.includes(client.class) && client.workspace.id === wsId && client.mapped ? Widget.Icon({
-    icon: windowIcon(client),
-    css: "font-size: 12px;"
-  }) : undef))
-});
-var MonitorWorkspaces = (monitorId = 0) => {
-  const firstWsId = config_default.workspace.perMonitor * monitorId + 1;
-  return Box({
-    className: "unset workspaces",
-    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i2) => Button({
-      css: "min-width: 30px;",
-      onClicked: () => setWorkspace(i2),
-      className: Hyprland.active.workspace.bind("id").as((id) => id === i2 ? "unset focused" : "unset unfocused"),
-      child: ClientRenderer({
-        wsId: i2
-      })
-    }))
-  });
-};
-var Workspaces = () => Box({
-  className: "unset workspace-box",
-  spacing: 4,
-  children: Hyprland.monitors.map((m) => MonitorWorkspaces(m.id))
-});
-
-// src/widgets/hardware/all.ts
-import {Box as Box4} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/widgets/hardware/battery.ts
-import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
-import {
-Button as Button2,
-CircularProgress,
-Label
-} from "resource:///com/github/Aylur/ags/widget.js";
-var BatteryWidget = () => {
-  const label = Label({
-    className: "battery-inner",
-    label: "\uF240"
-  });
-  const button = Button2({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  return CircularProgress({
-    className: "battery",
-    child: button,
-    startAt: 0,
-    rounded: false
-  }).hook(Battery, (batteryProgress) => {
-    if (Battery.charging) {
-      label.class_name = "battery-inner-charging";
-    } else {
-      label.class_name = "battery-inner";
-    }
-    batteryProgress.value = Battery.percent / 100;
-    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
-  });
-};
-
-// src/widgets/hardware/cpu.ts
-import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box2,
-Button as Button3,
-CircularProgress as CircularProgress2,
-Label as Label2
-} from "resource:///com/github/Aylur/ags/widget.js";
-var CpuWidget = () => {
-  const label = Label2({
-    className: "cpu-inner",
-    label: "\uF2DB"
-  });
-  const button = Button3({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  const progress = CircularProgress2({
-    className: "cpu",
-    child: button,
-    startAt: 0,
-    rounded: false
-  });
-  return Box2({
-    className: "bar-hw-cpu-box"
-  }).poll(1000, (box) => {
-    execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
-      progress.value = Number(val) / 100;
-      label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
-    }).catch(print);
-    box.children = [progress];
-    box.show_all();
-  });
-};
-
-// src/widgets/hardware/ram.ts
-import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box3,
-Button as Button4,
-CircularProgress as CircularProgress3,
-Label as Label3
-} from "resource:///com/github/Aylur/ags/widget.js";
-var RamWidget = () => {
-  const label = Label3({
-    className: "ram-inner",
-    label: "\uF538"
-  });
-  const button = Button4({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  const progress = CircularProgress3({
-    className: "ram",
-    startAt: 0,
-    rounded: false,
-    child: button
-  });
-  return Box3({
-    className: "bar-hw-ram-box"
-  }).poll(30000, (box) => {
-    execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
-      progress.value = Number(val) / 100;
-      label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
-    }).catch(print);
-    box.children = [progress];
-    box.show_all();
-  });
-};
-
-// src/widgets/hardware/all.ts
-var HardwareBox = () => Box4({
-  className: "hardware-box unset",
-  children: [CpuWidget(), RamWidget(), BatteryWidget()]
-});
-var showHardwareMenu = () => App.toggleWindow("hardware_menu");
 
 // node_modules/ts-pattern/dist/index.js
 var a2 = function(...t2) {
@@ -3903,51 +3721,51 @@ var u = function(t2) {
 var h3 = function(t2) {
   return Object.assign(((t3) => Object.assign(t3, { [Symbol.iterator]() {
     let n2 = 0;
-    const r = [{ value: Object.assign(t3, { [e]: true }), done: false }, { done: true, value: undefined }];
+    const r2 = [{ value: Object.assign(t3, { [e]: true }), done: false }, { done: true, value: undefined }];
     return { next: () => {
       var t4;
-      return (t4 = r[n2++]) != null ? t4 : r.at(-1);
+      return (t4 = r2[n2++]) != null ? t4 : r2.at(-1);
     } };
   } }))(t2), { optional: () => h3(l2(t2)), select: (e) => h3(e === undefined ? p(t2) : p(e, t2)) });
 };
 var l2 = function(e) {
   return u({ [t2]: () => ({ match: (t2) => {
     let n2 = {};
-    const r = (t3, e2) => {
+    const r2 = (t3, e2) => {
       n2[t3] = e2;
     };
-    return t2 === undefined ? (o(e).forEach((t3) => r(t3, undefined)), { matched: true, selections: n2 }) : { matched: s2(e, t2, r), selections: n2 };
+    return t2 === undefined ? (o(e).forEach((t3) => r2(t3, undefined)), { matched: true, selections: n2 }) : { matched: s2(e, t2, r2), selections: n2 };
   }, getSelectionKeys: () => o(e), matcherType: "optional" }) });
 };
 var m = function(...e) {
   return u({ [t2]: () => ({ match: (t2) => {
     let n2 = {};
-    const r = (t3, e2) => {
+    const r2 = (t3, e2) => {
       n2[t3] = e2;
     };
-    return { matched: e.every((e2) => s2(e2, t2, r)), selections: n2 };
+    return { matched: e.every((e2) => s2(e2, t2, r2)), selections: n2 };
   }, getSelectionKeys: () => c(e, o), matcherType: "and" }) });
 };
 var d2 = function(...e) {
   return u({ [t2]: () => ({ match: (t2) => {
     let n2 = {};
-    const r = (t3, e2) => {
+    const r2 = (t3, e2) => {
       n2[t3] = e2;
     };
-    return c(e, o).forEach((t3) => r(t3, undefined)), { matched: e.some((e2) => s2(e2, t2, r)), selections: n2 };
+    return c(e, o).forEach((t3) => r2(t3, undefined)), { matched: e.some((e2) => s2(e2, t2, r2)), selections: n2 };
   }, getSelectionKeys: () => c(e, o), matcherType: "or" }) });
 };
 var y = function(e) {
   return { [t2]: () => ({ match: (t2) => ({ matched: Boolean(e(t2)) }) }) };
 };
 var p = function(...e) {
-  const r = typeof e[0] == "string" ? e[0] : undefined, i2 = e.length === 2 ? e[1] : typeof e[0] == "string" ? undefined : e[0];
+  const r2 = typeof e[0] == "string" ? e[0] : undefined, i2 = e.length === 2 ? e[1] : typeof e[0] == "string" ? undefined : e[0];
   return u({ [t2]: () => ({ match: (t2) => {
-    let e2 = { [r != null ? r : n2]: t2 };
+    let e2 = { [r2 != null ? r2 : n2]: t2 };
     return { matched: i2 === undefined || s2(i2, t2, (t3, n2) => {
       e2[t3] = n2;
     }), selections: e2 };
-  }, getSelectionKeys: () => [r != null ? r : n2].concat(i2 === undefined ? [] : o(i2)) }) });
+  }, getSelectionKeys: () => [r2 != null ? r2 : n2].concat(i2 === undefined ? [] : o(i2)) }) });
 };
 var v3 = function(t2) {
   return typeof t2 == "number";
@@ -3964,37 +3782,37 @@ var N4 = function(t2) {
 var t2 = Symbol.for("@ts-pattern/matcher");
 var e = Symbol.for("@ts-pattern/isVariadic");
 var n2 = "@ts-pattern/anonymous-select-key";
-var r = (t3) => Boolean(t3 && typeof t3 == "object");
+var r2 = (t3) => Boolean(t3 && typeof t3 == "object");
 var i2 = (e2) => e2 && !!e2[t2];
 var s2 = (n3, o, c) => {
   if (i2(n3)) {
-    const e2 = n3[t2](), { matched: r2, selections: i3 } = e2.match(o);
-    return r2 && i3 && Object.keys(i3).forEach((t3) => c(t3, i3[t3])), r2;
+    const e2 = n3[t2](), { matched: r3, selections: i3 } = e2.match(o);
+    return r3 && i3 && Object.keys(i3).forEach((t3) => c(t3, i3[t3])), r3;
   }
-  if (r(n3)) {
-    if (!r(o))
+  if (r2(n3)) {
+    if (!r2(o))
       return false;
     if (Array.isArray(n3)) {
       if (!Array.isArray(o))
         return false;
-      let t3 = [], r2 = [], a3 = [];
+      let t3 = [], r3 = [], a3 = [];
       for (const s3 of n3.keys()) {
         const o2 = n3[s3];
-        i2(o2) && o2[e] ? a3.push(o2) : a3.length ? r2.push(o2) : t3.push(o2);
+        i2(o2) && o2[e] ? a3.push(o2) : a3.length ? r3.push(o2) : t3.push(o2);
       }
       if (a3.length) {
         if (a3.length > 1)
           throw new Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
-        if (o.length < t3.length + r2.length)
+        if (o.length < t3.length + r3.length)
           return false;
-        const e2 = o.slice(0, t3.length), n4 = r2.length === 0 ? [] : o.slice(-r2.length), i3 = o.slice(t3.length, r2.length === 0 ? Infinity : -r2.length);
-        return t3.every((t4, n5) => s2(t4, e2[n5], c)) && r2.every((t4, e3) => s2(t4, n4[e3], c)) && (a3.length === 0 || s2(a3[0], i3, c));
+        const e2 = o.slice(0, t3.length), n4 = r3.length === 0 ? [] : o.slice(-r3.length), i3 = o.slice(t3.length, r3.length === 0 ? Infinity : -r3.length);
+        return t3.every((t4, n5) => s2(t4, e2[n5], c)) && r3.every((t4, e3) => s2(t4, n4[e3], c)) && (a3.length === 0 || s2(a3[0], i3, c));
       }
       return n3.length === o.length && n3.every((t4, e2) => s2(t4, o[e2], c));
     }
     return Object.keys(n3).every((e2) => {
-      const r2 = n3[e2];
-      return ((e2 in o) || i2(a3 = r2) && a3[t2]().matcherType === "optional") && s2(r2, o[e2], c);
+      const r3 = n3[e2];
+      return ((e2 in o) || i2(a3 = r3) && a3[t2]().matcherType === "optional") && s2(r3, o[e2], c);
       var a3;
     });
   }
@@ -4002,7 +3820,7 @@ var s2 = (n3, o, c) => {
 };
 var o = (e2) => {
   var n3, s3, a3;
-  return r(e2) ? i2(e2) ? (n3 = (s3 = (a3 = e2[t2]()).getSelectionKeys) == null ? undefined : s3.call(a3)) != null ? n3 : [] : Array.isArray(e2) ? c(e2, o) : c(Object.values(e2), o) : [];
+  return r2(e2) ? i2(e2) ? (n3 = (s3 = (a3 = e2[t2]()).getSelectionKeys) == null ? undefined : s3.call(a3)) != null ? n3 : [] : Array.isArray(e2) ? c(e2, o) : c(Object.values(e2), o) : [];
 };
 var c = (t3, e2) => t3.reduce((t4, n3) => t4.concat(e2(n3)), []);
 var f2 = (t3, e2) => {
@@ -4012,8 +3830,8 @@ var f2 = (t3, e2) => {
   return true;
 };
 var g3 = (t3, e2) => {
-  for (const [n3, r2] of t3.entries())
-    if (!e2(r2, n3))
+  for (const [n3, r3] of t3.entries())
+    if (!e2(r3, n3))
       return false;
   return true;
 };
@@ -4055,15 +3873,15 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     if (e2.length === 0)
       return { matched: true };
     const n3 = e2[0];
-    let r2 = {};
+    let r3 = {};
     if (t3.length === 0)
       return o(n3).forEach((t4) => {
-        r2[t4] = [];
-      }), { matched: true, selections: r2 };
+        r3[t4] = [];
+      }), { matched: true, selections: r3 };
     const i3 = (t4, e3) => {
-      r2[t4] = (r2[t4] || []).concat([e3]);
+      r3[t4] = (r3[t4] || []).concat([e3]);
     };
-    return { matched: t3.every((t4) => s2(n3, t4, i3)), selections: r2 };
+    return { matched: t3.every((t4) => s2(n3, t4, i3)), selections: r3 };
   }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
 }, set: function(...e2) {
   return u({ [t2]: () => ({ match: (t3) => {
@@ -4074,10 +3892,10 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
       return { matched: true, selections: n3 };
     if (e2.length === 0)
       return { matched: true };
-    const r2 = (t4, e3) => {
+    const r3 = (t4, e3) => {
       n3[t4] = (n3[t4] || []).concat([e3]);
     }, i3 = e2[0];
-    return { matched: f2(t3, (t4) => s2(i3, t4, r2)), selections: n3 };
+    return { matched: f2(t3, (t4) => s2(i3, t4, r3)), selections: n3 };
   }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
 }, map: function(...e2) {
   return u({ [t2]: () => ({ match: (t3) => {
@@ -4086,7 +3904,7 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     let n3 = {};
     if (t3.size === 0)
       return { matched: true, selections: n3 };
-    const r2 = (t4, e3) => {
+    const r3 = (t4, e3) => {
       n3[t4] = (n3[t4] || []).concat([e3]);
     };
     if (e2.length === 0)
@@ -4096,7 +3914,7 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
       throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
     const [o2, c2] = e2;
     return { matched: g3(t3, (t4, e3) => {
-      const n4 = s2(o2, e3, r2), i4 = s2(c2, t4, r2);
+      const n4 = s2(o2, e3, r3), i4 = s2(c2, t4, r3);
       return n4 && i4;
     }), selections: n3 };
   }, getSelectionKeys: () => e2.length === 0 ? [] : [...o(e2[0]), ...o(e2[1])] }) });
@@ -4119,13 +3937,13 @@ class $2 {
   with(...t3) {
     if (this.state.matched)
       return this;
-    const e2 = t3[t3.length - 1], r2 = [t3[0]];
+    const e2 = t3[t3.length - 1], r3 = [t3[0]];
     let i3;
-    t3.length === 3 && typeof t3[1] == "function" ? i3 = t3[1] : t3.length > 2 && r2.push(...t3.slice(1, t3.length - 1));
+    t3.length === 3 && typeof t3[1] == "function" ? i3 = t3[1] : t3.length > 2 && r3.push(...t3.slice(1, t3.length - 1));
     let o2 = false, c2 = {};
     const a3 = (t4, e3) => {
       o2 = true, c2[t4] = e3;
-    }, u2 = !r2.some((t4) => s2(t4, this.input, a3)) || i3 && !Boolean(i3(this.input)) ? W : { matched: true, value: e2(o2 ? n2 in c2 ? c2[n2] : c2 : this.input, this.input) };
+    }, u2 = !r3.some((t4) => s2(t4, this.input, a3)) || i3 && !Boolean(i3(this.input)) ? W : { matched: true, value: e2(o2 ? n2 in c2 ? c2[n2] : c2 : this.input, this.input) };
     return new $2(this.input, u2);
   }
   when(t3, e2) {
@@ -4162,8 +3980,8 @@ var getVolumeIcon = (volume) => N4(volume * 100).with(_2.number.lte(0), () => ic
 // src/widgets/NetVolume.ts
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import {exec} from "resource:///com/github/Aylur/ags/utils.js";
-import {Box as Box5, Label as Label4} from "resource:///com/github/Aylur/ags/widget.js";
-var { Gravity: Gravity2 } = imports.gi.Gdk;
+import {Box, Label} from "resource:///com/github/Aylur/ags/widget.js";
+var { Gravity } = imports.gi.Gdk;
 var Audio = await Service.import("audio");
 var VolumeButton = () => {
   const icon = Variable(getVolumeIcon(Audio.speaker.volume));
@@ -4180,334 +3998,78 @@ var NetVolumeBox = () => Widget.Box({
   className: "internet-box small-shadow unset",
   children: [VolumeButton()]
 });
+// config.json
+var config_default = {
+  popupCloseDelay: 700,
+  transitionDuration: 250,
+  systray: {
+    ignore: []
+  },
+  workspace: {
+    ignore: [
+      "wofi",
+      "kitty-dropterm",
+      "org.kde.polkit-kde-authentication-agent-1"
+    ],
+    perMonitor: 4
+  },
+  keyboard: {
+    default: {
+      name: "compx-2.4g-wireless-receiver-keyboard",
+      keymap: "en"
+    }
+  },
+  gapsOut: 6
+};
 
-// src/widgets/menus/NotificationCenter.ts
-import {
-Box as Box7,
-Button as Button6,
-Label as Label6,
-Scrollable
-} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/utils/helpers.ts
-async function bash(strings, ...values) {
-  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i3) => str + `${values[i3] ?? ""}`).join("");
-  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
-    console.error(cmd, err);
-    return "";
-  });
-}
-async function sh(cmd) {
-  return Utils.execAsync(cmd).catch((err) => {
-    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
-    return "";
-  });
-}
-function dependencies(...bins) {
-  const missing = bins.filter((bin) => {
-    return !Utils.exec(`which ${bin}`);
-  });
-  if (missing.length > 0) {
-    console.warn("missing dependencies:", missing.join(", "));
-    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
-  }
-  return missing.length === 0;
-}
-var local = "LTR";
-
-// src/notifications/MenuNotification.ts
-import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box6,
-Button as Button5,
-EventBox,
-Icon,
-Label as Label5
-} from "resource:///com/github/Aylur/ags/widget.js";
-var { GLib } = imports.gi;
-var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
-var NotificationIcon = ({ appEntry, appIcon, image }) => {
-  if (image) {
-    return Box6({
-      vpack: "start",
-      hexpand: false,
-      className: "notification-img",
-      css: `
-              background-image: url("${image}");
-              background-size: contain;
-              background-repeat: no-repeat;
-              background-position: center;
-              min-width: 78px;
-              min-height: 78px;
-              ${margin}
-              border-radius: 1rem;
-          `
+// src/widgets/SystemTray.ts
+var { Gravity: Gravity2 } = imports.gi.Gdk;
+var SystemTray = await Service.import("systemtray");
+var PanelButton = ({ className, content, ...rest }) => Widget.Button({
+  className: `panel-button ${className} unset`,
+  child: Widget.Box({ children: [content] }),
+  ...rest
+});
+var SysTrayItem = (item) => PanelButton({
+  className: "tray-btn unset",
+  content: Widget.Icon().bind("icon", item, "icon"),
+  tooltip_markup: item.bind("tooltip_markup"),
+  setup: (btn) => {
+    const menu = item.menu;
+    if (!menu)
+      return;
+    const id = item.menu?.connect("popped-up", () => {
+      btn.toggleClassName("active");
+      menu.connect("notify::visible", () => {
+        btn.toggleClassName("active", menu.visible);
+      });
+      id && menu.disconnect(id);
     });
-  }
-  let icon = "dialog-information-symbolic";
-  if (lookUpIcon(appIcon))
-    icon = appIcon;
-  if (lookUpIcon(appEntry))
-    icon = appEntry;
-  return Box6({
-    vpack: "start",
-    hexpand: false,
-    css: `
-          min-width: 78px;
-          min-height: 78px;
-          ${margin}
-        `,
-    children: [
-      Icon({
-        icon,
-        size: 58,
-        hpack: "center",
-        hexpand: true,
-        vpack: "center",
-        vexpand: true
-      })
-    ]
-  });
-};
-var MenuNotification_default = (notification) => {
-  const bodyLabel = Label5({
-    css: `margin-top: 1rem;`,
-    className: "notification-description",
-    hexpand: true,
-    useMarkup: true,
-    xalign: 0,
-    justification: "left",
-    wrap: true
-  });
-  try {
-    bodyLabel.label = notification.body;
-  } catch (error) {
-    bodyLabel.label = "...";
-  }
-  const content = Box6({
-    css: `min-width: 330px;`,
-    children: [
-      NotificationIcon(notification),
-      Box6({
-        hexpand: true,
-        vertical: true,
-        children: [
-          Box6({
-            children: [
-              Label5({
-                className: "notification-title",
-                css: margin,
-                xalign: 0,
-                justification: "left",
-                hexpand: true,
-                maxWidthChars: 24,
-                truncate: "end",
-                wrap: true,
-                label: notification.summary,
-                useMarkup: notification.summary.startsWith("<")
-              }),
-              Label5({
-                className: "notification-time",
-                css: `${margin} margin-top: 0.5rem;`,
-                vpack: "start",
-                label: GLib.DateTime.new_from_unix_local(notification.time).format("%H:%M")
-              }),
-              Button5({
-                className: "notification-close-button",
-                vpack: "start",
-                child: Icon("window-close-symbolic"),
-                onClicked: () => {
-                  notification.close();
-                }
-              })
-            ]
-          }),
-          bodyLabel
-        ]
-      })
-    ]
-  });
-  const actionsbox = Box6({
-    className: "notification-actions",
-    children: notification.actions.map((action) => Button5({
-      css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
-      className: "action-button",
-      onClicked: () => notification.invoke(action.id),
-      hexpand: true,
-      child: Label5(action.label)
-    }))
-  });
-  const mainbox = EventBox({
-    className: `menu-notification ${notification.urgency}`,
-    vexpand: false,
-    onPrimaryClick: () => {
-    },
-    child: Box6({
-      vertical: true,
-      children: [
-        content,
-        ...optArr(notification.actions.length > 0, [actionsbox])
-      ]
-    })
-  });
-  return mainbox;
-};
+    if (id)
+      btn.connect("destroy", () => item.menu?.disconnect(id));
+  },
+  onPrimaryClick: (btn) => pipe(N2.fromExecution(() => item.activate), N2.tapError(() => item.menu?.popup_at_widget(btn, Gravity2.SOUTH, Gravity2.NORTH, null))),
+  onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity2.SOUTH, Gravity2.NORTH, null)
+});
+var SysTrayBox = () => Widget.Box({
+  class_name: "systray unset",
+  children: SystemTray.bind("items").as((items) => items.filter(({ id }) => !config_default.systray.ignore.includes(id)).map(SysTrayItem))
+});
 
-// src/widgets/menus/Popup.ts
-var PopupRevealer = ({
-  child,
-  name,
-  transition,
-  onOpen
-}) => Widget.Revealer({
-  transition,
-  child,
-  transitionDuration: config_default.transitionDuration,
-  setup: (self) => self.hook(App, (_3, ...args) => N4(args).with([name, _2.boolean], ([_4, visible]) => {
-    onOpen?.();
-    self.revealChild = visible;
-  }), "window-toggled")
-});
-var Popup = ({
-  transition,
-  name,
-  child,
-  onOpen,
-  ...props
-}) => {
-  const closing = l.makeControlledDebounce(() => App.closeWindow(name), {
-    delay: config_default.popupCloseDelay,
-    leading: false
-  });
-  return Widget.Window({
-    exclusivity: "ignore",
-    name,
-    focusable: true,
-    monitor: 0,
-    visible: false,
-    ...props,
-    setup: (w2) => w2.keybind("Escape", closing.invoke),
-    keymode: "on-demand",
-    child: Widget.Box({
-      css: `min-height: 2px;`,
-      child: Widget.EventBox({
-        onHover: closing.cancel,
-        child: PopupRevealer({
-          transition,
-          name,
-          child,
-          onOpen
-        })
-      })
-    })
-  }).on("leave-notify-event", closing.schedule);
-};
+// src/widgets/Workspaces/index.ts
+import Gtk30 from "gi://Gtk?version=3.0";
+import {Box as Box2, Button} from "resource:///com/github/Aylur/ags/widget.js";
+import {hyprland as hyprland4} from "resource:///com/github/Aylur/ags/service/hyprland.js";
 
-// src/widgets/menus/NotificationCenter.ts
-var Notifications = await Service.import("notifications");
-var NotificationsBox = () => {
-  return Box7({
-    className: "notification-menu-header",
-    vertical: true,
-    children: []
-  }).hook(Notifications, (self) => {
-    let notificationList = [];
-    const array = Notifications.notifications.reverse();
-    for (let index = 0;index < array.length; index++) {
-      const element = array[index];
-      const line = index !== array.length - 1 ? Box7({
-        class_name: "horizontal-line"
-      }) : undef;
-      notificationList.push(MenuNotification_default(element), line);
-    }
-    let noNotifications = Box7({
-      vertical: true,
-      className: "notification-this-is-all",
-      children: [
-        Label6({
-          className: "no-notification-icon",
-          label: "\uDB84\uDDE5"
-        }),
-        Label6({
-          className: "no-notification-text",
-          label: "There are no new notifications"
-        })
-      ]
-    });
-    if (array.length < 1) {
-      notificationList.push(noNotifications);
-    }
-    self.children = notificationList.filter(E2);
-  });
-};
-var NotificationHeader = () => {
-  return Box7({
-    className: "notification-header-box",
-    spacing: 70,
-    children: [
-      Button6({
-        className: "unset notification-center-header-clear",
-        label: "\uEA81",
-        onClicked: () => {
-          Notifications.clear();
-        }
-      }),
-      Label6({
-        className: "notification-center-header-text",
-        label: "Notification Center"
-      }),
-      Button6({
-        className: "unset notification-center-header-mute",
-        label: "\uDB80\uDC9A",
-        onClicked: () => Notifications.dnd = !Notifications.dnd
-      })
-    ]
-  }).hook(Notifications, (self) => {
-    if (Notifications.dnd) {
-      self.children[2].label = "\uDB80\uDC9B";
-    } else {
-      self.children[2].label = "\uDB80\uDC9A";
-    }
-  });
-};
-var notificationContainer = Scrollable({
-  hscroll: "never",
-  vscroll: "automatic",
-  className: "notification-center-container",
-  child: NotificationsBox()
-});
-var NotificationCenter = () => Popup({
-  name: "notification_center",
-  margins: [30, 200],
-  anchor: ["bottom", "right"],
-  transition: "slide_up",
-  child: Box7({
-    className: "left-menu-box",
-    vertical: true,
-    children: [NotificationHeader(), notificationContainer]
-  })
-});
-var NotificationCenterButton = () => Button6({
-  className: "notification-center-button unset",
-  label: "\uF0F3",
-  onClicked: () => App.toggleWindow("notification_center"),
-  onSecondaryClick: () => Notifications.Clear()
-}).hook(Notifications, (self) => {
-  if (Notifications.dnd) {
-    self.label = "\uDB80\uDC9B";
-  } else if (Notifications.notifications.length === 0) {
-    self.label = "\uDB80\uDC9A";
-  } else if (Notifications.notifications.length > 0) {
-    self.label = `${Notifications.notifications.length} \uEB9A`;
-  }
-});
+// src/services/hyprext.ts
+import {hyprland as hyprland2} from "resource:///com/github/Aylur/ags/service/hyprland.js";
 
 // src/services/ThemeService.js
 import App2 from "resource:///com/github/Aylur/ags/app.js";
 import Service2 from "resource:///com/github/Aylur/ags/service.js";
 import {
 exec as exec2,
-execAsync as execAsync3,
+execAsync,
 timeout,
 USER
 } from "resource:///com/github/Aylur/ags/utils.js";
@@ -4956,6 +4518,9 @@ class ThemeService extends Service2 {
   selectedLightWallpaper = 0;
   selectedDarkWallpaper = 0;
   dynamicWallpaperStatus = true;
+  get themeConfig() {
+    return themes_default[this.selectedTheme];
+  }
   constructor() {
     super();
     exec2("swww init");
@@ -4982,7 +4547,7 @@ class ThemeService extends Service2 {
     this.cacheVariables();
   }
   changeWallpaper(wallpaper) {
-    execAsync3([
+    execAsync([
       "swww",
       "img",
       "--transition-type",
@@ -5060,7 +4625,7 @@ class ThemeService extends Service2 {
     this.cacheVariables();
   }
   createM3ColorSchema(wallpaper, mode) {
-    execAsync3([
+    execAsync([
       "python",
       settings_default.scripts.dynamicM3Py,
       wallpaper,
@@ -5071,17 +4636,17 @@ class ThemeService extends Service2 {
     }).catch(print);
   }
   changePlasmaColor(plasmaColor) {
-    execAsync3(`cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`).catch(print);
+    execAsync(`cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`).catch(print);
   }
   changeGTKTheme(GTKTheme, gtkMode, iconTheme) {
-    execAsync3([
+    execAsync([
       `gsettings`,
       `set`,
       `org.gnome.desktop.interface`,
       `color-scheme`,
       `prefer-${gtkMode}`
     ]).catch(print);
-    execAsync3([
+    execAsync([
       `gsettings`,
       `set`,
       `org.gnome.desktop.interface`,
@@ -5089,14 +4654,14 @@ class ThemeService extends Service2 {
       `Adwaita`
     ]).catch(print);
     setTimeout(() => {
-      execAsync3([
+      execAsync([
         `gsettings`,
         `set`,
         `org.gnome.desktop.interface`,
         `gtk-theme`,
         GTKTheme
       ]).catch(print);
-      execAsync3([
+      execAsync([
         `gsettings`,
         `set`,
         `org.gnome.desktop.wm.preferences`,
@@ -5104,7 +4669,7 @@ class ThemeService extends Service2 {
         GTKTheme
       ]).catch(print);
     }, 2000);
-    execAsync3([
+    execAsync([
       `gsettings`,
       `set`,
       `org.gnome.desktop.interface`,
@@ -5115,33 +4680,33 @@ class ThemeService extends Service2 {
   steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow, kittyConfig, konsoleTheme) {
     Promise.resolve().then(() => {
       timeout(1000, () => {
-        execAsync3(`hyprctl keyword general:border_size ${border_width}`);
-        execAsync3(`hyprctl keyword general:col.active_border ${active_border}`);
-        execAsync3(`hyprctl keyword general:col.inactive_border ${inactive_border}`);
-        execAsync3(`hyprctl keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`);
-        execAsync3(`hyprctl keyword decoration:rounding ${rounding}`);
+        execAsync(`hyprctl keyword general:border_size ${border_width}`);
+        execAsync(`hyprctl keyword general:col.active_border ${active_border}`);
+        execAsync(`hyprctl keyword general:col.inactive_border ${inactive_border}`);
+        execAsync(`hyprctl keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`);
+        execAsync(`hyprctl keyword decoration:rounding ${rounding}`);
       });
     }).catch(print);
   }
   changeQtStyle(qtStyle) {
-    execAsync3([
+    execAsync([
       "sed",
       "-i",
       `s/style=.*/style=${qtStyle}/g`,
       this.qtFilePath
     ]).catch(print);
   }
-  changeIcons(icons4) {
-    execAsync3([
+  changeIcons(icons3) {
+    execAsync([
       "sed",
       "-i",
-      `s/icon_theme=.*/icon_theme=${icons4}/g`,
+      `s/icon_theme=.*/icon_theme=${icons3}/g`,
       this.qtFilePath
     ]).catch(print);
   }
   changeRofiTheme(rofiTheme) {
     const newTheme = `@import "${App2.configDir}/modules/theme/rofi/${rofiTheme}"`;
-    execAsync3([
+    execAsync([
       "sed",
       "-i",
       `11s|.*|${newTheme}|`,
@@ -5149,24 +4714,24 @@ class ThemeService extends Service2 {
     ]).catch(print);
   }
   changeKvantumTheme(kvantumTheme) {
-    execAsync3(["kvantummanager", "--set", kvantumTheme]).catch(print);
+    execAsync(["kvantummanager", "--set", kvantumTheme]).catch(print);
   }
-  showDesktopWidget(widget9) {
+  showDesktopWidget(widget2) {
     let oldTheme = themes_default[this.selectedTheme];
-    if (oldTheme.desktop_widget !== widget9 && oldTheme.desktop_widget !== null) {
+    if (oldTheme.desktop_widget !== widget2 && oldTheme.desktop_widget !== null) {
       this.hideWidget(oldTheme.desktop_widget);
     }
-    if (widget9 !== null) {
+    if (widget2 !== null) {
       timeout(1000, () => {
-        this.showWidget(widget9);
+        this.showWidget(widget2);
       });
     }
   }
   hideWidget(functionName) {
-    execAsync3(["ags", "-r", `Hide${functionName}()`]).catch(print);
+    execAsync(["ags", "-r", `Hide${functionName}()`]).catch(print);
   }
   showWidget(functionName) {
-    execAsync3(["ags", "-r", `Show${functionName}()`]).catch(print);
+    execAsync(["ags", "-r", `Show${functionName}()`]).catch(print);
   }
   cacheVariables() {
     const newData = {
@@ -5193,7 +4758,557 @@ class ThemeService extends Service2 {
   }
 }
 var themeService = new ThemeService;
+globalThis.changeTheme = (theme) => {
+  const dictionary = {
+    "Black hole": BLACK_HOLE_THEME,
+    Deer: DEER_THEME,
+    Color: COLOR_THEME,
+    Gradient: SIBERIAN_THEME,
+    Pastel: MATERIAL_YOU,
+    Windows: WIN_20,
+    Dark: DARK_THEME,
+    Unicat: UNICAT_THEME,
+    "New cat": NEW_CAT_THEME,
+    Circles: CIRCLES_THEME
+  };
+  if (theme in dictionary)
+    themeService.changeTheme(dictionary[theme]);
+};
 var ThemeService_default = themeService;
+
+// src/services/hyprext.ts
+var optionsToModify = ["general:gaps_out", "decoration:rounding"];
+var isSingleMonitor = () => hyprland2.monitors.length === 1;
+var isCurrentWindowFullscreen = () => hyprland2.getClient(hyprland2.active.client.address)?.fullscreen ?? false;
+
+class HyprExtensionsService extends Service {
+  static {
+    Service.register(this, {
+      "monitors-changed": []
+    }, {
+      fullscreen: ["boolean", "r"]
+    });
+  }
+  #enabled = isSingleMonitor();
+  #fullscreen = isCurrentWindowFullscreen();
+  get fullscreen() {
+    return this.#fullscreen;
+  }
+  constructor() {
+    super();
+    hyprland2.connect("event", this.#handleEvent);
+  }
+  #handleEvent = (_3, ...args) => N4(args).with(["fullscreen", _2.string.select()], (fstate) => this.#toggleFullscreenMode(!!parseInt(fstate.trim()))).with(["activewindowv2", _2.string.select()], (winaddr) => {
+    const fstate = hyprland2.getClient(`0x${winaddr}`)?.fullscreen;
+    this.#toggleFullscreenMode(fstate ?? false);
+  }).with([
+    _2.union("monitoraddedv2", "monitorremoved"),
+    ..._2.array(_2.any)
+  ], () => setTimeout(this.#onMonitorsChanged, 500));
+  #onMonitorsChanged = async () => {
+    const singleMon = isSingleMonitor();
+    await this.#toggleFullscreenMode(singleMon ? isCurrentWindowFullscreen() : false);
+    this.#enabled = singleMon;
+    this.emit("monitors-changed");
+  };
+  #toggleFullscreenMode = async (newfstate) => {
+    if (!this.#enabled || newfstate === this.#fullscreen)
+      return;
+    if (newfstate) {
+      await Promise.all(optionsToModify.map((opt) => hyprland2.messageAsync(`keyword ${opt} 0`)));
+    } else {
+      const rounding = ThemeService_default.themeConfig.hypr.rounding;
+      await Promise.all([
+        hyprland2.messageAsync(`keyword decoration:rounding ${rounding}`),
+        hyprland2.messageAsync(`keyword general:gaps_out ${config_default.gapsOut}`)
+      ]);
+    }
+    this.#fullscreen = newfstate;
+    this.changed("fullscreen");
+  };
+  toggleEnabled = () => {
+    if (this.#enabled) {
+      this.#toggleFullscreenMode(false);
+    }
+    this.#enabled = !this.#enabled;
+  };
+}
+var hyprext = new HyprExtensionsService;
+globalThis.toggleFullscreenWatching = hyprext.toggleEnabled;
+
+// src/widgets/Workspaces/index.ts
+var setWorkspace = (num) => hyprland4.messageAsync(`dispatch workspace ${num}`);
+var ClientRenderer = ({ wsId }) => Widget.Box({
+  halign: Gtk30.Align.CENTER,
+  spacing: 2,
+  css: "padding: 2 0;",
+  children: hyprland4.bind("clients").as(Ra.filterMap((client) => !config_default.workspace.ignore.includes(client.class) && client.workspace.id === wsId && client.mapped ? Widget.Icon({
+    icon: windowIcon(client),
+    css: "font-size: 12px;"
+  }) : undef))
+});
+var MonitorWorkspaces = (monitorId = 0) => {
+  const firstWsId = config_default.workspace.perMonitor * monitorId + 1;
+  return Box2({
+    className: "unset workspaces",
+    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i3) => Button({
+      css: "min-width: 30px;",
+      onClicked: () => setWorkspace(i3),
+      className: hyprland4.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
+      child: ClientRenderer({
+        wsId: i3
+      })
+    }))
+  });
+};
+var Workspaces = () => {
+  const createChildren = () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id));
+  return Box2({
+    className: "unset workspace-box",
+    spacing: 4,
+    children: createChildren(),
+    setup: (self) => self.hook(hyprext, () => {
+      self.children.forEach((c2) => c2.destroy());
+      self.children = createChildren();
+    }, "monitors-changed")
+  });
+};
+
+// src/widgets/hardware/all.ts
+import {Box as Box5} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/widgets/hardware/battery.ts
+import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
+import {
+Button as Button2,
+CircularProgress,
+Label as Label2
+} from "resource:///com/github/Aylur/ags/widget.js";
+var BatteryWidget = () => {
+  const label = Label2({
+    className: "battery-inner",
+    label: "\uF240"
+  });
+  const button = Button2({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  return CircularProgress({
+    className: "battery",
+    child: button,
+    startAt: 0,
+    rounded: false
+  }).hook(Battery, (batteryProgress) => {
+    if (Battery.charging) {
+      label.class_name = "battery-inner-charging";
+    } else {
+      label.class_name = "battery-inner";
+    }
+    batteryProgress.value = Battery.percent / 100;
+    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
+  });
+};
+
+// src/widgets/hardware/cpu.ts
+import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box3,
+Button as Button3,
+CircularProgress as CircularProgress2,
+Label as Label3
+} from "resource:///com/github/Aylur/ags/widget.js";
+var CpuWidget = () => {
+  const label = Label3({
+    className: "cpu-inner",
+    label: "\uF2DB"
+  });
+  const button = Button3({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  const progress = CircularProgress2({
+    className: "cpu",
+    child: button,
+    startAt: 0,
+    rounded: false
+  });
+  return Box3({
+    className: "bar-hw-cpu-box"
+  }).poll(1000, (box) => {
+    execAsync2(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
+      progress.value = Number(val) / 100;
+      label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
+    }).catch(print);
+    box.children = [progress];
+    box.show_all();
+  });
+};
+
+// src/widgets/hardware/ram.ts
+import {execAsync as execAsync3} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box4,
+Button as Button4,
+CircularProgress as CircularProgress3,
+Label as Label4
+} from "resource:///com/github/Aylur/ags/widget.js";
+var RamWidget = () => {
+  const label = Label4({
+    className: "ram-inner",
+    label: "\uF538"
+  });
+  const button = Button4({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  const progress = CircularProgress3({
+    className: "ram",
+    startAt: 0,
+    rounded: false,
+    child: button
+  });
+  return Box4({
+    className: "bar-hw-ram-box"
+  }).poll(30000, (box) => {
+    execAsync3(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
+      progress.value = Number(val) / 100;
+      label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
+    }).catch(print);
+    box.children = [progress];
+    box.show_all();
+  });
+};
+
+// src/widgets/hardware/all.ts
+var HardwareBox = () => Box5({
+  className: "hardware-box unset",
+  children: [CpuWidget(), RamWidget(), BatteryWidget()]
+});
+var showHardwareMenu = () => App.toggleWindow("hardware_menu");
+
+// src/widgets/menus/NotificationCenter.ts
+import {
+Box as Box7,
+Button as Button6,
+Label as Label6,
+Scrollable
+} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/utils/helpers.ts
+async function bash(strings, ...values) {
+  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i3) => str + `${values[i3] ?? ""}`).join("");
+  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
+    console.error(cmd, err);
+    return "";
+  });
+}
+async function sh(cmd) {
+  return Utils.execAsync(cmd).catch((err) => {
+    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
+    return "";
+  });
+}
+function dependencies(...bins) {
+  const missing = bins.filter((bin) => {
+    return !Utils.exec(`which ${bin}`);
+  });
+  if (missing.length > 0) {
+    console.warn("missing dependencies:", missing.join(", "));
+    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
+  }
+  return missing.length === 0;
+}
+var local = "LTR";
+
+// src/notifications/MenuNotification.ts
+import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box6,
+Button as Button5,
+EventBox,
+Icon,
+Label as Label5
+} from "resource:///com/github/Aylur/ags/widget.js";
+var { GLib } = imports.gi;
+var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
+var NotificationIcon = ({ appEntry, appIcon, image }) => {
+  if (image) {
+    return Box6({
+      vpack: "start",
+      hexpand: false,
+      className: "notification-img",
+      css: `
+              background-image: url("${image}");
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+              min-width: 78px;
+              min-height: 78px;
+              ${margin}
+              border-radius: 1rem;
+          `
+    });
+  }
+  let icon = "dialog-information-symbolic";
+  if (lookUpIcon(appIcon))
+    icon = appIcon;
+  if (lookUpIcon(appEntry))
+    icon = appEntry;
+  return Box6({
+    vpack: "start",
+    hexpand: false,
+    css: `
+          min-width: 78px;
+          min-height: 78px;
+          ${margin}
+        `,
+    children: [
+      Icon({
+        icon,
+        size: 58,
+        hpack: "center",
+        hexpand: true,
+        vpack: "center",
+        vexpand: true
+      })
+    ]
+  });
+};
+var MenuNotification_default = (notification) => {
+  const bodyLabel = Label5({
+    css: `margin-top: 1rem;`,
+    className: "notification-description",
+    hexpand: true,
+    useMarkup: true,
+    xalign: 0,
+    justification: "left",
+    wrap: true
+  });
+  try {
+    bodyLabel.label = notification.body;
+  } catch (error) {
+    bodyLabel.label = "...";
+  }
+  const content = Box6({
+    css: `min-width: 330px;`,
+    children: [
+      NotificationIcon(notification),
+      Box6({
+        hexpand: true,
+        vertical: true,
+        children: [
+          Box6({
+            children: [
+              Label5({
+                className: "notification-title",
+                css: margin,
+                xalign: 0,
+                justification: "left",
+                hexpand: true,
+                maxWidthChars: 24,
+                truncate: "end",
+                wrap: true,
+                label: notification.summary,
+                useMarkup: notification.summary.startsWith("<")
+              }),
+              Label5({
+                className: "notification-time",
+                css: `${margin} margin-top: 0.5rem;`,
+                vpack: "start",
+                label: GLib.DateTime.new_from_unix_local(notification.time).format("%H:%M")
+              }),
+              Button5({
+                className: "notification-close-button",
+                vpack: "start",
+                child: Icon("window-close-symbolic"),
+                onClicked: () => {
+                  notification.close();
+                }
+              })
+            ]
+          }),
+          bodyLabel
+        ]
+      })
+    ]
+  });
+  const actionsbox = Box6({
+    className: "notification-actions",
+    children: notification.actions.map((action) => Button5({
+      css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
+      className: "action-button",
+      onClicked: () => notification.invoke(action.id),
+      hexpand: true,
+      child: Label5(action.label)
+    }))
+  });
+  const mainbox = EventBox({
+    className: `menu-notification ${notification.urgency}`,
+    vexpand: false,
+    onPrimaryClick: () => {
+    },
+    child: Box6({
+      vertical: true,
+      children: [
+        content,
+        ...optArr(notification.actions.length > 0, [actionsbox])
+      ]
+    })
+  });
+  return mainbox;
+};
+
+// src/widgets/menus/Popup.ts
+var PopupRevealer = ({
+  child,
+  name,
+  transition,
+  onOpen
+}) => Widget.Revealer({
+  transition,
+  child,
+  transitionDuration: config_default.transitionDuration,
+  setup: (self) => self.hook(App, (_3, ...args) => N4(args).with([name, _2.boolean], ([_4, visible]) => {
+    onOpen?.();
+    self.revealChild = visible;
+  }), "window-toggled")
+});
+var Popup = ({
+  transition,
+  name,
+  child,
+  onOpen,
+  ...props
+}) => {
+  const closing = l.makeControlledDebounce(() => App.closeWindow(name), {
+    delay: config_default.popupCloseDelay,
+    leading: false
+  });
+  return Widget.Window({
+    exclusivity: "ignore",
+    name,
+    focusable: true,
+    monitor: 0,
+    visible: false,
+    ...props,
+    setup: (w2) => w2.keybind("Escape", closing.invoke),
+    keymode: "on-demand",
+    child: Widget.Box({
+      css: `min-height: 2px;`,
+      child: Widget.EventBox({
+        onHover: closing.cancel,
+        child: PopupRevealer({
+          transition,
+          name,
+          child,
+          onOpen
+        })
+      })
+    })
+  }).on("leave-notify-event", closing.schedule);
+};
+
+// src/widgets/menus/NotificationCenter.ts
+var Notifications = await Service.import("notifications");
+var NotificationsBox = () => {
+  return Box7({
+    className: "notification-menu-header",
+    vertical: true,
+    children: []
+  }).hook(Notifications, (self) => {
+    let notificationList = [];
+    const array = Notifications.notifications.reverse();
+    for (let index = 0;index < array.length; index++) {
+      const element = array[index];
+      const line = index !== array.length - 1 ? Box7({
+        class_name: "horizontal-line"
+      }) : undef;
+      notificationList.push(MenuNotification_default(element), line);
+    }
+    let noNotifications = Box7({
+      vertical: true,
+      className: "notification-this-is-all",
+      children: [
+        Label6({
+          className: "no-notification-icon",
+          label: "\uDB84\uDDE5"
+        }),
+        Label6({
+          className: "no-notification-text",
+          label: "There are no new notifications"
+        })
+      ]
+    });
+    if (array.length < 1) {
+      notificationList.push(noNotifications);
+    }
+    self.children = notificationList.filter(E2);
+  });
+};
+var NotificationHeader = () => {
+  return Box7({
+    className: "notification-header-box",
+    spacing: 70,
+    children: [
+      Button6({
+        className: "unset notification-center-header-clear",
+        label: "\uEA81",
+        onClicked: () => {
+          Notifications.clear();
+        }
+      }),
+      Label6({
+        className: "notification-center-header-text",
+        label: "Notification Center"
+      }),
+      Button6({
+        className: "unset notification-center-header-mute",
+        label: "\uDB80\uDC9A",
+        onClicked: () => Notifications.dnd = !Notifications.dnd
+      })
+    ]
+  }).hook(Notifications, (self) => {
+    if (Notifications.dnd) {
+      self.children[2].label = "\uDB80\uDC9B";
+    } else {
+      self.children[2].label = "\uDB80\uDC9A";
+    }
+  });
+};
+var notificationContainer = Scrollable({
+  hscroll: "never",
+  vscroll: "automatic",
+  className: "notification-center-container",
+  child: NotificationsBox()
+});
+var NotificationCenter = () => Popup({
+  name: "notification_center",
+  margins: [30, 200],
+  anchor: ["bottom", "right"],
+  transition: "slide_up",
+  child: Box7({
+    className: "left-menu-box",
+    vertical: true,
+    children: [NotificationHeader(), notificationContainer]
+  })
+});
+var NotificationCenterButton = () => Button6({
+  className: "notification-center-button unset",
+  label: "\uF0F3",
+  onClicked: () => App.toggleWindow("notification_center"),
+  onSecondaryClick: () => Notifications.Clear()
+}).hook(Notifications, (self) => {
+  if (Notifications.dnd) {
+    self.label = "\uDB80\uDC9B";
+  } else if (Notifications.notifications.length === 0) {
+    self.label = "\uDB80\uDC9A";
+  } else if (Notifications.notifications.length > 0) {
+    self.label = `${Notifications.notifications.length} \uEB9A`;
+  }
+});
 
 // src/widgets/MusicPLayer.js
 import Gdk2 from "gi://Gdk";
@@ -5674,18 +5789,11 @@ var MenuButton = () => Button7({
   onClicked: () => App.toggleWindow("left_menu")
 });
 
-// src/widgets/Bar/index.ts
-import {
-Box as Box9,
-CenterBox,
-Window
-} from "resource:///com/github/Aylur/ags/widget.js";
-
 // src/widgets/Bar/KeyboardLayout.ts
 import Gtk from "gi://Gtk?version=3.0";
 
 // src/services/keyboard.ts
-import {hyprland as hyprland2} from "resource:///com/github/Aylur/ags/service/hyprland.js";
+import {hyprland as hyprland6} from "resource:///com/github/Aylur/ags/service/hyprland.js";
 var hyprctlDevicesPattern = {
   keyboards: _2.array({
     name: _2.string,
@@ -5702,25 +5810,26 @@ class KeyboardService extends Service {
       layout: ["string", "r"]
     });
   }
-  #kbName = config_default.keyboard.default.name;
+  #kbname = config_default.keyboard.default.name;
   #layout = getInitialKeymap();
   get kbname() {
-    return this.#kbName;
+    return this.#kbname;
   }
   get layout() {
     return this.#layout;
   }
   constructor() {
     super();
-    hyprland2.connect("keyboard-layout", (_3, ...args) => N4(args).with([_2.string, _2.string], ([kbname, layout]) => {
-      this.#kbName = kbname;
+    hyprland6.connect("keyboard-layout", (_3, ...args) => N4(args).with([_2.string, _2.string], ([kbname, layout]) => {
+      this.#kbname = kbname;
       this.changed("kbname");
       this.#layout = parseKeymap(layout);
       this.changed("layout");
     }));
   }
-  nextLayout() {
-    return hyprland2.messageAsync(`switchxkblayout ${this.#kbName} next`);
+  async nextLayout() {
+    const msg = await hyprland6.messageAsync(`switchxkblayout ${this.#kbname} next`);
+    return msg.trim() === "ok";
   }
 }
 var keyboard_default = new KeyboardService;
@@ -5736,6 +5845,11 @@ var KeyboardLayout2 = () => {
 };
 
 // src/widgets/Bar/index.ts
+import {
+Box as Box9,
+CenterBox,
+Window
+} from "resource:///com/github/Aylur/ags/widget.js";
 var Clock = () => Widget.Button({
   className: "clock small-shadow unset",
   label: Variable("", {
@@ -5778,12 +5892,12 @@ var End = () => Box9({
 });
 var Bar = ({ monitor } = {}) => Window({
   name: `bar${monitor || ""}`,
-  className: "bar-bg unset",
+  className: hyprext.bind("fullscreen").as((f3) => clsx_default("bar-bg", f3 && "bar-bg--fullscreen")),
   monitor,
   anchor: ["bottom", "left", "right"],
   exclusivity: "exclusive",
   child: CenterBox({
-    className: "bar shadow",
+    className: hyprext.bind("fullscreen").as((f3) => clsx_default("bar", !f3 && "shadow")),
     startWidget: Start(),
     centerWidget: Center(),
     endWidget: End()

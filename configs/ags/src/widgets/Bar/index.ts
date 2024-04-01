@@ -1,17 +1,21 @@
+import { NetVolumeBox } from "../NetVolume.js";
 import { SysTrayBox } from "../SystemTray.js";
 import { Workspaces } from "../Workspaces";
 import { HardwareBox } from "../hardware/all.js";
-import { NetVolumeBox } from "../NetVolume.js";
 import { NotificationCenterButton } from "../menus/NotificationCenter.js";
 import { MenuButton } from "../menus/SystemMenu.js";
 
+import { hyprext } from "@/services/hyprext.ts";
+import { KeyboardLayout } from "@/widgets/Bar/KeyboardLayout.ts";
 import {
     Box,
     CenterBox,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
 import themeService from "../../services/ThemeService.js";
-import { KeyboardLayout } from "@/widgets/Bar/KeyboardLayout.ts";
+
+import clsx from "clsx";
+import "./style.sass";
 
 const Clock = () =>
     Widget.Button({
@@ -65,12 +69,19 @@ const End = () =>
 export const Bar = ({ monitor }: { monitor?: number } | undef = {}) =>
     Window({
         name: `bar${monitor || ""}`, // name has to be unique
-        className: "bar-bg unset",
+        className: hyprext
+            .bind("fullscreen")
+            .as(f => clsx("bar-bg", f && "bar-bg--fullscreen")),
+        // className: "bar-bg unset",
         monitor: monitor,
         anchor: ["bottom", "left", "right"],
         exclusivity: "exclusive",
         child: CenterBox({
-            className: "bar shadow",
+            // className: "bar shadow",
+            className: hyprext
+                .bind("fullscreen")
+                .as(f => clsx("bar", !f && "shadow")),
+
             startWidget: Start(),
             centerWidget: Center(),
             endWidget: End(),
