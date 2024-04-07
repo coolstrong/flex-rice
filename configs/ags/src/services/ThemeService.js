@@ -1,13 +1,6 @@
-import App from "resource:///com/github/Aylur/ags/app.js";
-import Service from "resource:///com/github/Aylur/ags/service.js";
-import {
-    exec,
-    execAsync,
-    timeout,
-    USER,
-} from "resource:///com/github/Aylur/ags/utils.js";
-import settings from "../settings.js";
 import ThemesDictionary, {
+    WIN_20,
+    UNICAT_THEME,
     BLACK_HOLE_THEME,
     CIRCLES_THEME,
     COLOR_THEME,
@@ -16,9 +9,16 @@ import ThemesDictionary, {
     MATERIAL_YOU,
     NEW_CAT_THEME,
     SIBERIAN_THEME,
-    UNICAT_THEME,
-    WIN_20,
 } from "../theme/themes.js";
+import {
+    timeout,
+    USER,
+    exec,
+    execAsync,
+} from "resource:///com/github/Aylur/ags/utils.js";
+import App from "resource:///com/github/Aylur/ags/app.js";
+import Service from "resource:///com/github/Aylur/ags/service.js";
+import settings from "../settings.js";
 
 class ThemeService extends Service {
     static {
@@ -28,14 +28,15 @@ class ThemeService extends Service {
             {
                 dynamicWallpaperIsOn: ["boolean", "r"],
                 isDynamicTheme: ["boolean", "r"],
-            },
+            }
         );
     }
 
-    qtFilePath = `/home/${USER}/.config/qt5ct/qt5ct.conf`;
+    qt5FilePath = `/home/${USER}/.config/qt5ct/qt5ct.conf`;
+    qt6FilePath = `/home/${USER}/.config/qt6ct/qt6ct.conf`;
     plasmaColorChanger = App.configDir + "/modules/theme/bin/plasma-theme";
     plasmaColorsPath = App.configDir + "/modules/theme/plasma-colors/";
-    selectedTheme = BLACK_HOLE_THEME;
+    selectedTheme = UNICAT_THEME;
     rofiFilePath = `/home/${USER}/.config/rofi/config.rasi`;
     wallpapersList = [];
 
@@ -44,10 +45,6 @@ class ThemeService extends Service {
     selectedLightWallpaper = 0;
     selectedDarkWallpaper = 0;
     dynamicWallpaperStatus = true;
-
-    get themeConfig() {
-        return ThemesDictionary[this.selectedTheme];
-    }
 
     constructor() {
         super();
@@ -66,7 +63,7 @@ class ThemeService extends Service {
             this.setDynamicWallpapers(
                 theme.wallpaper_path,
                 theme.gtk_mode,
-                theme.interval,
+                theme.interval
             );
         } else {
             this.changeCss(theme.css_theme);
@@ -78,10 +75,10 @@ class ThemeService extends Service {
         this.changeGTKTheme(
             theme.gtk_theme,
             theme.gtk_mode,
-            theme.gtk_icon_theme,
+            theme.gtk_icon_theme
         );
 
-        // this.changeQtStyle(theme.qt_style_theme);
+        this.changeQtStyle(theme.qt_5_style_theme, theme.qt_6_style_theme);
         this.changeIcons(theme.qt_icon_theme);
         this.changeKvantumTheme(theme.kvantum_theme);
         // this.changeRofiTheme(theme.rofi_theme);
@@ -95,7 +92,7 @@ class ThemeService extends Service {
             hypr.rounding,
             hypr.drop_shadow,
             hypr.kitty,
-            hypr.konsole,
+            hypr.konsole
         );
 
         this.selectedTheme = selectedTheme;
@@ -179,7 +176,7 @@ class ThemeService extends Service {
         this.setDynamicWallpapers(
             theme.wallpaper_path,
             theme.gtk_mode,
-            theme.interval,
+            theme.interval
         );
         this.cacheVariables();
         this.emit("changed");
@@ -225,13 +222,11 @@ class ThemeService extends Service {
     }
 
     changePlasmaColor(plasmaColor) {
-        // execAsync([...plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
-        execAsync(
-            `cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`,
-        ).catch(print);
+        const plasmaCmd = `plasma-apply-colorscheme`;
+        execAsync([plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
     }
 
-    changeGTKTheme(GTKTheme, gtkMode, iconTheme) {
+    changeGTKTheme(GTKTheme, gtkMode, iconTheme, fontName) {
         execAsync([
             `gsettings`,
             `set`,
@@ -273,6 +268,14 @@ class ThemeService extends Service {
             `icon-theme`,
             iconTheme,
         ]).catch(print);
+
+        // execAsync([
+        //     `gsettings`,
+        //     `set`,
+        //     `org.gnome.desktop.interface`,
+        //     `font-name`,
+        //     fontName,
+        // ]).catch(print);
     }
 
     steHyprland(
@@ -282,50 +285,48 @@ class ThemeService extends Service {
         rounding,
         drop_shadow,
         kittyConfig,
-        konsoleTheme,
+        konsoleTheme
     ) {
-        // const kittyBind = `bind = $mainMod, Return, exec, kitty -c ${App.configDir}/modules/theme/kitty/${kittyConfig}`;
-        // const konsoleBind = `bind = $mainMod, Return, exec, konsole --profile ${konsoleTheme}`;
-
-        // execAsync([
-        //     "sed",
-        //     "-i",
-        //     `42s|.*|${konsoleBind}|`,
-        //     `/home/${USER}/.config/hypr/binding.conf`,
-        // ])
         //todo It should be batched ofk
         Promise.resolve()
             .then(() => {
                 timeout(1000, () => {
                     execAsync(
-                        `hyprctl keyword general:border_size ${border_width}`,
+                        `hyprctl keyword general:border_size ${border_width}`
                     );
                     execAsync(
-                        `hyprctl keyword general:col.active_border ${active_border}`,
+                        `hyprctl keyword general:col.active_border ${active_border}`
                     );
                     execAsync(
-                        `hyprctl keyword general:col.inactive_border ${inactive_border}`,
+                        `hyprctl keyword general:col.inactive_border ${inactive_border}`
                     );
                     execAsync(
                         `hyprctl keyword decoration:drop_shadow ${
                             drop_shadow ? "yes" : "no"
-                        }`,
+                        }`
                     );
                     execAsync(
-                        `hyprctl keyword decoration:rounding ${rounding}`,
+                        `hyprctl keyword decoration:rounding ${rounding}`
                     );
-                    // execAsync(`hyprctl setcursor material_light_cursors 24 `);
+                    // execAsync(`hyprctl setcursor Bibata-Rainbow-Modern 24 `);
                 });
             })
             .catch(print);
     }
 
-    changeQtStyle(qtStyle) {
+    changeQtStyle(qt5Style, qt6Style) {
         execAsync([
             "sed",
             "-i",
-            `s/style=.*/style=${qtStyle}/g`,
-            this.qtFilePath,
+            `s/style=.*/style=${qt5Style}/g`,
+            this.qt5FilePath,
+        ]).catch(print);
+
+        execAsync([
+            "sed",
+            "-i",
+            `s/style=.*/style=${qt6Style}/g`,
+            this.qt6FilePath,
         ]).catch(print);
     }
 
@@ -334,7 +335,14 @@ class ThemeService extends Service {
             "sed",
             "-i",
             `s/icon_theme=.*/icon_theme=${icons}/g`,
-            this.qtFilePath,
+            this.qt5FilePath,
+        ]).catch(print);
+
+        execAsync([
+            "sed",
+            "-i",
+            `s/icon_theme=.*/icon_theme=${icons}/g`,
+            this.qt6FilePath,
         ]).catch(print);
     }
 
@@ -384,7 +392,7 @@ class ThemeService extends Service {
         };
         Utils.writeFile(
             JSON.stringify(newData, null, 2),
-            this.CACHE_FILE_PATH,
+            this.CACHE_FILE_PATH
         ).catch(err => print(err));
     }
 

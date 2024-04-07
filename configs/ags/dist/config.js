@@ -4559,16 +4559,6 @@ var NotificationCenterButton = () => Button6({
   }
 });
 
-// src/services/ThemeService.js
-import App2 from "resource:///com/github/Aylur/ags/app.js";
-import Service2 from "resource:///com/github/Aylur/ags/service.js";
-import {
-exec as exec2,
-execAsync as execAsync3,
-timeout,
-USER
-} from "resource:///com/github/Aylur/ags/utils.js";
-
 // src/settings.js
 var MAIN_PATH = `${App.configDir}`;
 var ASSETS_PATH = `${App.configDir}/assets`;
@@ -4610,9 +4600,10 @@ var black_hole = {
   wallpaper: `${WALLPAPER_PATH}/black-hole.png`,
   css_theme: "black-hole.scss",
   plasma_color: "ArcMidnightDark.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "BeautySolar",
-  kvantum_theme: "a-color",
+  kvantum_theme: "Win10XOS-Concept",
   gtk_theme: "Shades-of-purple",
   gtk_icon_theme: "BeautySolar",
   gtk_mode: "dark",
@@ -4632,9 +4623,10 @@ var win_20 = {
   wallpaper: `${WALLPAPER_PATH}/win30.jpg`,
   css_theme: "win20.scss",
   plasma_color: "ArcMidnightDark.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "BeautySolar",
-  kvantum_theme: "a-color",
+  kvantum_theme: "Win10XOS-Concept",
   gtk_theme: "Shades-of-purple",
   gtk_icon_theme: "BeautySolar",
   gtk_mode: "dark",
@@ -4654,9 +4646,10 @@ var deer = {
   wallpaper: `${WALLPAPER_PATH}/deer.jpg`,
   css_theme: "deer.scss",
   plasma_color: "BlueDeer.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Vivid-Dark-Icons",
-  kvantum_theme: "a-color",
+  kvantum_theme: "Tellgo",
   gtk_theme: "Kimi-dark",
   gtk_icon_theme: "Vivid-Dark-Icons",
   gtk_mode: "dark",
@@ -4673,12 +4666,13 @@ var deer = {
   dynamic: false
 };
 var colors = {
-  wallpaper: `${WALLPAPER_PATH}/Windows_365_Wallpaper_4.jpg`,
+  wallpaper: `${WALLPAPER_PATH}/colors.png`,
   css_theme: "colors.scss",
   plasma_color: "AColors.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Vivid-Dark-Icons",
-  kvantum_theme: "a-color",
+  kvantum_theme: "Win10XOS-Concept",
   gtk_icon_theme: "Vivid-Dark-Icons",
   gtk_theme: "Shades-of-purple",
   gtk_mode: "dark",
@@ -4698,9 +4692,10 @@ var siberian = {
   wallpaper: `${WALLPAPER_PATH}/tapet_Siberian.png`,
   css_theme: "siberian.scss",
   plasma_color: "BlueDeer.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "NeonIcons",
-  kvantum_theme: "a-color",
+  kvantum_theme: "Tellgo",
   gtk_theme: "Shades-of-purple",
   gtk_icon_theme: "NeonIcons",
   gtk_mode: "dark",
@@ -4720,7 +4715,8 @@ var materialYou = {
   wallpaper: `${WALLPAPER_PATH}/pastel.jpg`,
   css_theme: "material-you.scss",
   plasma_color: "MyMaterialYou.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Zafiro-Nord-Dark-Black",
   kvantum_theme: "a-m-you",
   gtk_theme: "Cabinet-Light-Orange",
@@ -4742,9 +4738,10 @@ var game = {
   wallpaper: `${WALLPAPER_PATH}/game.png`,
   css_theme: "game.scss",
   plasma_color: "ArcStarryDark.colors",
-  qt_style_theme: "Lightly",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "la-capitaine-icon-theme",
-  kvantum_theme: "a-color",
+  kvantum_theme: "a-batman",
   gtk_theme: "Tokyonight-Dark-BL",
   gtk_icon_theme: "la-capitaine-icon-theme",
   gtk_mode: "dark",
@@ -4764,9 +4761,10 @@ var dark = {
   wallpaper: `${WALLPAPER_PATH}/dark.jpg`,
   css_theme: "dark.scss",
   plasma_color: "DarkAGS.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Infinity-Dark-Icons",
-  kvantum_theme: "a-color",
+  kvantum_theme: "WinSur-dark",
   gtk_theme: "Tokyonight-Dark-BL",
   gtk_icon_theme: "Infinity-Dark-Icons",
   gtk_mode: "dark",
@@ -4786,9 +4784,10 @@ var uniCat = {
   wallpaper: `${WALLPAPER_PATH}/unicat.png`,
   css_theme: "unicat.scss",
   plasma_color: "Unicat.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Magma",
-  kvantum_theme: "a-color",
+  kvantum_theme: "Win10XOS-Concept",
   gtk_theme: "Dracula",
   gtk_icon_theme: "Magma",
   gtk_mode: "dark",
@@ -4808,9 +4807,10 @@ var newCat = {
   wallpaper: `${WALLPAPER_PATH}/catMachup.jpg`,
   css_theme: "newCat.scss",
   plasma_color: "NewCat.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Gradient-Dark-Icons",
-  kvantum_theme: "a-color",
+  kvantum_theme: "Vivid-Dark-Kvantum",
   gtk_theme: "Tokyonight-Dark-BL",
   gtk_icon_theme: "Gradient-Dark-Icons",
   gtk_mode: "dark",
@@ -4830,9 +4830,10 @@ var golden = {
   wallpaper: `${WALLPAPER_PATH}/golden.png`,
   css_theme: "golden.scss",
   plasma_color: "Gold.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Zafiro-Nord-Dark-Black",
-  kvantum_theme: "a-m-you",
+  kvantum_theme: "Canta-light",
   gtk_theme: "Cabinet-Light-Orange",
   gtk_icon_theme: "kora-grey-light-panel",
   gtk_mode: "light",
@@ -4852,7 +4853,8 @@ var harmony = {
   wallpaper: `${WALLPAPER_PATH}/ign_wanderlust.jpg`,
   css_theme: "harmony.scss",
   plasma_color: "Nordic.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Windows11-red-dark",
   kvantum_theme: "Sweet-Mars",
   gtk_theme: "Nordic-darker-standard-buttons",
@@ -4874,11 +4876,12 @@ var circles = {
   wallpaper: `${WALLPAPER_PATH}/wall_arch.png`,
   css_theme: "circles.scss",
   plasma_color: "Circles.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   kvantum_theme: "a-circles",
-  qt_icon_theme: "FairyWren",
+  qt_icon_theme: "Vivid-Dark-Icons",
   gtk_theme: "Nordic-darker-standard-buttons",
-  gtk_icon_theme: "FairyWren",
+  gtk_icon_theme: "Vivid-Dark-Icons",
   gtk_mode: "dark",
   hypr: {
     border_width: 2,
@@ -4896,9 +4899,10 @@ var whiteFlower = {
   wallpaper: `${WALLPAPER_PATH}/white-flower.jpg`,
   css_theme: "white-flower.scss",
   plasma_color: "MateriaYaruLight.colors",
-  qt_style_theme: "Breeze",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
   qt_icon_theme: "Rowaita-Pink-Light",
-  kvantum_theme: "a-m-you",
+  kvantum_theme: "Mkos-BigSur-Transparent",
   gtk_theme: "Jasper-Light-Dracula",
   gtk_icon_theme: "Rowaita-Pink-Light",
   gtk_mode: "light",
@@ -4915,13 +4919,14 @@ var whiteFlower = {
   dynamic: false
 };
 var dynamicM3Dark = {
-  wallpaper_path: `/media/shared/Pictures/wallpapers/dark`,
+  wallpaper_path: `/home/ahmed/wallpapers/dark`,
   dynamic: true,
   interval: 15 * 60 * 1000,
   gtk_mode: "dark",
   plasma_color: "MateriaYaruDark.colors",
-  qt_style_theme: "Breeze",
-  kvantum_theme: "MateriaDark",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
+  kvantum_theme: "Win10XOS-Concept",
   gtk_theme: "Nordic-darker-standard-buttons",
   qt_icon_theme: "BeautySolar",
   gtk_icon_theme: "BeautySolar",
@@ -4933,17 +4938,17 @@ var dynamicM3Dark = {
     drop_shadow: "no",
     kitty: "material-you.conf",
     konsole: "MaterialYouAlt"
-  },
-  desktop_widget: "BHWidget"
+  }
 };
 var dynamicM3Light = {
-  wallpaper_path: `/media/shared/Pictures/wallpapers/light`,
+  wallpaper_path: `/home/ahmed/wallpapers/light`,
   dynamic: true,
   interval: 15 * 60 * 1000,
   gtk_mode: "light",
   plasma_color: "MateriaYaruDark.colors",
-  qt_style_theme: "Breeze",
-  kvantum_theme: "MateriaDark",
+  qt_5_style_theme: "Breeze",
+  qt_6_style_theme: "kvantum",
+  kvantum_theme: "Arc",
   gtk_theme: "Victory-black-light-compact",
   qt_icon_theme: "BeautySolar",
   gtk_icon_theme: "BeautySolar",
@@ -4995,6 +5000,14 @@ var ThemesDictionary = {
 var themes_default = ThemesDictionary;
 
 // src/services/ThemeService.js
+import {
+timeout,
+USER,
+exec as exec2,
+execAsync as execAsync3
+} from "resource:///com/github/Aylur/ags/utils.js";
+import App2 from "resource:///com/github/Aylur/ags/app.js";
+import Service2 from "resource:///com/github/Aylur/ags/service.js";
 class ThemeService extends Service2 {
   static {
     Service2.register(this, {}, {
@@ -5002,10 +5015,11 @@ class ThemeService extends Service2 {
       isDynamicTheme: ["boolean", "r"]
     });
   }
-  qtFilePath = `/home/${USER}/.config/qt5ct/qt5ct.conf`;
+  qt5FilePath = `/home/${USER}/.config/qt5ct/qt5ct.conf`;
+  qt6FilePath = `/home/${USER}/.config/qt6ct/qt6ct.conf`;
   plasmaColorChanger = App2.configDir + "/modules/theme/bin/plasma-theme";
   plasmaColorsPath = App2.configDir + "/modules/theme/plasma-colors/";
-  selectedTheme = BLACK_HOLE_THEME;
+  selectedTheme = UNICAT_THEME;
   rofiFilePath = `/home/${USER}/.config/rofi/config.rasi`;
   wallpapersList = [];
   CACHE_FILE_PATH = `/home/${USER}/.cache/ahmed-hyprland-conf.temp`;
@@ -5013,9 +5027,6 @@ class ThemeService extends Service2 {
   selectedLightWallpaper = 0;
   selectedDarkWallpaper = 0;
   dynamicWallpaperStatus = true;
-  get themeConfig() {
-    return themes_default[this.selectedTheme];
-  }
   constructor() {
     super();
     exec2("swww init");
@@ -5033,6 +5044,7 @@ class ThemeService extends Service2 {
     }
     this.changePlasmaColor(theme.plasma_color);
     this.changeGTKTheme(theme.gtk_theme, theme.gtk_mode, theme.gtk_icon_theme);
+    this.changeQtStyle(theme.qt_5_style_theme, theme.qt_6_style_theme);
     this.changeIcons(theme.qt_icon_theme);
     this.changeKvantumTheme(theme.kvantum_theme);
     let hypr = theme.hypr;
@@ -5131,9 +5143,10 @@ class ThemeService extends Service2 {
     }).catch(print);
   }
   changePlasmaColor(plasmaColor) {
-    execAsync3(`cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`).catch(print);
+    const plasmaCmd = `plasma-apply-colorscheme`;
+    execAsync3([plasmaCmd, plasmaColor.split(".")[0]]).catch(print);
   }
-  changeGTKTheme(GTKTheme, gtkMode, iconTheme) {
+  changeGTKTheme(GTKTheme, gtkMode, iconTheme, fontName) {
     execAsync3([
       `gsettings`,
       `set`,
@@ -5183,12 +5196,18 @@ class ThemeService extends Service2 {
       });
     }).catch(print);
   }
-  changeQtStyle(qtStyle) {
+  changeQtStyle(qt5Style, qt6Style) {
     execAsync3([
       "sed",
       "-i",
-      `s/style=.*/style=${qtStyle}/g`,
-      this.qtFilePath
+      `s/style=.*/style=${qt5Style}/g`,
+      this.qt5FilePath
+    ]).catch(print);
+    execAsync3([
+      "sed",
+      "-i",
+      `s/style=.*/style=${qt6Style}/g`,
+      this.qt6FilePath
     ]).catch(print);
   }
   changeIcons(icons4) {
@@ -5196,7 +5215,13 @@ class ThemeService extends Service2 {
       "sed",
       "-i",
       `s/icon_theme=.*/icon_theme=${icons4}/g`,
-      this.qtFilePath
+      this.qt5FilePath
+    ]).catch(print);
+    execAsync3([
+      "sed",
+      "-i",
+      `s/icon_theme=.*/icon_theme=${icons4}/g`,
+      this.qt6FilePath
     ]).catch(print);
   }
   changeRofiTheme(rofiTheme) {
@@ -5955,8 +5980,8 @@ var tempProgress = Widget.CircularProgress({
     const temps = val.split("\n");
     let total = 0;
     for (let index = 0;index < temps.length; index++) {
-      const element = temps[index].replace("+", "").replace("\xB0C", "");
-      total += parseInt(element);
+      const element = temps[index]?.replace("+", "").replace("\xB0C", "");
+      total += parseInt(element ?? "0");
     }
     total = total / temps.length;
     self.value = total / 100;

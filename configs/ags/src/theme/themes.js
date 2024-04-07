@@ -6,9 +6,10 @@ const black_hole = {
     wallpaper: `${WALLPAPER_PATH}/black-hole.png`,
     css_theme: "black-hole.scss",
     plasma_color: "ArcMidnightDark.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "BeautySolar",
-    kvantum_theme: "a-color",
+    kvantum_theme: "Win10XOS-Concept",
     gtk_theme: "Shades-of-purple",
     gtk_icon_theme: "BeautySolar",
     gtk_mode: "dark",
@@ -29,9 +30,10 @@ const win_20 = {
     wallpaper: `${WALLPAPER_PATH}/win30.jpg`,
     css_theme: "win20.scss",
     plasma_color: "ArcMidnightDark.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "BeautySolar",
-    kvantum_theme: "a-color",
+    kvantum_theme: "Win10XOS-Concept",
     gtk_theme: "Shades-of-purple",
     gtk_icon_theme: "BeautySolar",
     gtk_mode: "dark",
@@ -53,14 +55,16 @@ const deer = {
     // css_theme: "deer-m3.scss",
     css_theme: "deer.scss",
     plasma_color: "BlueDeer.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Vivid-Dark-Icons",
-    kvantum_theme: "a-color",
+    kvantum_theme: "Tellgo",
     gtk_theme: "Kimi-dark",
     // gtk_theme: "Colorful-Dark-GTK",
     gtk_icon_theme: "Vivid-Dark-Icons",
     // rofi_theme: "islamic_theme.rasi",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(FDB4B7ff) rgba(A2E8FFff) 0deg",
@@ -75,15 +79,17 @@ const deer = {
 };
 
 const colors = {
-    wallpaper: `${WALLPAPER_PATH}/Windows_365_Wallpaper_4.jpg`,
+    wallpaper: `${WALLPAPER_PATH}/colors.png`,
     css_theme: "colors.scss",
     plasma_color: "AColors.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Vivid-Dark-Icons",
-    kvantum_theme: "a-color",
+    kvantum_theme: "Win10XOS-Concept",
     gtk_icon_theme: "Vivid-Dark-Icons",
     gtk_theme: "Shades-of-purple",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(FD02FFff) rgba(1ed4fdff) 0deg",
@@ -101,12 +107,14 @@ const siberian = {
     wallpaper: `${WALLPAPER_PATH}/tapet_Siberian.png`,
     css_theme: "siberian.scss",
     plasma_color: "BlueDeer.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "NeonIcons",
-    kvantum_theme: "a-color",
+    kvantum_theme: "Tellgo",
     gtk_theme: "Shades-of-purple",
     gtk_icon_theme: "NeonIcons",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(FDB4B7ff) rgba(A2E8FFff) 0deg",
@@ -124,12 +132,14 @@ const materialYou = {
     wallpaper: `${WALLPAPER_PATH}/pastel.jpg`,
     css_theme: "material-you.scss",
     plasma_color: "MyMaterialYou.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Zafiro-Nord-Dark-Black",
     kvantum_theme: "a-m-you",
     gtk_theme: "Cabinet-Light-Orange",
     gtk_icon_theme: "kora-grey-light-panel",
     gtk_mode: "light",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(678382ff) rgba(9d6c73ff) 0deg",
@@ -147,12 +157,14 @@ const game = {
     wallpaper: `${WALLPAPER_PATH}/game.png`,
     css_theme: "game.scss",
     plasma_color: "ArcStarryDark.colors",
-    qt_style_theme: "Lightly",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "la-capitaine-icon-theme",
-    kvantum_theme: "a-color",
+    kvantum_theme: "a-batman",
     gtk_theme: "Tokyonight-Dark-BL",
     gtk_icon_theme: "la-capitaine-icon-theme",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(ffff7fff) rgba(ffaa7fff) 0deg",
@@ -170,12 +182,14 @@ const dark = {
     wallpaper: `${WALLPAPER_PATH}/dark.jpg`,
     css_theme: "dark.scss",
     plasma_color: "DarkAGS.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Infinity-Dark-Icons",
-    kvantum_theme: "a-color",
+    kvantum_theme: "WinSur-dark",
     gtk_theme: "Tokyonight-Dark-BL",
     gtk_icon_theme: "Infinity-Dark-Icons",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(ff9a4cff) rgba(0080ffff) 0deg",
@@ -193,12 +207,14 @@ const uniCat = {
     wallpaper: `${WALLPAPER_PATH}/unicat.png`,
     css_theme: "unicat.scss",
     plasma_color: "Unicat.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Magma",
-    kvantum_theme: "a-color",
+    kvantum_theme: "Win10XOS-Concept",
     gtk_theme: "Dracula",
     gtk_icon_theme: "Magma",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(C6AAE8ff) rgba(F0AFE1ff) 0deg",
@@ -216,12 +232,14 @@ const newCat = {
     wallpaper: `${WALLPAPER_PATH}/catMachup.jpg`,
     css_theme: "newCat.scss",
     plasma_color: "NewCat.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Gradient-Dark-Icons",
-    kvantum_theme: "a-color",
+    kvantum_theme: "Vivid-Dark-Kvantum",
     gtk_theme: "Tokyonight-Dark-BL",
     gtk_icon_theme: "Gradient-Dark-Icons",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(ECBFBDff) rgba(F0AFE1ff) 0deg",
@@ -239,12 +257,14 @@ const golden = {
     wallpaper: `${WALLPAPER_PATH}/golden.png`,
     css_theme: "golden.scss",
     plasma_color: "Gold.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Zafiro-Nord-Dark-Black",
-    kvantum_theme: "a-m-you",
+    kvantum_theme: "Canta-light",
     gtk_theme: "Cabinet-Light-Orange",
     gtk_icon_theme: "kora-grey-light-panel",
     gtk_mode: "light",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(2C3041ff) rgba(611a15ff) 0deg",
@@ -262,12 +282,14 @@ const harmony = {
     wallpaper: `${WALLPAPER_PATH}/ign_wanderlust.jpg`,
     css_theme: "harmony.scss",
     plasma_color: "Nordic.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Windows11-red-dark",
     kvantum_theme: "Sweet-Mars",
     gtk_theme: "Nordic-darker-standard-buttons",
     gtk_icon_theme: "Windows11-red-dark",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(BF616Bff) rgba(BF616Bff) 0deg",
@@ -285,12 +307,14 @@ const circles = {
     wallpaper: `${WALLPAPER_PATH}/wall_arch.png`,
     css_theme: "circles.scss",
     plasma_color: "Circles.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     kvantum_theme: "a-circles",
-    qt_icon_theme: "FairyWren",
+    qt_icon_theme: "Vivid-Dark-Icons",
     gtk_theme: "Nordic-darker-standard-buttons",
-    gtk_icon_theme: "FairyWren",
+    gtk_icon_theme: "Vivid-Dark-Icons",
     gtk_mode: "dark",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(61AFEFff) rgba(7EC7A2ff) 0deg",
@@ -308,12 +332,14 @@ const whiteFlower = {
     wallpaper: `${WALLPAPER_PATH}/white-flower.jpg`,
     css_theme: "white-flower.scss",
     plasma_color: "MateriaYaruLight.colors",
-    qt_style_theme: "Breeze",
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
     qt_icon_theme: "Rowaita-Pink-Light",
-    kvantum_theme: "a-m-you",
+    kvantum_theme: "Mkos-BigSur-Transparent",
     gtk_theme: "Jasper-Light-Dracula",
     gtk_icon_theme: "Rowaita-Pink-Light",
     gtk_mode: "light",
+
     hypr: {
         border_width: 2,
         active_border: "rgba(678382ff) rgba(9d6c73ff) 0deg",
@@ -328,14 +354,15 @@ const whiteFlower = {
 };
 
 const dynamicM3Dark = {
-    wallpaper_path: `/media/shared/Pictures/wallpapers/dark`,
+    wallpaper_path: `/home/ahmed/wallpapers/dark`,
     dynamic: true,
     interval: 15 * 60 * 1000,
     gtk_mode: "dark",
 
     plasma_color: "MateriaYaruDark.colors",
-    qt_style_theme: "Breeze",
-    kvantum_theme: "MateriaDark", // not used
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
+    kvantum_theme: "Win10XOS-Concept", //
     gtk_theme: "Nordic-darker-standard-buttons",
 
     qt_icon_theme: "BeautySolar",
@@ -350,19 +377,20 @@ const dynamicM3Dark = {
         kitty: "material-you.conf",
         konsole: "MaterialYouAlt",
     },
-    //   desktop_widget: null,
-    desktop_widget: "BHWidget",
+    // desktop_widget: null,
+    // desktop_widget: "BHWidget",
 };
 
 const dynamicM3Light = {
-    wallpaper_path: `/media/shared/Pictures/wallpapers/light`,
+    wallpaper_path: `/home/ahmed/wallpapers/light`,
     dynamic: true,
     interval: 15 * 60 * 1000,
     gtk_mode: "light",
 
     plasma_color: "MateriaYaruDark.colors",
-    qt_style_theme: "Breeze",
-    kvantum_theme: "MateriaDark", // not used
+    qt_5_style_theme: "Breeze",
+    qt_6_style_theme: "kvantum",
+    kvantum_theme: "Arc",
     gtk_theme: "Victory-black-light-compact",
 
     qt_icon_theme: "BeautySolar", //-Dark",
