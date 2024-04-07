@@ -320,7 +320,7 @@ export const SystemMenu = () =>
         name: "left_menu",
         anchor: ["bottom", "right"],
         transition: "slide_up",
-        margins: [30, 0],
+        margins: [30, 6],
         child: Box({
             className: "left-menu-box unset",
             vertical: true,

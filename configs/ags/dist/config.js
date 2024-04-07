@@ -4001,7 +4001,7 @@ var NetVolumeBox = () => Widget.Box({
 // config.json
 var config_default = {
   popupCloseDelay: 700,
-  transitionDuration: 250,
+  transitionDuration: 100,
   systray: {
     ignore: []
   },
@@ -4063,13 +4063,508 @@ import {hyprland as hyprland4} from "resource:///com/github/Aylur/ags/service/hy
 
 // src/services/hyprext.ts
 import {hyprland as hyprland2} from "resource:///com/github/Aylur/ags/service/hyprland.js";
+class HyprExtensionsService extends Service {
+  static {
+    Service.register(this, {
+      "monitors-changed": []
+    }, {
+      fullscreen: ["boolean", "r"]
+    });
+  }
+  get fullscreen() {
+    return false;
+  }
+  constructor() {
+    super();
+    hyprland2.connect("event", this.#handleEvent);
+  }
+  #handleEvent = (_3, ...args) => N4(args).with([_2.union("monitoraddedv2", "monitorremoved"), ..._2.array(_2.any)], () => setTimeout(this.#onMonitorsChanged, 500));
+  #onMonitorsChanged = async () => {
+    this.emit("monitors-changed");
+  };
+}
+var hyprext = new HyprExtensionsService;
+
+// src/widgets/Workspaces/index.ts
+var setWorkspace = (num) => hyprland4.messageAsync(`dispatch workspace ${num}`);
+var ClientRenderer = ({ wsId }) => Widget.Box({
+  halign: Gtk30.Align.CENTER,
+  spacing: 2,
+  css: "padding: 2 0;",
+  children: hyprland4.bind("clients").as(Ra.filterMap((client) => !config_default.workspace.ignore.includes(client.class) && client.workspace.id === wsId && client.mapped ? Widget.Icon({
+    icon: windowIcon(client),
+    css: "font-size: 12px;"
+  }) : undef))
+});
+var MonitorWorkspaces = (monitorId = 0) => {
+  const firstWsId = config_default.workspace.perMonitor * monitorId + 1;
+  return Box2({
+    className: "unset workspaces",
+    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i3) => Button({
+      css: "min-width: 30px;",
+      onClicked: () => setWorkspace(i3),
+      className: hyprland4.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
+      child: ClientRenderer({
+        wsId: i3
+      })
+    }))
+  });
+};
+var Workspaces = () => {
+  const createChildren = () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id));
+  return Box2({
+    className: "unset workspace-box",
+    spacing: 4,
+    children: createChildren(),
+    setup: (self) => self.hook(hyprext, () => {
+      self.children.forEach((c2) => c2.destroy());
+      self.children = createChildren();
+    }, "monitors-changed")
+  });
+};
+
+// src/widgets/hardware/all.ts
+import {Box as Box5} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/widgets/hardware/battery.ts
+import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
+import {
+Button as Button2,
+CircularProgress,
+Label as Label2
+} from "resource:///com/github/Aylur/ags/widget.js";
+var BatteryWidget = () => {
+  const label = Label2({
+    className: "battery-inner",
+    label: "\uF240"
+  });
+  const button = Button2({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  return CircularProgress({
+    className: "battery",
+    child: button,
+    startAt: 0,
+    rounded: false
+  }).hook(Battery, (batteryProgress) => {
+    if (Battery.charging) {
+      label.class_name = "battery-inner-charging";
+    } else {
+      label.class_name = "battery-inner";
+    }
+    batteryProgress.value = Battery.percent / 100;
+    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
+  });
+};
+
+// src/widgets/hardware/cpu.ts
+import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box3,
+Button as Button3,
+CircularProgress as CircularProgress2,
+Label as Label3
+} from "resource:///com/github/Aylur/ags/widget.js";
+var CpuWidget = () => {
+  const label = Label3({
+    className: "cpu-inner",
+    label: "\uF2DB"
+  });
+  const button = Button3({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  const progress = CircularProgress2({
+    className: "cpu",
+    child: button,
+    startAt: 0,
+    rounded: false
+  });
+  return Box3({
+    className: "bar-hw-cpu-box"
+  }).poll(1000, (box) => {
+    execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
+      progress.value = Number(val) / 100;
+      label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
+    }).catch(print);
+    box.children = [progress];
+    box.show_all();
+  });
+};
+
+// src/widgets/hardware/ram.ts
+import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box4,
+Button as Button4,
+CircularProgress as CircularProgress3,
+Label as Label4
+} from "resource:///com/github/Aylur/ags/widget.js";
+var RamWidget = () => {
+  const label = Label4({
+    className: "ram-inner",
+    label: "\uF538"
+  });
+  const button = Button4({
+    className: "unset no-hover",
+    child: label,
+    onClicked: () => showHardwareMenu()
+  });
+  const progress = CircularProgress3({
+    className: "ram",
+    startAt: 0,
+    rounded: false,
+    child: button
+  });
+  return Box4({
+    className: "bar-hw-ram-box"
+  }).poll(30000, (box) => {
+    execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
+      progress.value = Number(val) / 100;
+      label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
+    }).catch(print);
+    box.children = [progress];
+    box.show_all();
+  });
+};
+
+// src/widgets/hardware/all.ts
+var HardwareBox = () => Box5({
+  className: "hardware-box unset",
+  children: [CpuWidget(), RamWidget(), BatteryWidget()]
+});
+var showHardwareMenu = () => App.toggleWindow("hardware_menu");
+
+// src/widgets/menus/NotificationCenter.ts
+import {
+Box as Box7,
+Button as Button6,
+Label as Label6,
+Scrollable
+} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/utils/helpers.ts
+async function bash(strings, ...values) {
+  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i3) => str + `${values[i3] ?? ""}`).join("");
+  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
+    console.error(cmd, err);
+    return "";
+  });
+}
+async function sh(cmd) {
+  return Utils.execAsync(cmd).catch((err) => {
+    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
+    return "";
+  });
+}
+function dependencies(...bins) {
+  const missing = bins.filter((bin) => {
+    return !Utils.exec(`which ${bin}`);
+  });
+  if (missing.length > 0) {
+    console.warn("missing dependencies:", missing.join(", "));
+    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
+  }
+  return missing.length === 0;
+}
+var local = "LTR";
+
+// src/notifications/MenuNotification.ts
+import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box6,
+Button as Button5,
+EventBox,
+Icon,
+Label as Label5
+} from "resource:///com/github/Aylur/ags/widget.js";
+var { GLib } = imports.gi;
+var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
+var NotificationIcon = ({ appEntry, appIcon, image }) => {
+  if (image) {
+    return Box6({
+      vpack: "start",
+      hexpand: false,
+      className: "notification-img",
+      css: `
+              background-image: url("${image}");
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+              min-width: 78px;
+              min-height: 78px;
+              ${margin}
+              border-radius: 1rem;
+          `
+    });
+  }
+  let icon = "dialog-information-symbolic";
+  if (lookUpIcon(appIcon))
+    icon = appIcon;
+  if (lookUpIcon(appEntry))
+    icon = appEntry;
+  return Box6({
+    vpack: "start",
+    hexpand: false,
+    css: `
+          min-width: 78px;
+          min-height: 78px;
+          ${margin}
+        `,
+    children: [
+      Icon({
+        icon,
+        size: 58,
+        hpack: "center",
+        hexpand: true,
+        vpack: "center",
+        vexpand: true
+      })
+    ]
+  });
+};
+var MenuNotification_default = (notification) => {
+  const bodyLabel = Label5({
+    css: `margin-top: 1rem;`,
+    className: "notification-description",
+    hexpand: true,
+    useMarkup: true,
+    xalign: 0,
+    justification: "left",
+    wrap: true
+  });
+  try {
+    bodyLabel.label = notification.body;
+  } catch (error) {
+    bodyLabel.label = "...";
+  }
+  const content = Box6({
+    css: `min-width: 330px;`,
+    children: [
+      NotificationIcon(notification),
+      Box6({
+        hexpand: true,
+        vertical: true,
+        children: [
+          Box6({
+            children: [
+              Label5({
+                className: "notification-title",
+                css: margin,
+                xalign: 0,
+                justification: "left",
+                hexpand: true,
+                maxWidthChars: 24,
+                truncate: "end",
+                wrap: true,
+                label: notification.summary,
+                useMarkup: notification.summary.startsWith("<")
+              }),
+              Label5({
+                className: "notification-time",
+                css: `${margin} margin-top: 0.5rem;`,
+                vpack: "start",
+                label: GLib.DateTime.new_from_unix_local(notification.time).format("%H:%M")
+              }),
+              Button5({
+                className: "notification-close-button",
+                vpack: "start",
+                child: Icon("window-close-symbolic"),
+                onClicked: () => {
+                  notification.close();
+                }
+              })
+            ]
+          }),
+          bodyLabel
+        ]
+      })
+    ]
+  });
+  const actionsbox = Box6({
+    className: "notification-actions",
+    children: notification.actions.map((action) => Button5({
+      css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
+      className: "action-button",
+      onClicked: () => notification.invoke(action.id),
+      hexpand: true,
+      child: Label5(action.label)
+    }))
+  });
+  const mainbox = EventBox({
+    className: `menu-notification ${notification.urgency}`,
+    vexpand: false,
+    onPrimaryClick: () => {
+    },
+    child: Box6({
+      vertical: true,
+      children: [
+        content,
+        ...optArr(notification.actions.length > 0, [actionsbox])
+      ]
+    })
+  });
+  return mainbox;
+};
+
+// src/widgets/menus/Popup.ts
+var PopupRevealer = ({
+  child,
+  name,
+  transition,
+  onOpen
+}) => Widget.Revealer({
+  transition,
+  child,
+  transitionDuration: config_default.transitionDuration,
+  setup: (self) => self.hook(App, (_3, ...args) => N4(args).with([name, _2.boolean], ([_4, visible]) => {
+    onOpen?.();
+    self.revealChild = visible;
+  }), "window-toggled")
+});
+var Popup = ({
+  transition,
+  name,
+  child,
+  onOpen,
+  ...props
+}) => {
+  const closing = l.makeControlledDebounce(() => App.closeWindow(name), {
+    delay: config_default.popupCloseDelay,
+    leading: false
+  });
+  return Widget.Window({
+    exclusivity: "ignore",
+    name,
+    focusable: true,
+    monitor: 0,
+    visible: false,
+    ...props,
+    setup: (w2) => w2.keybind("Escape", closing.invoke),
+    keymode: "on-demand",
+    child: Widget.Box({
+      css: `min-height: 2px;`,
+      child: Widget.EventBox({
+        onHover: closing.cancel,
+        child: PopupRevealer({
+          transition,
+          name,
+          child,
+          onOpen
+        })
+      })
+    })
+  }).on("leave-notify-event", closing.schedule);
+};
+
+// src/widgets/menus/NotificationCenter.ts
+var Notifications = await Service.import("notifications");
+var NotificationsBox = () => {
+  return Box7({
+    className: "notification-menu-header",
+    vertical: true,
+    children: []
+  }).hook(Notifications, (self) => {
+    let notificationList = [];
+    const array = Notifications.notifications.reverse();
+    for (let index = 0;index < array.length; index++) {
+      const element = array[index];
+      const line = index !== array.length - 1 ? Box7({
+        class_name: "horizontal-line"
+      }) : undef;
+      notificationList.push(MenuNotification_default(element), line);
+    }
+    let noNotifications = Box7({
+      vertical: true,
+      className: "notification-this-is-all",
+      children: [
+        Label6({
+          className: "no-notification-icon",
+          label: "\uDB84\uDDE5"
+        }),
+        Label6({
+          className: "no-notification-text",
+          label: "There are no new notifications"
+        })
+      ]
+    });
+    if (array.length < 1) {
+      notificationList.push(noNotifications);
+    }
+    self.children = notificationList.filter(E2);
+  });
+};
+var NotificationHeader = () => {
+  return Box7({
+    className: "notification-header-box",
+    spacing: 70,
+    children: [
+      Button6({
+        className: "unset notification-center-header-clear",
+        label: "\uEA81",
+        onClicked: () => {
+          Notifications.clear();
+        }
+      }),
+      Label6({
+        className: "notification-center-header-text",
+        label: "Notification Center"
+      }),
+      Button6({
+        className: "unset notification-center-header-mute",
+        label: "\uDB80\uDC9A",
+        onClicked: () => Notifications.dnd = !Notifications.dnd
+      })
+    ]
+  }).hook(Notifications, (self) => {
+    if (Notifications.dnd) {
+      self.children[2].label = "\uDB80\uDC9B";
+    } else {
+      self.children[2].label = "\uDB80\uDC9A";
+    }
+  });
+};
+var notificationContainer = Scrollable({
+  hscroll: "never",
+  vscroll: "automatic",
+  className: "notification-center-container",
+  child: NotificationsBox()
+});
+var NotificationCenter = () => Popup({
+  name: "notification_center",
+  margins: [30, 200],
+  anchor: ["bottom", "right"],
+  transition: "slide_up",
+  child: Box7({
+    className: "left-menu-box",
+    vertical: true,
+    children: [NotificationHeader(), notificationContainer]
+  })
+});
+var NotificationCenterButton = () => Button6({
+  className: "notification-center-button unset",
+  label: "\uF0F3",
+  onClicked: () => App.toggleWindow("notification_center"),
+  onSecondaryClick: () => Notifications.Clear()
+}).hook(Notifications, (self) => {
+  if (Notifications.dnd) {
+    self.label = "\uDB80\uDC9B";
+  } else if (Notifications.notifications.length === 0) {
+    self.label = "\uDB80\uDC9A";
+  } else if (Notifications.notifications.length > 0) {
+    self.label = `${Notifications.notifications.length} \uEB9A`;
+  }
+});
 
 // src/services/ThemeService.js
 import App2 from "resource:///com/github/Aylur/ags/app.js";
 import Service2 from "resource:///com/github/Aylur/ags/service.js";
 import {
 exec as exec2,
-execAsync,
+execAsync as execAsync3,
 timeout,
 USER
 } from "resource:///com/github/Aylur/ags/utils.js";
@@ -4182,9 +4677,9 @@ var colors = {
   css_theme: "colors.scss",
   plasma_color: "AColors.colors",
   qt_style_theme: "Breeze",
-  qt_icon_theme: "Magma",
+  qt_icon_theme: "Vivid-Dark-Icons",
   kvantum_theme: "a-color",
-  gtk_icon_theme: "Magma",
+  gtk_icon_theme: "Vivid-Dark-Icons",
   gtk_theme: "Shades-of-purple",
   gtk_mode: "dark",
   hypr: {
@@ -4547,7 +5042,7 @@ class ThemeService extends Service2 {
     this.cacheVariables();
   }
   changeWallpaper(wallpaper) {
-    execAsync([
+    execAsync3([
       "swww",
       "img",
       "--transition-type",
@@ -4625,7 +5120,7 @@ class ThemeService extends Service2 {
     this.cacheVariables();
   }
   createM3ColorSchema(wallpaper, mode) {
-    execAsync([
+    execAsync3([
       "python",
       settings_default.scripts.dynamicM3Py,
       wallpaper,
@@ -4636,17 +5131,17 @@ class ThemeService extends Service2 {
     }).catch(print);
   }
   changePlasmaColor(plasmaColor) {
-    execAsync(`cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`).catch(print);
+    execAsync3(`cp ~/.local/share/color-schemes/${plasmaColor} ~/.config/kdeglobals`).catch(print);
   }
   changeGTKTheme(GTKTheme, gtkMode, iconTheme) {
-    execAsync([
+    execAsync3([
       `gsettings`,
       `set`,
       `org.gnome.desktop.interface`,
       `color-scheme`,
       `prefer-${gtkMode}`
     ]).catch(print);
-    execAsync([
+    execAsync3([
       `gsettings`,
       `set`,
       `org.gnome.desktop.interface`,
@@ -4654,14 +5149,14 @@ class ThemeService extends Service2 {
       `Adwaita`
     ]).catch(print);
     setTimeout(() => {
-      execAsync([
+      execAsync3([
         `gsettings`,
         `set`,
         `org.gnome.desktop.interface`,
         `gtk-theme`,
         GTKTheme
       ]).catch(print);
-      execAsync([
+      execAsync3([
         `gsettings`,
         `set`,
         `org.gnome.desktop.wm.preferences`,
@@ -4669,7 +5164,7 @@ class ThemeService extends Service2 {
         GTKTheme
       ]).catch(print);
     }, 2000);
-    execAsync([
+    execAsync3([
       `gsettings`,
       `set`,
       `org.gnome.desktop.interface`,
@@ -4680,33 +5175,33 @@ class ThemeService extends Service2 {
   steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow, kittyConfig, konsoleTheme) {
     Promise.resolve().then(() => {
       timeout(1000, () => {
-        execAsync(`hyprctl keyword general:border_size ${border_width}`);
-        execAsync(`hyprctl keyword general:col.active_border ${active_border}`);
-        execAsync(`hyprctl keyword general:col.inactive_border ${inactive_border}`);
-        execAsync(`hyprctl keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`);
-        execAsync(`hyprctl keyword decoration:rounding ${rounding}`);
+        execAsync3(`hyprctl keyword general:border_size ${border_width}`);
+        execAsync3(`hyprctl keyword general:col.active_border ${active_border}`);
+        execAsync3(`hyprctl keyword general:col.inactive_border ${inactive_border}`);
+        execAsync3(`hyprctl keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`);
+        execAsync3(`hyprctl keyword decoration:rounding ${rounding}`);
       });
     }).catch(print);
   }
   changeQtStyle(qtStyle) {
-    execAsync([
+    execAsync3([
       "sed",
       "-i",
       `s/style=.*/style=${qtStyle}/g`,
       this.qtFilePath
     ]).catch(print);
   }
-  changeIcons(icons3) {
-    execAsync([
+  changeIcons(icons4) {
+    execAsync3([
       "sed",
       "-i",
-      `s/icon_theme=.*/icon_theme=${icons3}/g`,
+      `s/icon_theme=.*/icon_theme=${icons4}/g`,
       this.qtFilePath
     ]).catch(print);
   }
   changeRofiTheme(rofiTheme) {
     const newTheme = `@import "${App2.configDir}/modules/theme/rofi/${rofiTheme}"`;
-    execAsync([
+    execAsync3([
       "sed",
       "-i",
       `11s|.*|${newTheme}|`,
@@ -4714,24 +5209,24 @@ class ThemeService extends Service2 {
     ]).catch(print);
   }
   changeKvantumTheme(kvantumTheme) {
-    execAsync(["kvantummanager", "--set", kvantumTheme]).catch(print);
+    execAsync3(["kvantummanager", "--set", kvantumTheme]).catch(print);
   }
-  showDesktopWidget(widget2) {
+  showDesktopWidget(widget9) {
     let oldTheme = themes_default[this.selectedTheme];
-    if (oldTheme.desktop_widget !== widget2 && oldTheme.desktop_widget !== null) {
+    if (oldTheme.desktop_widget !== widget9 && oldTheme.desktop_widget !== null) {
       this.hideWidget(oldTheme.desktop_widget);
     }
-    if (widget2 !== null) {
+    if (widget9 !== null) {
       timeout(1000, () => {
-        this.showWidget(widget2);
+        this.showWidget(widget9);
       });
     }
   }
   hideWidget(functionName) {
-    execAsync(["ags", "-r", `Hide${functionName}()`]).catch(print);
+    execAsync3(["ags", "-r", `Hide${functionName}()`]).catch(print);
   }
   showWidget(functionName) {
-    execAsync(["ags", "-r", `Show${functionName}()`]).catch(print);
+    execAsync3(["ags", "-r", `Show${functionName}()`]).catch(print);
   }
   cacheVariables() {
     const newData = {
@@ -4775,540 +5270,6 @@ globalThis.changeTheme = (theme) => {
     themeService.changeTheme(dictionary[theme]);
 };
 var ThemeService_default = themeService;
-
-// src/services/hyprext.ts
-var optionsToModify = ["general:gaps_out", "decoration:rounding"];
-var isSingleMonitor = () => hyprland2.monitors.length === 1;
-var isCurrentWindowFullscreen = () => hyprland2.getClient(hyprland2.active.client.address)?.fullscreen ?? false;
-
-class HyprExtensionsService extends Service {
-  static {
-    Service.register(this, {
-      "monitors-changed": []
-    }, {
-      fullscreen: ["boolean", "r"]
-    });
-  }
-  #enabled = isSingleMonitor();
-  #fullscreen = isCurrentWindowFullscreen();
-  get fullscreen() {
-    return this.#fullscreen;
-  }
-  constructor() {
-    super();
-    hyprland2.connect("event", this.#handleEvent);
-  }
-  #handleEvent = (_3, ...args) => N4(args).with(["fullscreen", _2.string.select()], (fstate) => this.#toggleFullscreenMode(!!parseInt(fstate.trim()))).with(["activewindowv2", _2.string.select()], (winaddr) => {
-    const fstate = hyprland2.getClient(`0x${winaddr}`)?.fullscreen;
-    this.#toggleFullscreenMode(fstate ?? false);
-  }).with([
-    _2.union("monitoraddedv2", "monitorremoved"),
-    ..._2.array(_2.any)
-  ], () => setTimeout(this.#onMonitorsChanged, 500));
-  #onMonitorsChanged = async () => {
-    const singleMon = isSingleMonitor();
-    await this.#toggleFullscreenMode(singleMon ? isCurrentWindowFullscreen() : false);
-    this.#enabled = singleMon;
-    this.emit("monitors-changed");
-  };
-  #toggleFullscreenMode = async (newfstate) => {
-    if (!this.#enabled || newfstate === this.#fullscreen)
-      return;
-    if (newfstate) {
-      await Promise.all(optionsToModify.map((opt) => hyprland2.messageAsync(`keyword ${opt} 0`)));
-    } else {
-      const rounding = ThemeService_default.themeConfig.hypr.rounding;
-      await Promise.all([
-        hyprland2.messageAsync(`keyword decoration:rounding ${rounding}`),
-        hyprland2.messageAsync(`keyword general:gaps_out ${config_default.gapsOut}`)
-      ]);
-    }
-    this.#fullscreen = newfstate;
-    this.changed("fullscreen");
-  };
-  toggleEnabled = () => {
-    if (this.#enabled) {
-      this.#toggleFullscreenMode(false);
-    }
-    this.#enabled = !this.#enabled;
-  };
-}
-var hyprext = new HyprExtensionsService;
-globalThis.toggleFullscreenWatching = hyprext.toggleEnabled;
-
-// src/widgets/Workspaces/index.ts
-var setWorkspace = (num) => hyprland4.messageAsync(`dispatch workspace ${num}`);
-var ClientRenderer = ({ wsId }) => Widget.Box({
-  halign: Gtk30.Align.CENTER,
-  spacing: 2,
-  css: "padding: 2 0;",
-  children: hyprland4.bind("clients").as(Ra.filterMap((client) => !config_default.workspace.ignore.includes(client.class) && client.workspace.id === wsId && client.mapped ? Widget.Icon({
-    icon: windowIcon(client),
-    css: "font-size: 12px;"
-  }) : undef))
-});
-var MonitorWorkspaces = (monitorId = 0) => {
-  const firstWsId = config_default.workspace.perMonitor * monitorId + 1;
-  return Box2({
-    className: "unset workspaces",
-    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i3) => Button({
-      css: "min-width: 30px;",
-      onClicked: () => setWorkspace(i3),
-      className: hyprland4.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
-      child: ClientRenderer({
-        wsId: i3
-      })
-    }))
-  });
-};
-var Workspaces = () => {
-  const createChildren = () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id));
-  return Box2({
-    className: "unset workspace-box",
-    spacing: 4,
-    children: createChildren(),
-    setup: (self) => self.hook(hyprext, () => {
-      self.children.forEach((c2) => c2.destroy());
-      self.children = createChildren();
-    }, "monitors-changed")
-  });
-};
-
-// src/widgets/hardware/all.ts
-import {Box as Box5} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/widgets/hardware/battery.ts
-import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
-import {
-Button as Button2,
-CircularProgress,
-Label as Label2
-} from "resource:///com/github/Aylur/ags/widget.js";
-var BatteryWidget = () => {
-  const label = Label2({
-    className: "battery-inner",
-    label: "\uF240"
-  });
-  const button = Button2({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  return CircularProgress({
-    className: "battery",
-    child: button,
-    startAt: 0,
-    rounded: false
-  }).hook(Battery, (batteryProgress) => {
-    if (Battery.charging) {
-      label.class_name = "battery-inner-charging";
-    } else {
-      label.class_name = "battery-inner";
-    }
-    batteryProgress.value = Battery.percent / 100;
-    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
-  });
-};
-
-// src/widgets/hardware/cpu.ts
-import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box3,
-Button as Button3,
-CircularProgress as CircularProgress2,
-Label as Label3
-} from "resource:///com/github/Aylur/ags/widget.js";
-var CpuWidget = () => {
-  const label = Label3({
-    className: "cpu-inner",
-    label: "\uF2DB"
-  });
-  const button = Button3({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  const progress = CircularProgress2({
-    className: "cpu",
-    child: button,
-    startAt: 0,
-    rounded: false
-  });
-  return Box3({
-    className: "bar-hw-cpu-box"
-  }).poll(1000, (box) => {
-    execAsync2(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
-      progress.value = Number(val) / 100;
-      label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
-    }).catch(print);
-    box.children = [progress];
-    box.show_all();
-  });
-};
-
-// src/widgets/hardware/ram.ts
-import {execAsync as execAsync3} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box4,
-Button as Button4,
-CircularProgress as CircularProgress3,
-Label as Label4
-} from "resource:///com/github/Aylur/ags/widget.js";
-var RamWidget = () => {
-  const label = Label4({
-    className: "ram-inner",
-    label: "\uF538"
-  });
-  const button = Button4({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  const progress = CircularProgress3({
-    className: "ram",
-    startAt: 0,
-    rounded: false,
-    child: button
-  });
-  return Box4({
-    className: "bar-hw-ram-box"
-  }).poll(30000, (box) => {
-    execAsync3(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
-      progress.value = Number(val) / 100;
-      label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
-    }).catch(print);
-    box.children = [progress];
-    box.show_all();
-  });
-};
-
-// src/widgets/hardware/all.ts
-var HardwareBox = () => Box5({
-  className: "hardware-box unset",
-  children: [CpuWidget(), RamWidget(), BatteryWidget()]
-});
-var showHardwareMenu = () => App.toggleWindow("hardware_menu");
-
-// src/widgets/menus/NotificationCenter.ts
-import {
-Box as Box7,
-Button as Button6,
-Label as Label6,
-Scrollable
-} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/utils/helpers.ts
-async function bash(strings, ...values) {
-  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i3) => str + `${values[i3] ?? ""}`).join("");
-  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
-    console.error(cmd, err);
-    return "";
-  });
-}
-async function sh(cmd) {
-  return Utils.execAsync(cmd).catch((err) => {
-    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
-    return "";
-  });
-}
-function dependencies(...bins) {
-  const missing = bins.filter((bin) => {
-    return !Utils.exec(`which ${bin}`);
-  });
-  if (missing.length > 0) {
-    console.warn("missing dependencies:", missing.join(", "));
-    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
-  }
-  return missing.length === 0;
-}
-var local = "LTR";
-
-// src/notifications/MenuNotification.ts
-import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box6,
-Button as Button5,
-EventBox,
-Icon,
-Label as Label5
-} from "resource:///com/github/Aylur/ags/widget.js";
-var { GLib } = imports.gi;
-var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
-var NotificationIcon = ({ appEntry, appIcon, image }) => {
-  if (image) {
-    return Box6({
-      vpack: "start",
-      hexpand: false,
-      className: "notification-img",
-      css: `
-              background-image: url("${image}");
-              background-size: contain;
-              background-repeat: no-repeat;
-              background-position: center;
-              min-width: 78px;
-              min-height: 78px;
-              ${margin}
-              border-radius: 1rem;
-          `
-    });
-  }
-  let icon = "dialog-information-symbolic";
-  if (lookUpIcon(appIcon))
-    icon = appIcon;
-  if (lookUpIcon(appEntry))
-    icon = appEntry;
-  return Box6({
-    vpack: "start",
-    hexpand: false,
-    css: `
-          min-width: 78px;
-          min-height: 78px;
-          ${margin}
-        `,
-    children: [
-      Icon({
-        icon,
-        size: 58,
-        hpack: "center",
-        hexpand: true,
-        vpack: "center",
-        vexpand: true
-      })
-    ]
-  });
-};
-var MenuNotification_default = (notification) => {
-  const bodyLabel = Label5({
-    css: `margin-top: 1rem;`,
-    className: "notification-description",
-    hexpand: true,
-    useMarkup: true,
-    xalign: 0,
-    justification: "left",
-    wrap: true
-  });
-  try {
-    bodyLabel.label = notification.body;
-  } catch (error) {
-    bodyLabel.label = "...";
-  }
-  const content = Box6({
-    css: `min-width: 330px;`,
-    children: [
-      NotificationIcon(notification),
-      Box6({
-        hexpand: true,
-        vertical: true,
-        children: [
-          Box6({
-            children: [
-              Label5({
-                className: "notification-title",
-                css: margin,
-                xalign: 0,
-                justification: "left",
-                hexpand: true,
-                maxWidthChars: 24,
-                truncate: "end",
-                wrap: true,
-                label: notification.summary,
-                useMarkup: notification.summary.startsWith("<")
-              }),
-              Label5({
-                className: "notification-time",
-                css: `${margin} margin-top: 0.5rem;`,
-                vpack: "start",
-                label: GLib.DateTime.new_from_unix_local(notification.time).format("%H:%M")
-              }),
-              Button5({
-                className: "notification-close-button",
-                vpack: "start",
-                child: Icon("window-close-symbolic"),
-                onClicked: () => {
-                  notification.close();
-                }
-              })
-            ]
-          }),
-          bodyLabel
-        ]
-      })
-    ]
-  });
-  const actionsbox = Box6({
-    className: "notification-actions",
-    children: notification.actions.map((action) => Button5({
-      css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
-      className: "action-button",
-      onClicked: () => notification.invoke(action.id),
-      hexpand: true,
-      child: Label5(action.label)
-    }))
-  });
-  const mainbox = EventBox({
-    className: `menu-notification ${notification.urgency}`,
-    vexpand: false,
-    onPrimaryClick: () => {
-    },
-    child: Box6({
-      vertical: true,
-      children: [
-        content,
-        ...optArr(notification.actions.length > 0, [actionsbox])
-      ]
-    })
-  });
-  return mainbox;
-};
-
-// src/widgets/menus/Popup.ts
-var PopupRevealer = ({
-  child,
-  name,
-  transition,
-  onOpen
-}) => Widget.Revealer({
-  transition,
-  child,
-  transitionDuration: config_default.transitionDuration,
-  setup: (self) => self.hook(App, (_3, ...args) => N4(args).with([name, _2.boolean], ([_4, visible]) => {
-    onOpen?.();
-    self.revealChild = visible;
-  }), "window-toggled")
-});
-var Popup = ({
-  transition,
-  name,
-  child,
-  onOpen,
-  ...props
-}) => {
-  const closing = l.makeControlledDebounce(() => App.closeWindow(name), {
-    delay: config_default.popupCloseDelay,
-    leading: false
-  });
-  return Widget.Window({
-    exclusivity: "ignore",
-    name,
-    focusable: true,
-    monitor: 0,
-    visible: false,
-    ...props,
-    setup: (w2) => w2.keybind("Escape", closing.invoke),
-    keymode: "on-demand",
-    child: Widget.Box({
-      css: `min-height: 2px;`,
-      child: Widget.EventBox({
-        onHover: closing.cancel,
-        child: PopupRevealer({
-          transition,
-          name,
-          child,
-          onOpen
-        })
-      })
-    })
-  }).on("leave-notify-event", closing.schedule);
-};
-
-// src/widgets/menus/NotificationCenter.ts
-var Notifications = await Service.import("notifications");
-var NotificationsBox = () => {
-  return Box7({
-    className: "notification-menu-header",
-    vertical: true,
-    children: []
-  }).hook(Notifications, (self) => {
-    let notificationList = [];
-    const array = Notifications.notifications.reverse();
-    for (let index = 0;index < array.length; index++) {
-      const element = array[index];
-      const line = index !== array.length - 1 ? Box7({
-        class_name: "horizontal-line"
-      }) : undef;
-      notificationList.push(MenuNotification_default(element), line);
-    }
-    let noNotifications = Box7({
-      vertical: true,
-      className: "notification-this-is-all",
-      children: [
-        Label6({
-          className: "no-notification-icon",
-          label: "\uDB84\uDDE5"
-        }),
-        Label6({
-          className: "no-notification-text",
-          label: "There are no new notifications"
-        })
-      ]
-    });
-    if (array.length < 1) {
-      notificationList.push(noNotifications);
-    }
-    self.children = notificationList.filter(E2);
-  });
-};
-var NotificationHeader = () => {
-  return Box7({
-    className: "notification-header-box",
-    spacing: 70,
-    children: [
-      Button6({
-        className: "unset notification-center-header-clear",
-        label: "\uEA81",
-        onClicked: () => {
-          Notifications.clear();
-        }
-      }),
-      Label6({
-        className: "notification-center-header-text",
-        label: "Notification Center"
-      }),
-      Button6({
-        className: "unset notification-center-header-mute",
-        label: "\uDB80\uDC9A",
-        onClicked: () => Notifications.dnd = !Notifications.dnd
-      })
-    ]
-  }).hook(Notifications, (self) => {
-    if (Notifications.dnd) {
-      self.children[2].label = "\uDB80\uDC9B";
-    } else {
-      self.children[2].label = "\uDB80\uDC9A";
-    }
-  });
-};
-var notificationContainer = Scrollable({
-  hscroll: "never",
-  vscroll: "automatic",
-  className: "notification-center-container",
-  child: NotificationsBox()
-});
-var NotificationCenter = () => Popup({
-  name: "notification_center",
-  margins: [30, 200],
-  anchor: ["bottom", "right"],
-  transition: "slide_up",
-  child: Box7({
-    className: "left-menu-box",
-    vertical: true,
-    children: [NotificationHeader(), notificationContainer]
-  })
-});
-var NotificationCenterButton = () => Button6({
-  className: "notification-center-button unset",
-  label: "\uF0F3",
-  onClicked: () => App.toggleWindow("notification_center"),
-  onSecondaryClick: () => Notifications.Clear()
-}).hook(Notifications, (self) => {
-  if (Notifications.dnd) {
-    self.label = "\uDB80\uDC9B";
-  } else if (Notifications.notifications.length === 0) {
-    self.label = "\uDB80\uDC9A";
-  } else if (Notifications.notifications.length > 0) {
-    self.label = `${Notifications.notifications.length} \uEB9A`;
-  }
-});
 
 // src/widgets/MusicPLayer.js
 import Gdk2 from "gi://Gdk";
@@ -5771,7 +5732,7 @@ var SystemMenu = () => Popup({
   name: "left_menu",
   anchor: ["bottom", "right"],
   transition: "slide_up",
-  margins: [30, 0],
+  margins: [30, 6],
   child: Box8({
     className: "left-menu-box unset",
     vertical: true,
@@ -6170,6 +6131,7 @@ var HardwareMenu = () => Popup({
   margins: [50, 250],
   child: Widget.Box({
     className: "left-menu-window",
+    css: "padding: 12px;",
     vertical: true,
     children: [headerBox, tablesBox()]
   })

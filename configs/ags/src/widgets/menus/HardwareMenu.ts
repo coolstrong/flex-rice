@@ -109,8 +109,10 @@ const tempProgress = Widget.CircularProgress({
             const temps = val.split("\n");
             let total = 0;
             for (let index = 0; index < temps.length; index++) {
-                const element = temps[index].replace("+", "").replace("°C", "");
-                total += parseInt(element);
+                const element = temps[index]
+                    ?.replace("+", "")
+                    .replace("°C", "");
+                total += parseInt(element ?? "0");
             }
             total = total / temps.length;
             self.value = total / 100;
@@ -214,7 +216,7 @@ const hardwareUsageTable = ({
                                     appName: element["process"],
                                     percentage: element["%"],
                                     deviceName: deviceName,
-                                }),
+                                })
                             );
                         }
                         self.children = children;
@@ -241,7 +243,7 @@ const tablesBox = () => {
         deviceName: batDeviceName,
     }).hook(Battery, self => {
         Utils.execAsync(
-            `/home/${Utils.USER}/.config/ags/scripts/hardware_info.sh`,
+            `/home/${Utils.USER}/.config/ags/scripts/hardware_info.sh`
         )
             .then(val => {
                 let data = JSON.parse(val);
@@ -360,6 +362,7 @@ export const HardwareMenu = () =>
         margins: [50, 250],
         child: Widget.Box({
             className: "left-menu-window",
+            css: "padding: 12px;",
             vertical: true,
             children: [headerBox, tablesBox()],
         }),

@@ -1,6 +1,6 @@
 {
     "popupCloseDelay": 700,
-    "transitionDuration": 250,
+    "transitionDuration": 100,
     "systray": {
         "ignore": []
     },

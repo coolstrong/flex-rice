@@ -79,9 +79,9 @@ const colors = {
     css_theme: "colors.scss",
     plasma_color: "AColors.colors",
     qt_style_theme: "Breeze",
-    qt_icon_theme: "Magma",
+    qt_icon_theme: "Vivid-Dark-Icons",
     kvantum_theme: "a-color",
-    gtk_icon_theme: "Magma",
+    gtk_icon_theme: "Vivid-Dark-Icons",
     gtk_theme: "Shades-of-purple",
     gtk_mode: "dark",
     hypr: {
