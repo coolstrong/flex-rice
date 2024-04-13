@@ -1,9 +1,14 @@
 import type { TrayItem } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 import config from "config.json";
-import { pipe, R } from "@mobily/ts-belt";
+import { ASSETS_PATH } from "@/settings";
+import { D, F, flow } from "@mobily/ts-belt";
 
-const { Gravity } = imports.gi.Gdk;
 const SystemTray = await Service.import("systemtray");
+
+const iconSubstites = {
+    TelegramDesktop: "telegram",
+    breaktimer: `${ASSETS_PATH}/icons/coffee.png`,
+};
 
 const PanelButton = ({ className, content, ...rest }) =>
     Widget.Button({
@@ -15,36 +20,15 @@ const PanelButton = ({ className, content, ...rest }) =>
 const SysTrayItem = (item: TrayItem) =>
     PanelButton({
         className: "tray-btn unset",
-        content: Widget.Icon().bind("icon", item, "icon"),
+        content: Widget.Icon({
+            icon:
+                item.title in iconSubstites
+                    ? iconSubstites[item.title]
+                    : item.bind("icon"),
+        }),
         tooltip_markup: item.bind("tooltip_markup"),
-        setup: btn => {
-            const menu = item.menu;
-            if (!menu) return;
-            const id = item.menu?.connect("popped-up", () => {
-                btn.toggleClassName("active");
-                menu.connect("notify::visible", () => {
-                    btn.toggleClassName("active", menu.visible);
-                });
-                id && menu.disconnect(id);
-            });
-
-            if (id) btn.connect("destroy", () => item.menu?.disconnect(id));
-        },
-        onPrimaryClick: btn =>
-            pipe(
-                R.fromExecution(() => item.activate),
-                R.tapError(() =>
-                    item.menu?.popup_at_widget(
-                        btn,
-                        Gravity.SOUTH,
-                        Gravity.NORTH,
-                        null,
-                    ),
-                ),
-            ),
-
-        onSecondaryClick: btn =>
-            item.menu?.popup_at_widget(btn, Gravity.SOUTH, Gravity.NORTH, null),
+        onPrimaryClick: (_, event) => item.activate(event),
+        onSecondaryClick: (_, event) => item.openMenu(event),
     });
 
 export const SysTrayBox = () =>
@@ -53,8 +37,24 @@ export const SysTrayBox = () =>
         children: SystemTray.bind("items").as(items =>
             items
                 .filter(
-                    ({ id }) => !(<string[]>config.systray.ignore).includes(id),
+                    ({ status, title }) =>
+                        status !== "Passive" &&
+                        !(config.systray.ignore as string[]).includes(title)
                 )
-                .map(SysTrayItem),
+                .map(
+                    flow(
+                        // F.tap(item =>
+                        //     print(
+                        //         D.selectKeys(item, [
+                        //             "is_menu",
+                        //             "title",
+                        //             "status",
+                        //             "icon",
+                        //         ])
+                        //     )
+                        // ),
+                        SysTrayItem
+                    )
+                )
         ),
     });

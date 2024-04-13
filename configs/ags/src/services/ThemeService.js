@@ -1,6 +1,4 @@
 import ThemesDictionary, {
-    WIN_20,
-    UNICAT_THEME,
     BLACK_HOLE_THEME,
     CIRCLES_THEME,
     COLOR_THEME,
@@ -9,16 +7,18 @@ import ThemesDictionary, {
     MATERIAL_YOU,
     NEW_CAT_THEME,
     SIBERIAN_THEME,
+    UNICAT_THEME,
+    WIN_20,
 } from "../theme/themes.js";
 import {
+    execAsync,
     timeout,
     USER,
-    exec,
-    execAsync,
 } from "resource:///com/github/Aylur/ags/utils.js";
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Service from "resource:///com/github/Aylur/ags/service.js";
 import settings from "../settings.js";
+import { bash } from "@/utils/helpers.js";
 
 class ThemeService extends Service {
     static {
@@ -48,7 +48,7 @@ class ThemeService extends Service {
 
     constructor() {
         super();
-        exec("swww init");
+        // exec("swww init");
 
         this.getCachedVariables();
         this.changeTheme(this.selectedTheme);
@@ -101,17 +101,11 @@ class ThemeService extends Service {
         this.cacheVariables();
     }
 
-    changeWallpaper(wallpaper) {
-        execAsync([
-            "swww",
-            "img",
-            "--transition-type",
-            // 'grow',
-            "random",
-            "--transition-pos",
-            exec("hyprctl cursorpos").replace(" ", ""),
-            wallpaper,
-        ]).catch(print);
+    async changeWallpaper(wallpaper) {
+        await execAsync("pkill swaybg").catch(print);
+        // const cmd = `bash -c "swaybg --mode fill --image '${wallpaper}' &"`;
+        // print(cmd);
+        await bash`swaybg --mode fill --image '${wallpaper}' &`.catch(print);
     }
 
     changeCss(cssTheme) {
@@ -130,8 +124,7 @@ class ThemeService extends Service {
     setDynamicWallpapers(path, themeMode, interval) {
         Utils.execAsync([settings.scripts.get_wallpapers, path])
             .then(out => {
-                const wallpapers = JSON.parse(out);
-                this.wallpapersList = wallpapers;
+                this.wallpapersList = JSON.parse(out);
 
                 // First call
                 this.callNextWallpaper(themeMode);
@@ -145,7 +138,7 @@ class ThemeService extends Service {
                     this.clearDynamicWallpaperInterval();
                 }
             })
-            .catch(err => print(err));
+            .catch(print);
     }
 
     toggleDynamicWallpaper() {

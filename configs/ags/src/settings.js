@@ -1,5 +1,5 @@
 const MAIN_PATH = `${App.configDir}`;
-const ASSETS_PATH = `${App.configDir}/assets`;
+export const ASSETS_PATH = `${App.configDir}/assets`;
 
 const getAssets = path => {
     return `${ASSETS_PATH}/${path}`;

@@ -24,8 +24,8 @@ const ClientRenderer = ({ wsId }: { wsId: number }) =>
                           icon: windowIcon(client),
                           css: "font-size: 12px;",
                       })
-                    : undef,
-            ),
+                    : undef
+            )
         ),
     });
 
@@ -36,7 +36,7 @@ const MonitorWorkspaces = (monitorId = 0) => {
         className: "unset workspaces",
         children: A.range(
             firstWsId,
-            firstWsId + config.workspace.perMonitor - 1,
+            firstWsId + config.workspace.perMonitor - 1
         ).map(i =>
             Button({
                 css: "min-width: 30px;",
@@ -47,11 +47,12 @@ const MonitorWorkspaces = (monitorId = 0) => {
                 child: ClientRenderer({
                     wsId: i,
                 }),
-            }),
+            })
         ),
     });
 };
 
+//todo extract rebuilding on signal logic
 export const Workspaces = () => {
     const createChildren = () =>
         hyprland.monitors.map(m => MonitorWorkspaces(m.id));
@@ -70,7 +71,7 @@ export const Workspaces = () => {
                     self.children.forEach(c => c.destroy());
                     self.children = createChildren();
                 },
-                "monitors-changed",
+                "monitors-changed"
             ),
     });
 };

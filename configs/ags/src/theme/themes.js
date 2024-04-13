@@ -79,7 +79,7 @@ const deer = {
 };
 
 const colors = {
-    wallpaper: `${WALLPAPER_PATH}/colors.png`,
+    wallpaper: `${WALLPAPER_PATH}/lofi-purple.jpg`,
     css_theme: "colors.scss",
     plasma_color: "AColors.colors",
     qt_5_style_theme: "Breeze",
@@ -144,7 +144,7 @@ const materialYou = {
         border_width: 2,
         active_border: "rgba(678382ff) rgba(9d6c73ff) 0deg",
         inactive_border: "rgba(59595900) 0deg",
-        rounding: 30,
+        rounding: 20,
         drop_shadow: "no",
         kitty: "materialYou.conf",
         konsole: "material-you",

@@ -2,6 +2,41 @@
 import App4 from "resource:///com/github/Aylur/ags/app.js";
 import Notifications4 from "resource:///com/github/Aylur/ags/service/notifications.js";
 
+// src/notifications/OSDNotifications.js
+import Notifications2 from "resource:///com/github/Aylur/ags/service/notifications.js";
+import {timeout as timeout2} from "resource:///com/github/Aylur/ags/utils.js";
+import {
+Box as Box2,
+Revealer as Revealer2,
+Window
+} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/utils/helpers.ts
+async function bash(strings, ...values) {
+  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i) => str + `${values[i] ?? ""}`).join("");
+  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
+    console.error(cmd, err);
+    return "";
+  });
+}
+async function sh(cmd) {
+  return Utils.execAsync(cmd).catch((err) => {
+    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
+    return "";
+  });
+}
+function dependencies(...bins) {
+  const missing = bins.filter((bin) => {
+    return !Utils.exec(`which ${bin}`);
+  });
+  if (missing.length > 0) {
+    console.warn("missing dependencies:", missing.join(", "));
+    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
+  }
+  return missing.length === 0;
+}
+var local = "LTR";
+
 // node_modules/@mobily/ts-belt/dist/pipe.mjs
 var pipe = function() {
   let e = arguments[0];
@@ -2669,490 +2704,6 @@ var $$catch = function(r, s2) {
 };
 var t = create("Promise.JsError");
 
-// node_modules/@mobily/ts-belt/dist/belt_Result-a4eb468a.mjs
-var getExn3 = function(r) {
-  if (r.TAG === 0) {
-    return r._0;
-  }
-  throw {
-    RE_EXN_ID: "Not_found",
-    Error: new Error
-  };
-};
-var mapWithDefaultU2 = function(r, t2, e) {
-  if (r.TAG === 0) {
-    return e(r._0);
-  } else {
-    return t2;
-  }
-};
-var mapU3 = function(r, t2) {
-  if (r.TAG === 0) {
-    return {
-      TAG: 0,
-      _0: t2(r._0)
-    };
-  } else {
-    return {
-      TAG: 1,
-      _0: r._0
-    };
-  }
-};
-var flatMapU2 = function(r, t2) {
-  if (r.TAG === 0) {
-    return t2(r._0);
-  } else {
-    return {
-      TAG: 1,
-      _0: r._0
-    };
-  }
-};
-var flatMap3 = function(t2, e) {
-  return flatMapU2(t2, __1(e));
-};
-var getWithDefault2 = function(r, t2) {
-  if (r.TAG === 0) {
-    return r._0;
-  } else {
-    return t2;
-  }
-};
-var isOk = function(r) {
-  if (r.TAG === 0) {
-    return true;
-  } else {
-    return false;
-  }
-};
-var isError = function(r) {
-  if (r.TAG === 0) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
-// node_modules/@mobily/ts-belt/dist/Result.bs-d9de06b5.mjs
-var mapException = function(n2) {
-  if (n2.RE_EXN_ID === t) {
-    return {
-      TAG: 1,
-      _0: n2._1
-    };
-  } else {
-    return {
-      TAG: 1,
-      _0: n2
-    };
-  }
-};
-var makeOk = function(r) {
-  return {
-    TAG: 0,
-    _0: r
-  };
-};
-var makeError = function(r) {
-  return {
-    TAG: 1,
-    _0: r
-  };
-};
-var _fromNullable = function(r, n2) {
-  if (r == null) {
-    return {
-      TAG: 1,
-      _0: n2
-    };
-  } else {
-    return {
-      TAG: 0,
-      _0: r
-    };
-  }
-};
-var fromNullable = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _fromNullable(n2, r[0]);
-    };
-  }
-  return _fromNullable(arguments[0], arguments[1]);
-};
-var _fromFalsy = function(r, n2) {
-  if (r) {
-    return {
-      TAG: 0,
-      _0: r
-    };
-  } else {
-    return {
-      TAG: 1,
-      _0: n2
-    };
-  }
-};
-var fromFalsy = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _fromFalsy(n2, r[0]);
-    };
-  }
-  return _fromFalsy(arguments[0], arguments[1]);
-};
-var _fromPredicate = function(r, n2, t2) {
-  return flatMap3(fromNullable(r, t2), function(r2) {
-    if (n2(r2)) {
-      return {
-        TAG: 0,
-        _0: r2
-      };
-    } else {
-      return {
-        TAG: 1,
-        _0: t2
-      };
-    }
-  });
-};
-var fromPredicate = function() {
-  if (arguments.length === 2) {
-    const r = arguments;
-    return function fn(n2) {
-      return _fromPredicate(n2, r[0], r[1]);
-    };
-  }
-  return _fromPredicate(arguments[0], arguments[1], arguments[2]);
-};
-var fromExecution = function(r) {
-  try {
-    return {
-      TAG: 0,
-      _0: r(undefined)
-    };
-  } catch (r2) {
-    var n2 = internalToOCamlException(r2);
-    if (n2.RE_EXN_ID === "JsError") {
-      return {
-        TAG: 1,
-        _0: n2._1
-      };
-    }
-    throw n2;
-  }
-};
-var fromPromise = function(r) {
-  return $$catch(r.then(function(r2) {
-    return {
-      TAG: 0,
-      _0: r2
-    };
-  }), function(r2) {
-    return Promise.resolve(mapException(r2));
-  });
-};
-var map2 = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return E(n2, r[0]);
-    };
-  }
-  return E(arguments[0], arguments[1]);
-};
-var mapWithDefault = function() {
-  if (arguments.length === 2) {
-    const r = arguments;
-    return function fn(n2) {
-      return A(n2, r[0], r[1]);
-    };
-  }
-  return A(arguments[0], arguments[1], arguments[2]);
-};
-var flatMap4 = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return G2(n2, r[0]);
-    };
-  }
-  return G2(arguments[0], arguments[1]);
-};
-var getWithDefault3 = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return d(n2, r[0]);
-    };
-  }
-  return d(arguments[0], arguments[1]);
-};
-var toUndefined = function(r) {
-  return getWithDefault2(r, undefined);
-};
-var toNullable = function(r) {
-  return getWithDefault2(r, null);
-};
-var toOption = function(r) {
-  if (r.TAG === 0) {
-    return some(r._0);
-  }
-};
-var _match = function(r, n2, t2) {
-  if (r.TAG === 0) {
-    return n2(r._0);
-  } else {
-    return t2(r._0);
-  }
-};
-var match = function() {
-  if (arguments.length === 2) {
-    const r = arguments;
-    return function fn(n2) {
-      return _match(n2, r[0], r[1]);
-    };
-  }
-  return _match(arguments[0], arguments[1], arguments[2]);
-};
-var _tap3 = function(r, n2) {
-  if (r.TAG !== 0) {
-    return r;
-  }
-  n2(r._0);
-  return r;
-};
-var tap3 = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _tap3(n2, r[0]);
-    };
-  }
-  return _tap3(arguments[0], arguments[1]);
-};
-var _tapError = function(r, n2) {
-  if (r.TAG === 0) {
-    return r;
-  }
-  n2(r._0);
-  return r;
-};
-var tapError = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _tapError(n2, r[0]);
-    };
-  }
-  return _tapError(arguments[0], arguments[1]);
-};
-var _handleError = function(r, n2) {
-  if (r.TAG === 0) {
-    return r;
-  } else {
-    return {
-      TAG: 0,
-      _0: n2(r._0)
-    };
-  }
-};
-var handleError = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _handleError(n2, r[0]);
-    };
-  }
-  return _handleError(arguments[0], arguments[1]);
-};
-var _mapError = function(r, n2) {
-  if (r.TAG === 0) {
-    return r;
-  } else {
-    return {
-      TAG: 1,
-      _0: n2(r._0)
-    };
-  }
-};
-var mapError = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _mapError(n2, r[0]);
-    };
-  }
-  return _mapError(arguments[0], arguments[1]);
-};
-var _catchError = function(r, n2) {
-  if (r.TAG === 0) {
-    return r;
-  } else {
-    return n2(r._0);
-  }
-};
-var catchError = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _catchError(n2, r[0]);
-    };
-  }
-  return _catchError(arguments[0], arguments[1]);
-};
-var _recover = function(r, n2) {
-  return catchError(r, function(r2) {
-    return {
-      TAG: 0,
-      _0: n2
-    };
-  });
-};
-var recover = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _recover(n2, r[0]);
-    };
-  }
-  return _recover(arguments[0], arguments[1]);
-};
-var flip2 = function(r) {
-  if (r.TAG === 0) {
-    return {
-      TAG: 1,
-      _0: r._0
-    };
-  } else {
-    return {
-      TAG: 0,
-      _0: r._0
-    };
-  }
-};
-var _filter2 = function(r, n2) {
-  return flatMapU2(r, function(r2) {
-    if (n2(r2)) {
-      return {
-        TAG: 0,
-        _0: r2
-      };
-    } else {
-      return {
-        TAG: 1,
-        _0: {
-          RE_EXN_ID: h,
-          message: "[Result.filter]: not found"
-        }
-      };
-    }
-  });
-};
-var filter2 = function() {
-  if (arguments.length === 1) {
-    const r = arguments;
-    return function fn(n2) {
-      return _filter2(n2, r[0]);
-    };
-  }
-  return _filter2(arguments[0], arguments[1]);
-};
-var _fold = function(r, n2, t2) {
-  if (r.TAG === 0) {
-    return n2(r._0);
-  } else {
-    return t2(r._0);
-  }
-};
-var fold = function() {
-  if (arguments.length === 2) {
-    const r = arguments;
-    return function fn(n2) {
-      return _fold(n2, r[0], r[1]);
-    };
-  }
-  return _fold(arguments[0], arguments[1], arguments[2]);
-};
-var all2 = function(r) {
-  return reduceU(r, {
-    TAG: 0,
-    _0: []
-  }, function(r2, n2) {
-    return flatMapU2(r2, function(r3) {
-      if (n2.TAG === 0) {
-        return {
-          TAG: 0,
-          _0: concat(r3, [n2._0])
-        };
-      } else {
-        return {
-          TAG: 1,
-          _0: {
-            RE_EXN_ID: h,
-            message: "[Result.all]: found Error data type"
-          }
-        };
-      }
-    });
-  });
-};
-var h = create("Result.ResultError");
-var E = mapU3;
-var A = mapWithDefaultU2;
-var G2 = flatMapU2;
-var T = getExn3;
-var d = getWithDefault2;
-var g = isError;
-var v = isOk;
-
-// node_modules/@mobily/ts-belt/dist/index-58f1c6b0.mjs
-var Ok = (a2) => ({
-  TAG: 0,
-  _0: a2
-});
-var Error2 = (a2) => ({
-  TAG: 1,
-  _0: a2
-});
-var N2 = {
-  __proto__: null,
-  Ok,
-  Error: Error2,
-  ResultError: h,
-  mapException,
-  makeOk,
-  makeError,
-  fromNullable,
-  fromFalsy,
-  fromPredicate,
-  fromExecution,
-  fromPromise,
-  map: map2,
-  mapWithDefault,
-  flatMap: flatMap4,
-  getExn: T,
-  getWithDefault: getWithDefault3,
-  toUndefined,
-  toNullable,
-  toOption,
-  match,
-  isError: g,
-  isOk: v,
-  tap: tap3,
-  tapError,
-  handleError,
-  mapError,
-  catchError,
-  recover,
-  flip: flip2,
-  filter: filter2,
-  fold,
-  all: all2
-};
 // node_modules/@mobily/ts-belt/dist/index-e7228f55.mjs
 var _is = function(i, n2) {
   return typeof i === n2;
@@ -3211,7 +2762,7 @@ var isNot = function() {
   return _isNot(arguments[0], arguments[1]);
 };
 var isPromise = (i) => i instanceof Promise;
-var isError2 = (i) => i instanceof Error;
+var isError = (i) => i instanceof Error;
 var isDate = (i) => i instanceof Date;
 var isNull = (i) => i === null;
 var isUndefined = (i) => i === undefined;
@@ -3225,7 +2776,7 @@ var i = {
   isArray,
   isObject,
   isFunction,
-  isError: isError2,
+  isError,
   isDate,
   isNullable,
   isNotNullable,
@@ -3241,58 +2792,58 @@ var makeSome = function(n2) {
 };
 var makeNone = function(n2) {
 };
-var fromNullable2 = function(n2) {
+var fromNullable = function(n2) {
   if (n2 == null) {
     return;
   } else {
     return some(n2);
   }
 };
-var fromFalsy2 = function(n2) {
+var fromFalsy = function(n2) {
   if (n2) {
     return n2;
   }
 };
-var _fromPredicate2 = function(n2, t2) {
+var _fromPredicate = function(n2, t2) {
   return flatMap(n2 == null ? undefined : some(n2), function(n3) {
     if (t2(n3)) {
       return some(n3);
     }
   });
 };
-var fromPredicate2 = function() {
+var fromPredicate = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t2) {
-      return _fromPredicate2(t2, n2[0]);
+      return _fromPredicate(t2, n2[0]);
     };
   }
-  return _fromPredicate2(arguments[0], arguments[1]);
+  return _fromPredicate(arguments[0], arguments[1]);
 };
-var fromExecution2 = function(n2) {
+var fromExecution = function(n2) {
   try {
     return some(n2(undefined));
   } catch (n3) {
     return;
   }
 };
-var fromPromise2 = function(t2) {
+var fromPromise = function(t2) {
   return $$catch(t2.then(function(n2) {
     return some(n2);
   }), function(n2) {
     return Promise.resolve(undefined);
   });
 };
-var map3 = function() {
+var map2 = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t2) {
-      return h2(t2, n2[0]);
+      return h(t2, n2[0]);
     };
   }
-  return h2(arguments[0], arguments[1]);
+  return h(arguments[0], arguments[1]);
 };
-var flatMap5 = function() {
+var flatMap3 = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t2) {
@@ -3301,14 +2852,14 @@ var flatMap5 = function() {
   }
   return _(arguments[0], arguments[1]);
 };
-var mapWithDefault2 = function() {
+var mapWithDefault = function() {
   if (arguments.length === 2) {
     const n2 = arguments;
     return function fn(t2) {
-      return v2(t2, n2[0], n2[1]);
+      return v(t2, n2[0], n2[1]);
     };
   }
-  return v2(arguments[0], arguments[1], arguments[2]);
+  return v(arguments[0], arguments[1], arguments[2]);
 };
 var _mapNullable = function(n2, t2) {
   if (n2 !== undefined) {
@@ -3324,35 +2875,35 @@ var mapNullable = function() {
   }
   return _mapNullable(arguments[0], arguments[1]);
 };
-var _filter3 = function(n2, t2) {
+var _filter2 = function(n2, t2) {
   return flatMapU(n2, function(n3) {
     if (t2(n3)) {
       return some(n3);
     }
   });
 };
-var filter3 = function() {
+var filter2 = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t2) {
-      return _filter3(t2, n2[0]);
+      return _filter2(t2, n2[0]);
     };
   }
-  return _filter3(arguments[0], arguments[1]);
+  return _filter2(arguments[0], arguments[1]);
 };
-var getWithDefault4 = function() {
+var getWithDefault2 = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t2) {
-      return g2(t2, n2[0]);
+      return g(t2, n2[0]);
     };
   }
-  return g2(arguments[0], arguments[1]);
+  return g(arguments[0], arguments[1]);
 };
-var toNullable2 = function(n2) {
+var toNullable = function(n2) {
   return getWithDefault(n2, null);
 };
-var toUndefined2 = function(n2) {
+var toUndefined = function(n2) {
   return getWithDefault(n2, undefined);
 };
 var _toResult = function(n2, t2) {
@@ -3377,23 +2928,23 @@ var toResult = function() {
   }
   return _toResult(arguments[0], arguments[1]);
 };
-var _match2 = function(n2, t2, r) {
+var _match = function(n2, t2, r) {
   if (n2 !== undefined) {
     return t2(valFromOption(n2));
   } else {
     return r(undefined);
   }
 };
-var match2 = function() {
+var match = function() {
   if (arguments.length === 2) {
     const n2 = arguments;
     return function fn(t2) {
-      return _match2(t2, n2[0], n2[1]);
+      return _match(t2, n2[0], n2[1]);
     };
   }
-  return _match2(arguments[0], arguments[1], arguments[2]);
+  return _match(arguments[0], arguments[1], arguments[2]);
 };
-var _tap4 = function(n2, t2) {
+var _tap3 = function(n2, t2) {
   if (n2 !== undefined) {
     t2(valFromOption(n2));
     return n2;
@@ -3401,14 +2952,14 @@ var _tap4 = function(n2, t2) {
     return n2;
   }
 };
-var tap4 = function() {
+var tap3 = function() {
   if (arguments.length === 1) {
     const n2 = arguments;
     return function fn(t2) {
-      return _tap4(t2, n2[0]);
+      return _tap3(t2, n2[0]);
     };
   }
-  return _tap4(arguments[0], arguments[1]);
+  return _tap3(arguments[0], arguments[1]);
 };
 var _contains = function(n2, r) {
   return mapWithDefaultU(n2, false, function(n3) {
@@ -3452,23 +3003,23 @@ var zipWith2 = function() {
   }
   return _zipWith(arguments[0], arguments[1], arguments[2]);
 };
-var _fold2 = function(n2, t2, r) {
+var _fold = function(n2, t2, r) {
   if (n2 !== undefined) {
     return t2(valFromOption(n2));
   } else {
     return r(undefined);
   }
 };
-var fold2 = function() {
+var fold = function() {
   if (arguments.length === 2) {
     const n2 = arguments;
     return function fn(t2) {
-      return _fold2(t2, n2[0], n2[1]);
+      return _fold(t2, n2[0], n2[1]);
     };
   }
-  return _fold2(arguments[0], arguments[1], arguments[2]);
+  return _fold(arguments[0], arguments[1], arguments[2]);
 };
-var all3 = function(n2) {
+var all2 = function(n2) {
   return reduceU(n2, [], function(n3, t2) {
     return flatMapU(n3, function(n4) {
       if (t2 !== undefined) {
@@ -3477,11 +3028,11 @@ var all3 = function(n2) {
     });
   });
 };
-var h2 = mapU2;
+var h = mapU2;
 var _ = flatMapU;
-var v2 = mapWithDefaultU;
-var g2 = getWithDefault;
-var N3 = getExn2;
+var v = mapWithDefaultU;
+var g = getWithDefault;
+var N2 = getExn2;
 var b = isNone;
 var z2 = isSome;
 var Some = (n2) => n2;
@@ -3492,30 +3043,30 @@ var P2 = {
   placeholder: placeholder3,
   makeSome,
   makeNone,
-  fromNullable: fromNullable2,
-  fromFalsy: fromFalsy2,
-  fromPredicate: fromPredicate2,
-  fromExecution: fromExecution2,
-  fromPromise: fromPromise2,
-  map: map3,
-  flatMap: flatMap5,
-  mapWithDefault: mapWithDefault2,
+  fromNullable,
+  fromFalsy,
+  fromPredicate,
+  fromExecution,
+  fromPromise,
+  map: map2,
+  flatMap: flatMap3,
+  mapWithDefault,
   mapNullable,
-  filter: filter3,
-  getWithDefault: getWithDefault4,
-  getExn: N3,
-  toNullable: toNullable2,
-  toUndefined: toUndefined2,
+  filter: filter2,
+  getWithDefault: getWithDefault2,
+  getExn: N2,
+  toNullable,
+  toUndefined,
   toResult,
-  match: match2,
+  match,
   isNone: b,
   isSome: z2,
-  tap: tap4,
+  tap: tap3,
   contains,
   zip: zip3,
   zipWith: zipWith2,
-  fold: fold2,
-  all: all3
+  fold,
+  all: all2
 };
 // node_modules/clsx/dist/clsx.mjs
 var r = function(e) {
@@ -3542,7 +3093,229 @@ var clsx_default = clsx;
 // src/utils/common.ts
 var undef = undefined;
 var optArr = (condition, arr) => condition ? arr : [];
-var E2 = i.isNotNullable;
+var E = i.isNotNullable;
+
+// src/notifications/Notification.ts
+import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
+import {lookUpIcon, timeout} from "resource:///com/github/Aylur/ags/utils.js";
+import Variable2 from "resource:///com/github/Aylur/ags/variable.js";
+import {
+Box,
+Button,
+EventBox,
+Icon,
+Label,
+Revealer
+} from "resource:///com/github/Aylur/ags/widget.js";
+var { GLib } = imports.gi;
+var rtlMargin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
+var NotificationIcon = ({ appEntry, appIcon, image }) => {
+  if (image) {
+    return Box({
+      vpack: "start",
+      hexpand: false,
+      className: "notification-img",
+      css: `
+              background-image: url("${image}");
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+              min-width: 78px;
+              min-height: 78px;
+              ${rtlMargin}
+              border-radius: 1rem;
+            `
+    });
+  }
+  let icon = "dialog-information-symbolic";
+  if (lookUpIcon(appIcon))
+    icon = appIcon;
+  if (lookUpIcon(appEntry))
+    icon = appEntry;
+  return Box({
+    vpack: "start",
+    hexpand: false,
+    css: `
+            min-width: 78px;
+            min-height: 78px;
+            ${rtlMargin}
+        `,
+    children: [
+      Icon({
+        icon,
+        size: 58,
+        hpack: "center",
+        hexpand: true,
+        vpack: "center",
+        vexpand: true
+      })
+    ]
+  });
+};
+var Notification_default = (notification) => {
+  const hovered = Variable2(false);
+  let timeoutId;
+  const bodyLabel = Label({
+    css: `margin-top: 1rem;`,
+    className: "notification-description",
+    hexpand: true,
+    useMarkup: true,
+    xalign: 0,
+    justification: "left",
+    wrap: true
+  });
+  try {
+    bodyLabel.label = notification.body;
+  } catch (error) {
+    bodyLabel.label = "...";
+  }
+  const hover = () => {
+    hovered.value = true;
+    hovered._block = true;
+    clearTimeout(timeoutId);
+    timeout(100, () => hovered._block = false);
+  };
+  const hoverLost = () => GLib.idle_add(0, () => {
+    timeoutId = setTimeout(() => {
+      hovered.value = false;
+      notification.dismiss();
+    }, 3000);
+    return GLib.SOURCE_REMOVE;
+  });
+  const content = Box({
+    css: `min-width: 400px;`,
+    children: [
+      NotificationIcon(notification),
+      Box({
+        hexpand: true,
+        vertical: true,
+        children: [
+          Box({
+            children: [
+              Label({
+                className: "notification-title",
+                css: `${rtlMargin}`,
+                xalign: 0,
+                justification: "left",
+                hexpand: true,
+                maxWidthChars: 24,
+                truncate: "end",
+                wrap: true,
+                label: notification.summary,
+                useMarkup: notification.summary.startsWith("<")
+              }),
+              Label({
+                className: "notification-time",
+                css: `${rtlMargin} margin-top: 0.5rem;`,
+                vpack: "start",
+                label: GLib.DateTime.new_from_unix_local(notification.time).format("%H:%M")
+              }),
+              Button({
+                onHover: hover,
+                className: "notification-close-button",
+                vpack: "start",
+                child: Icon("window-close-symbolic"),
+                onClicked: () => {
+                  notification.close();
+                }
+              })
+            ]
+          }),
+          bodyLabel
+        ]
+      })
+    ]
+  });
+  const actionsbox = Revealer({
+    transition: "slide_up",
+    child: EventBox({
+      onHover: hover,
+      child: Box({
+        className: "notification-actions",
+        children: notification.actions.map((action) => Button({
+          onHover: hover,
+          css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
+          className: "action-button",
+          onClicked: () => Notifications.InvokeAction(notification.id, action.id),
+          hexpand: true,
+          child: Label(action.label)
+        }))
+      })
+    })
+  }).bind("revealChild", hovered);
+  const mainbox = EventBox({
+    className: `notification ${notification.urgency}`,
+    vexpand: false,
+    onPrimaryClick: () => {
+      hovered.value = false;
+      notification.dismiss();
+    },
+    attribute: { hovered },
+    onHover: hover,
+    onHoverLost: hoverLost,
+    child: Box({
+      vertical: true,
+      children: [
+        content,
+        ...optArr(notification.actions.length > 0, [actionsbox])
+      ]
+    })
+  });
+  return mainbox;
+};
+
+// src/notifications/OSDNotifications.js
+var Popups = () => Box2({
+  className: "notification-popups",
+  vertical: true,
+  attribute: {
+    map: new Map,
+    dismiss: (box, id, force = false) => {
+      if (!id || !box.attribute.map.has(id)) {
+        return;
+      }
+      if (box.attribute.map.get(id).attribute.hovered.value && !force)
+        return;
+      if (box.attribute.map.size - 1 === 0)
+        box.get_parent().revealChild = false;
+      timeout2(400, () => {
+        box.attribute.map.get(id)?.destroy();
+        box.attribute.map.delete(id);
+      });
+    },
+    notify: (box, id) => {
+      if (!id || Notifications2.dnd) {
+        box.get_parent().revealChild = false;
+        return;
+      }
+      box.attribute.map.set(id, Notification_default(Notifications2.getNotification(id)));
+      box.children = Array.from(box.attribute.map.values());
+      box.get_parent().revealChild = true;
+    }
+  }
+}).hook(Notifications2, (box, id) => box.attribute.notify(box, id), "notified").hook(Notifications2, (box, id) => box.attribute.dismiss(box, id), "dismissed").hook(Notifications2, (box, id) => box.attribute.dismiss(box, id, true), "closed");
+var PopupList = ({ transition = "slide_up" } = {}) => Box2({
+  className: "notifications-popup-list",
+  css: `
+        min-height: 1.2px;
+        min-width: 1.2px;
+    `,
+  children: [
+    Revealer2({
+      transition,
+      child: Popups()
+    })
+  ]
+});
+var OSDNotifications_default = (monitor) => Window({
+  monitor,
+  layer: "overlay",
+  name: `notifications${monitor}`,
+  visible: true,
+  margins: [30, 30],
+  anchor: ["bottom", local === "RTL" ? "left" : "right"],
+  child: PopupList()
+});
 
 // src/lib/icons.ts
 var icons = {
@@ -3687,7 +3460,6 @@ var icons = {
 var Apps = await Service.import("applications");
 var directClassMatch = {
   "code-url-handler": "visual-studio-code",
-  "com.intellij.idea.Main": "webstorm",
   Notion: "notion",
   "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
   "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist"
@@ -3716,9 +3488,9 @@ var a2 = function(...t2) {
   throw new Error(`isMatching wasn't given the right number of arguments: expected 1 or 2, received ${t2.length}.`);
 };
 var u = function(t2) {
-  return Object.assign(t2, { optional: () => l2(t2), and: (e) => m(t2, e), or: (e) => d2(t2, e), select: (e) => e === undefined ? p(t2) : p(e, t2) });
+  return Object.assign(t2, { optional: () => l2(t2), and: (e) => m(t2, e), or: (e) => d(t2, e), select: (e) => e === undefined ? p(t2) : p(e, t2) });
 };
-var h3 = function(t2) {
+var h2 = function(t2) {
   return Object.assign(((t3) => Object.assign(t3, { [Symbol.iterator]() {
     let n2 = 0;
     const r2 = [{ value: Object.assign(t3, { [e]: true }), done: false }, { done: true, value: undefined }];
@@ -3726,7 +3498,7 @@ var h3 = function(t2) {
       var t4;
       return (t4 = r2[n2++]) != null ? t4 : r2.at(-1);
     } };
-  } }))(t2), { optional: () => h3(l2(t2)), select: (e) => h3(e === undefined ? p(t2) : p(e, t2)) });
+  } }))(t2), { optional: () => h2(l2(t2)), select: (e) => h2(e === undefined ? p(t2) : p(e, t2)) });
 };
 var l2 = function(e) {
   return u({ [t2]: () => ({ match: (t2) => {
@@ -3746,7 +3518,7 @@ var m = function(...e) {
     return { matched: e.every((e2) => s2(e2, t2, r2)), selections: n2 };
   }, getSelectionKeys: () => c(e, o), matcherType: "and" }) });
 };
-var d2 = function(...e) {
+var d = function(...e) {
   return u({ [t2]: () => ({ match: (t2) => {
     let n2 = {};
     const r2 = (t3, e2) => {
@@ -3767,7 +3539,7 @@ var p = function(...e) {
     }), selections: e2 };
   }, getSelectionKeys: () => [r2 != null ? r2 : n2].concat(i2 === undefined ? [] : o(i2)) }) });
 };
-var v3 = function(t2) {
+var v2 = function(t2) {
   return typeof t2 == "number";
 };
 var b2 = function(t2) {
@@ -3776,7 +3548,7 @@ var b2 = function(t2) {
 var w = function(t2) {
   return typeof t2 == "bigint";
 };
-var N4 = function(t2) {
+var N3 = function(t2) {
   return new $2(t2, W);
 };
 var t2 = Symbol.for("@ts-pattern/matcher");
@@ -3829,7 +3601,7 @@ var f2 = (t3, e2) => {
       return false;
   return true;
 };
-var g3 = (t3, e2) => {
+var g2 = (t3, e2) => {
   for (const [n3, r3] of t3.entries())
     if (!e2(r3, n3))
       return false;
@@ -3852,12 +3624,12 @@ var j = (t3) => Object.assign(u(t3), { startsWith: (e2) => {
   return j(m(t3, (n3 = e2, y((t4) => b2(t4) && Boolean(t4.match(n3))))));
   var n3;
 } });
-var E3 = j(y(b2));
-var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v3(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v3(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v3(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v3(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v3(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v3(t4) && t4 < 0))) });
-var x = K2(y(v3));
-var A2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => A2(m(t3, ((t4, e3) => y((n4) => w(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 < t4))(e2))), gt: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 > t4))(e2))), lte: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 <= t4))(e2))), gte: (e2) => A2(m(t3, ((t4) => y((e3) => w(e3) && e3 >= t4))(e2))), positive: () => A2(m(t3, y((t4) => w(t4) && t4 > 0))), negative: () => A2(m(t3, y((t4) => w(t4) && t4 < 0))) });
-var P3 = A2(y(w));
-var T2 = u(y(function(t3) {
+var E2 = j(y(b2));
+var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v2(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v2(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v2(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v2(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v2(t4) && t4 < 0))) });
+var x = K2(y(v2));
+var A = (t3) => Object.assign(u(t3), { between: (e2, n3) => A(m(t3, ((t4, e3) => y((n4) => w(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 < t4))(e2))), gt: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 > t4))(e2))), lte: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 <= t4))(e2))), gte: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 >= t4))(e2))), positive: () => A(m(t3, y((t4) => w(t4) && t4 > 0))), negative: () => A(m(t3, y((t4) => w(t4) && t4 < 0))) });
+var P3 = A(y(w));
+var T = u(y(function(t3) {
   return typeof t3 == "boolean";
 }));
 var k = u(y(function(t3) {
@@ -3867,7 +3639,7 @@ var B = u(y(function(t3) {
   return t3 == null;
 }));
 var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
-  return h3({ [t2]: () => ({ match: (t3) => {
+  return h2({ [t2]: () => ({ match: (t3) => {
     if (!Array.isArray(t3))
       return { matched: false };
     if (e2.length === 0)
@@ -3913,15 +3685,15 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     if (e2.length === 1)
       throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
     const [o2, c2] = e2;
-    return { matched: g3(t3, (t4, e3) => {
+    return { matched: g2(t3, (t4, e3) => {
       const n4 = s2(o2, e3, r3), i4 = s2(c2, t4, r3);
       return n4 && i4;
     }), selections: n3 };
   }, getSelectionKeys: () => e2.length === 0 ? [] : [...o(e2[0]), ...o(e2[1])] }) });
-}, intersection: m, union: d2, not: function(e2) {
+}, intersection: m, union: d, not: function(e2) {
   return u({ [t2]: () => ({ match: (t3) => ({ matched: !s2(e2, t3, () => {
   }) }), getSelectionKeys: () => [], matcherType: "not" }) });
-}, when: y, select: p, any: S2, _: O2, string: E3, number: x, bigint: P3, boolean: T2, symbol: k, nullish: B, instanceOf: function(t3) {
+}, when: y, select: p, any: S2, _: O2, string: E2, number: x, bigint: P3, boolean: T, symbol: k, nullish: B, instanceOf: function(t3) {
   return u(y(function(t4) {
     return (e2) => e2 instanceof t4;
   }(t3)));
@@ -3975,12 +3747,12 @@ class $2 {
 }
 
 // src/utils/shared.ts
-var getVolumeIcon = (volume) => N4(volume * 100).with(_2.number.lte(0), () => icons.audio.volume.muted).with(_2.number.between(0, 34), () => icons.audio.volume.low).with(_2.number.between(34, 67), () => icons.audio.volume.medium).with(_2.number.between(67, 100), () => icons.audio.volume.high).with(_2.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
+var getVolumeIcon = (volume) => N3(volume * 100).with(_2.number.lte(0), () => icons.audio.volume.muted).with(_2.number.between(0, 34), () => icons.audio.volume.low).with(_2.number.between(34, 67), () => icons.audio.volume.medium).with(_2.number.between(67, 100), () => icons.audio.volume.high).with(_2.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
 
 // src/widgets/NetVolume.ts
 import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import {exec} from "resource:///com/github/Aylur/ags/utils.js";
-import {Box, Label} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box3, Label as Label2} from "resource:///com/github/Aylur/ags/widget.js";
 var { Gravity } = imports.gi.Gdk;
 var Audio = await Service.import("audio");
 var VolumeButton = () => {
@@ -4022,9 +3794,47 @@ var config_default = {
   gapsOut: 6
 };
 
+// src/settings.js
+var MAIN_PATH = `${App.configDir}`;
+var ASSETS_PATH = `${App.configDir}/assets`;
+var getAssets = (path) => {
+  return `${ASSETS_PATH}/${path}`;
+};
+var getPath = (path) => {
+  return `${MAIN_PATH}/${path}`;
+};
+var settings = {
+  assets: {
+    wallpapers: getAssets("wallpapers"),
+    icons: {
+      hot_weather: `${getAssets("icons")}/hot-weather.png`,
+      cold_weather: `${getAssets("icons")}/cold-weather.png`,
+      mosque: `${getAssets("icons")}/mosque.png`
+    },
+    audio: {
+      cold_weather: `${getAssets("audio")}/cold-weather.mp3`
+    }
+  },
+  scripts: {
+    scripts: getPath("scripts"),
+    dynamicM3Py: getPath("scripts/m3/dynamic-m3.py"),
+    get_wallpapers: getPath("scripts/get_wallpapers.sh")
+  },
+  theme: {
+    scss: `${getPath("scss")}`,
+    absoluteDynamicM3Scss: `${getPath("scss/themes/m3/dynamic.scss")}`,
+    mainCss: `${getPath("/scss/main.scss")}`,
+    styleCss: `${getPath("/style.scss")}`
+  }
+};
+var settings_default = settings;
+
 // src/widgets/SystemTray.ts
-var { Gravity: Gravity2 } = imports.gi.Gdk;
 var SystemTray = await Service.import("systemtray");
+var iconSubstites = {
+  TelegramDesktop: "telegram",
+  breaktimer: `${ASSETS_PATH}/icons/coffee.png`
+};
 var PanelButton = ({ className, content, ...rest }) => Widget.Button({
   className: `panel-button ${className} unset`,
   child: Widget.Box({ children: [content] }),
@@ -4032,33 +3842,21 @@ var PanelButton = ({ className, content, ...rest }) => Widget.Button({
 });
 var SysTrayItem = (item) => PanelButton({
   className: "tray-btn unset",
-  content: Widget.Icon().bind("icon", item, "icon"),
+  content: Widget.Icon({
+    icon: item.title in iconSubstites ? iconSubstites[item.title] : item.bind("icon")
+  }),
   tooltip_markup: item.bind("tooltip_markup"),
-  setup: (btn) => {
-    const menu = item.menu;
-    if (!menu)
-      return;
-    const id = item.menu?.connect("popped-up", () => {
-      btn.toggleClassName("active");
-      menu.connect("notify::visible", () => {
-        btn.toggleClassName("active", menu.visible);
-      });
-      id && menu.disconnect(id);
-    });
-    if (id)
-      btn.connect("destroy", () => item.menu?.disconnect(id));
-  },
-  onPrimaryClick: (btn) => pipe(N2.fromExecution(() => item.activate), N2.tapError(() => item.menu?.popup_at_widget(btn, Gravity2.SOUTH, Gravity2.NORTH, null))),
-  onSecondaryClick: (btn) => item.menu?.popup_at_widget(btn, Gravity2.SOUTH, Gravity2.NORTH, null)
+  onPrimaryClick: (_3, event) => item.activate(event),
+  onSecondaryClick: (_3, event) => item.openMenu(event)
 });
 var SysTrayBox = () => Widget.Box({
   class_name: "systray unset",
-  children: SystemTray.bind("items").as((items) => items.filter(({ id }) => !config_default.systray.ignore.includes(id)).map(SysTrayItem))
+  children: SystemTray.bind("items").as((items) => items.filter(({ status, title }) => status !== "Passive" && !config_default.systray.ignore.includes(title)).map(flow(SysTrayItem)))
 });
 
 // src/widgets/Workspaces/index.ts
 import Gtk30 from "gi://Gtk?version=3.0";
-import {Box as Box2, Button} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box4, Button as Button2} from "resource:///com/github/Aylur/ags/widget.js";
 import {hyprland as hyprland4} from "resource:///com/github/Aylur/ags/service/hyprland.js";
 
 // src/services/hyprext.ts
@@ -4078,7 +3876,7 @@ class HyprExtensionsService extends Service {
     super();
     hyprland2.connect("event", this.#handleEvent);
   }
-  #handleEvent = (_3, ...args) => N4(args).with([_2.union("monitoraddedv2", "monitorremoved"), ..._2.array(_2.any)], () => setTimeout(this.#onMonitorsChanged, 500));
+  #handleEvent = (_3, ...args) => N3(args).with([_2.union("monitoraddedv2", "monitorremoved"), ..._2.array(_2.any)], () => setTimeout(this.#onMonitorsChanged, 500));
   #onMonitorsChanged = async () => {
     this.emit("monitors-changed");
   };
@@ -4098,9 +3896,9 @@ var ClientRenderer = ({ wsId }) => Widget.Box({
 });
 var MonitorWorkspaces = (monitorId = 0) => {
   const firstWsId = config_default.workspace.perMonitor * monitorId + 1;
-  return Box2({
+  return Box4({
     className: "unset workspaces",
-    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i3) => Button({
+    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i3) => Button2({
       css: "min-width: 30px;",
       onClicked: () => setWorkspace(i3),
       className: hyprland4.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
@@ -4112,7 +3910,7 @@ var MonitorWorkspaces = (monitorId = 0) => {
 };
 var Workspaces = () => {
   const createChildren = () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id));
-  return Box2({
+  return Box4({
     className: "unset workspace-box",
     spacing: 4,
     children: createChildren(),
@@ -4124,21 +3922,21 @@ var Workspaces = () => {
 };
 
 // src/widgets/hardware/all.ts
-import {Box as Box5} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box7} from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/widgets/hardware/battery.ts
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
 import {
-Button as Button2,
+Button as Button3,
 CircularProgress,
-Label as Label2
+Label as Label3
 } from "resource:///com/github/Aylur/ags/widget.js";
 var BatteryWidget = () => {
-  const label = Label2({
+  const label = Label3({
     className: "battery-inner",
     label: "\uF240"
   });
-  const button = Button2({
+  const button = Button3({
     className: "unset no-hover",
     child: label,
     onClicked: () => showHardwareMenu()
@@ -4162,17 +3960,17 @@ var BatteryWidget = () => {
 // src/widgets/hardware/cpu.ts
 import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
 import {
-Box as Box3,
-Button as Button3,
+Box as Box5,
+Button as Button4,
 CircularProgress as CircularProgress2,
-Label as Label3
+Label as Label4
 } from "resource:///com/github/Aylur/ags/widget.js";
 var CpuWidget = () => {
-  const label = Label3({
+  const label = Label4({
     className: "cpu-inner",
     label: "\uF2DB"
   });
-  const button = Button3({
+  const button = Button4({
     className: "unset no-hover",
     child: label,
     onClicked: () => showHardwareMenu()
@@ -4183,7 +3981,7 @@ var CpuWidget = () => {
     startAt: 0,
     rounded: false
   });
-  return Box3({
+  return Box5({
     className: "bar-hw-cpu-box"
   }).poll(1000, (box) => {
     execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
@@ -4198,17 +3996,17 @@ var CpuWidget = () => {
 // src/widgets/hardware/ram.ts
 import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
 import {
-Box as Box4,
-Button as Button4,
+Box as Box6,
+Button as Button5,
 CircularProgress as CircularProgress3,
-Label as Label4
+Label as Label5
 } from "resource:///com/github/Aylur/ags/widget.js";
 var RamWidget = () => {
-  const label = Label4({
+  const label = Label5({
     className: "ram-inner",
     label: "\uF538"
   });
-  const button = Button4({
+  const button = Button5({
     className: "unset no-hover",
     child: label,
     onClicked: () => showHardwareMenu()
@@ -4219,7 +4017,7 @@ var RamWidget = () => {
     rounded: false,
     child: button
   });
-  return Box4({
+  return Box6({
     className: "bar-hw-ram-box"
   }).poll(30000, (box) => {
     execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
@@ -4232,7 +4030,7 @@ var RamWidget = () => {
 };
 
 // src/widgets/hardware/all.ts
-var HardwareBox = () => Box5({
+var HardwareBox = () => Box7({
   className: "hardware-box unset",
   children: [CpuWidget(), RamWidget(), BatteryWidget()]
 });
@@ -4240,52 +4038,26 @@ var showHardwareMenu = () => App.toggleWindow("hardware_menu");
 
 // src/widgets/menus/NotificationCenter.ts
 import {
-Box as Box7,
-Button as Button6,
-Label as Label6,
+Box as Box9,
+Button as Button7,
+Label as Label7,
 Scrollable
 } from "resource:///com/github/Aylur/ags/widget.js";
 
-// src/utils/helpers.ts
-async function bash(strings, ...values) {
-  const cmd = typeof strings === "string" ? strings : strings.flatMap((str, i3) => str + `${values[i3] ?? ""}`).join("");
-  return Utils.execAsync(["bash", "-c", cmd]).catch((err) => {
-    console.error(cmd, err);
-    return "";
-  });
-}
-async function sh(cmd) {
-  return Utils.execAsync(cmd).catch((err) => {
-    console.error(typeof cmd === "string" ? cmd : cmd.join(" "), err);
-    return "";
-  });
-}
-function dependencies(...bins) {
-  const missing = bins.filter((bin) => {
-    return !Utils.exec(`which ${bin}`);
-  });
-  if (missing.length > 0) {
-    console.warn("missing dependencies:", missing.join(", "));
-    Utils.notify(`missing dependencies: ${missing.join(", ")}`);
-  }
-  return missing.length === 0;
-}
-var local = "LTR";
-
 // src/notifications/MenuNotification.ts
-import {lookUpIcon} from "resource:///com/github/Aylur/ags/utils.js";
+import {lookUpIcon as lookUpIcon2} from "resource:///com/github/Aylur/ags/utils.js";
 import {
-Box as Box6,
-Button as Button5,
-EventBox,
-Icon,
-Label as Label5
+Box as Box8,
+Button as Button6,
+EventBox as EventBox2,
+Icon as Icon2,
+Label as Label6
 } from "resource:///com/github/Aylur/ags/widget.js";
-var { GLib } = imports.gi;
+var { GLib: GLib2 } = imports.gi;
 var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
-var NotificationIcon = ({ appEntry, appIcon, image }) => {
+var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
   if (image) {
-    return Box6({
+    return Box8({
       vpack: "start",
       hexpand: false,
       className: "notification-img",
@@ -4302,11 +4074,11 @@ var NotificationIcon = ({ appEntry, appIcon, image }) => {
     });
   }
   let icon = "dialog-information-symbolic";
-  if (lookUpIcon(appIcon))
+  if (lookUpIcon2(appIcon))
     icon = appIcon;
-  if (lookUpIcon(appEntry))
+  if (lookUpIcon2(appEntry))
     icon = appEntry;
-  return Box6({
+  return Box8({
     vpack: "start",
     hexpand: false,
     css: `
@@ -4315,7 +4087,7 @@ var NotificationIcon = ({ appEntry, appIcon, image }) => {
           ${margin}
         `,
     children: [
-      Icon({
+      Icon2({
         icon,
         size: 58,
         hpack: "center",
@@ -4327,7 +4099,7 @@ var NotificationIcon = ({ appEntry, appIcon, image }) => {
   });
 };
 var MenuNotification_default = (notification) => {
-  const bodyLabel = Label5({
+  const bodyLabel = Label6({
     css: `margin-top: 1rem;`,
     className: "notification-description",
     hexpand: true,
@@ -4341,17 +4113,17 @@ var MenuNotification_default = (notification) => {
   } catch (error) {
     bodyLabel.label = "...";
   }
-  const content = Box6({
+  const content = Box8({
     css: `min-width: 330px;`,
     children: [
-      NotificationIcon(notification),
-      Box6({
+      NotificationIcon2(notification),
+      Box8({
         hexpand: true,
         vertical: true,
         children: [
-          Box6({
+          Box8({
             children: [
-              Label5({
+              Label6({
                 className: "notification-title",
                 css: margin,
                 xalign: 0,
@@ -4363,16 +4135,16 @@ var MenuNotification_default = (notification) => {
                 label: notification.summary,
                 useMarkup: notification.summary.startsWith("<")
               }),
-              Label5({
+              Label6({
                 className: "notification-time",
                 css: `${margin} margin-top: 0.5rem;`,
                 vpack: "start",
-                label: GLib.DateTime.new_from_unix_local(notification.time).format("%H:%M")
+                label: GLib2.DateTime.new_from_unix_local(notification.time).format("%H:%M")
               }),
-              Button5({
+              Button6({
                 className: "notification-close-button",
                 vpack: "start",
-                child: Icon("window-close-symbolic"),
+                child: Icon2("window-close-symbolic"),
                 onClicked: () => {
                   notification.close();
                 }
@@ -4384,22 +4156,22 @@ var MenuNotification_default = (notification) => {
       })
     ]
   });
-  const actionsbox = Box6({
+  const actionsbox = Box8({
     className: "notification-actions",
-    children: notification.actions.map((action) => Button5({
+    children: notification.actions.map((action) => Button6({
       css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
       className: "action-button",
       onClicked: () => notification.invoke(action.id),
       hexpand: true,
-      child: Label5(action.label)
+      child: Label6(action.label)
     }))
   });
-  const mainbox = EventBox({
+  const mainbox = EventBox2({
     className: `menu-notification ${notification.urgency}`,
     vexpand: false,
     onPrimaryClick: () => {
     },
-    child: Box6({
+    child: Box8({
       vertical: true,
       children: [
         content,
@@ -4420,7 +4192,7 @@ var PopupRevealer = ({
   transition,
   child,
   transitionDuration: config_default.transitionDuration,
-  setup: (self) => self.hook(App, (_3, ...args) => N4(args).with([name, _2.boolean], ([_4, visible]) => {
+  setup: (self) => self.hook(App, (_3, ...args) => N3(args).with([name, _2.boolean], ([_4, visible]) => {
     onOpen?.();
     self.revealChild = visible;
   }), "window-toggled")
@@ -4461,31 +4233,31 @@ var Popup = ({
 };
 
 // src/widgets/menus/NotificationCenter.ts
-var Notifications = await Service.import("notifications");
+var Notifications3 = await Service.import("notifications");
 var NotificationsBox = () => {
-  return Box7({
+  return Box9({
     className: "notification-menu-header",
     vertical: true,
     children: []
-  }).hook(Notifications, (self) => {
+  }).hook(Notifications3, (self) => {
     let notificationList = [];
-    const array = Notifications.notifications.reverse();
+    const array = Notifications3.notifications.reverse();
     for (let index = 0;index < array.length; index++) {
       const element = array[index];
-      const line = index !== array.length - 1 ? Box7({
+      const line = index !== array.length - 1 ? Box9({
         class_name: "horizontal-line"
       }) : undef;
       notificationList.push(MenuNotification_default(element), line);
     }
-    let noNotifications = Box7({
+    let noNotifications = Box9({
       vertical: true,
       className: "notification-this-is-all",
       children: [
-        Label6({
+        Label7({
           className: "no-notification-icon",
           label: "\uDB84\uDDE5"
         }),
-        Label6({
+        Label7({
           className: "no-notification-text",
           label: "There are no new notifications"
         })
@@ -4494,33 +4266,33 @@ var NotificationsBox = () => {
     if (array.length < 1) {
       notificationList.push(noNotifications);
     }
-    self.children = notificationList.filter(E2);
+    self.children = notificationList.filter(E);
   });
 };
 var NotificationHeader = () => {
-  return Box7({
+  return Box9({
     className: "notification-header-box",
     spacing: 70,
     children: [
-      Button6({
+      Button7({
         className: "unset notification-center-header-clear",
         label: "\uEA81",
         onClicked: () => {
-          Notifications.clear();
+          Notifications3.clear();
         }
       }),
-      Label6({
+      Label7({
         className: "notification-center-header-text",
         label: "Notification Center"
       }),
-      Button6({
+      Button7({
         className: "unset notification-center-header-mute",
         label: "\uDB80\uDC9A",
-        onClicked: () => Notifications.dnd = !Notifications.dnd
+        onClicked: () => Notifications3.dnd = !Notifications3.dnd
       })
     ]
-  }).hook(Notifications, (self) => {
-    if (Notifications.dnd) {
+  }).hook(Notifications3, (self) => {
+    if (Notifications3.dnd) {
       self.children[2].label = "\uDB80\uDC9B";
     } else {
       self.children[2].label = "\uDB80\uDC9A";
@@ -4538,61 +4310,26 @@ var NotificationCenter = () => Popup({
   margins: [30, 200],
   anchor: ["bottom", "right"],
   transition: "slide_up",
-  child: Box7({
+  child: Box9({
     className: "left-menu-box",
     vertical: true,
     children: [NotificationHeader(), notificationContainer]
   })
 });
-var NotificationCenterButton = () => Button6({
+var NotificationCenterButton = () => Button7({
   className: "notification-center-button unset",
   label: "\uF0F3",
   onClicked: () => App.toggleWindow("notification_center"),
-  onSecondaryClick: () => Notifications.Clear()
-}).hook(Notifications, (self) => {
-  if (Notifications.dnd) {
+  onSecondaryClick: () => Notifications3.Clear()
+}).hook(Notifications3, (self) => {
+  if (Notifications3.dnd) {
     self.label = "\uDB80\uDC9B";
-  } else if (Notifications.notifications.length === 0) {
+  } else if (Notifications3.notifications.length === 0) {
     self.label = "\uDB80\uDC9A";
-  } else if (Notifications.notifications.length > 0) {
-    self.label = `${Notifications.notifications.length} \uEB9A`;
+  } else if (Notifications3.notifications.length > 0) {
+    self.label = `${Notifications3.notifications.length} \uEB9A`;
   }
 });
-
-// src/settings.js
-var MAIN_PATH = `${App.configDir}`;
-var ASSETS_PATH = `${App.configDir}/assets`;
-var getAssets = (path) => {
-  return `${ASSETS_PATH}/${path}`;
-};
-var getPath = (path) => {
-  return `${MAIN_PATH}/${path}`;
-};
-var settings = {
-  assets: {
-    wallpapers: getAssets("wallpapers"),
-    icons: {
-      hot_weather: `${getAssets("icons")}/hot-weather.png`,
-      cold_weather: `${getAssets("icons")}/cold-weather.png`,
-      mosque: `${getAssets("icons")}/mosque.png`
-    },
-    audio: {
-      cold_weather: `${getAssets("audio")}/cold-weather.mp3`
-    }
-  },
-  scripts: {
-    scripts: getPath("scripts"),
-    dynamicM3Py: getPath("scripts/m3/dynamic-m3.py"),
-    get_wallpapers: getPath("scripts/get_wallpapers.sh")
-  },
-  theme: {
-    scss: `${getPath("scss")}`,
-    absoluteDynamicM3Scss: `${getPath("scss/themes/m3/dynamic.scss")}`,
-    mainCss: `${getPath("/scss/main.scss")}`,
-    styleCss: `${getPath("/style.scss")}`
-  }
-};
-var settings_default = settings;
 
 // src/theme/themes.js
 var WALLPAPER_PATH = settings_default.assets.wallpapers;
@@ -4666,7 +4403,7 @@ var deer = {
   dynamic: false
 };
 var colors = {
-  wallpaper: `${WALLPAPER_PATH}/colors.png`,
+  wallpaper: `${WALLPAPER_PATH}/lofi-purple.jpg`,
   css_theme: "colors.scss",
   plasma_color: "AColors.colors",
   qt_5_style_theme: "Breeze",
@@ -4726,7 +4463,7 @@ var materialYou = {
     border_width: 2,
     active_border: "rgba(678382ff) rgba(9d6c73ff) 0deg",
     inactive_border: "rgba(59595900) 0deg",
-    rounding: 30,
+    rounding: 20,
     drop_shadow: "no",
     kitty: "materialYou.conf",
     konsole: "material-you"
@@ -5001,10 +4738,9 @@ var themes_default = ThemesDictionary;
 
 // src/services/ThemeService.js
 import {
-timeout,
-USER,
-exec as exec2,
-execAsync as execAsync3
+execAsync as execAsync3,
+timeout as timeout3,
+USER
 } from "resource:///com/github/Aylur/ags/utils.js";
 import App2 from "resource:///com/github/Aylur/ags/app.js";
 import Service2 from "resource:///com/github/Aylur/ags/service.js";
@@ -5029,7 +4765,6 @@ class ThemeService extends Service2 {
   dynamicWallpaperStatus = true;
   constructor() {
     super();
-    exec2("swww init");
     this.getCachedVariables();
     this.changeTheme(this.selectedTheme);
   }
@@ -5053,16 +4788,9 @@ class ThemeService extends Service2 {
     this.emit("changed");
     this.cacheVariables();
   }
-  changeWallpaper(wallpaper) {
-    execAsync3([
-      "swww",
-      "img",
-      "--transition-type",
-      "random",
-      "--transition-pos",
-      exec2("hyprctl cursorpos").replace(" ", ""),
-      wallpaper
-    ]).catch(print);
+  async changeWallpaper(wallpaper) {
+    await execAsync3("pkill swaybg").catch(print);
+    await bash`swaybg --mode fill --image '${wallpaper}' &`.catch(print);
   }
   changeCss(cssTheme) {
     const newTh = `@import './themes/${cssTheme}';`;
@@ -5076,8 +4804,7 @@ class ThemeService extends Service2 {
   }
   setDynamicWallpapers(path, themeMode, interval) {
     Utils.execAsync([settings_default.scripts.get_wallpapers, path]).then((out) => {
-      const wallpapers = JSON.parse(out);
-      this.wallpapersList = wallpapers;
+      this.wallpapersList = JSON.parse(out);
       this.callNextWallpaper(themeMode);
       if (this.dynamicWallpaperIsOn) {
         this.wallpaperIntervalId = setInterval(() => {
@@ -5086,7 +4813,7 @@ class ThemeService extends Service2 {
       } else {
         this.clearDynamicWallpaperInterval();
       }
-    }).catch((err) => print(err));
+    }).catch(print);
   }
   toggleDynamicWallpaper() {
     if (this.isDynamicTheme && this.dynamicWallpaperIsOn)
@@ -5187,7 +4914,7 @@ class ThemeService extends Service2 {
   }
   steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow, kittyConfig, konsoleTheme) {
     Promise.resolve().then(() => {
-      timeout(1000, () => {
+      timeout3(1000, () => {
         execAsync3(`hyprctl keyword general:border_size ${border_width}`);
         execAsync3(`hyprctl keyword general:col.active_border ${active_border}`);
         execAsync3(`hyprctl keyword general:col.inactive_border ${inactive_border}`);
@@ -5236,14 +4963,14 @@ class ThemeService extends Service2 {
   changeKvantumTheme(kvantumTheme) {
     execAsync3(["kvantummanager", "--set", kvantumTheme]).catch(print);
   }
-  showDesktopWidget(widget9) {
+  showDesktopWidget(widget11) {
     let oldTheme = themes_default[this.selectedTheme];
-    if (oldTheme.desktop_widget !== widget9 && oldTheme.desktop_widget !== null) {
+    if (oldTheme.desktop_widget !== widget11 && oldTheme.desktop_widget !== null) {
       this.hideWidget(oldTheme.desktop_widget);
     }
-    if (widget9 !== null) {
-      timeout(1000, () => {
-        this.showWidget(widget9);
+    if (widget11 !== null) {
+      timeout3(1000, () => {
+        this.showWidget(widget11);
       });
     }
   }
@@ -5502,9 +5229,9 @@ globalThis.mp = () => {
 
 // src/widgets/menus/SystemMenu.ts
 import {execAsync as execAsync4} from "resource:///com/github/Aylur/ags/utils.js";
-import {Box as Box8, Button as Button7, Label as Label7} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box10, Button as Button8, Label as Label8} from "resource:///com/github/Aylur/ags/widget.js";
 var Header = () => {
-  return Box8({
+  return Box10({
     className: "left-menu-header",
     css: `
             background-image: url("${settings_default.assets.wallpapers}/black-hole.png");
@@ -5526,22 +5253,22 @@ var ThemeButton = ({
         border-radius: 1rem;
     `
 }) => {
-  const _label = Label7({
+  const _label = Label8({
     className: `unset ${label_css}`,
     hpack: "start",
     label
   });
-  const _icon = Label7({
+  const _icon = Label8({
     className: `unset ${icon_css}`,
     css: `min-width: 1.5rem;`,
     label: icon,
     xalign: 0.5
   });
-  const box = Box8({
+  const box = Box10({
     className: "unset theme-btn-box",
     children: [_label, Widget.Box({ hexpand: true }), _icon]
   });
-  const button = Button7({
+  const button = Button8({
     css,
     child: box,
     onClicked: () => ThemeService_default.changeTheme(theme)
@@ -5658,12 +5385,12 @@ var ThemesButtonsRowOne = () => {
       })
     ]
   });
-  const row1 = Box8({
+  const row1 = Box10({
     homogeneous: true,
     children: [materialYouTheme, win20Theme],
     spacing: 20
   });
-  const row2 = Box8({
+  const row2 = Box10({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5671,7 +5398,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [siberianTheme, blackHoleTheme]
   });
-  const row3 = Box8({
+  const row3 = Box10({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5679,7 +5406,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [deerTheme, darkTheme]
   });
-  const row4 = Box8({
+  const row4 = Box10({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5687,7 +5414,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [newCatTheme, circlesTheme]
   });
-  const row5 = Box8({
+  const row5 = Box10({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5695,7 +5422,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [colorTheme, unicatTheme]
   });
-  return Box8({
+  return Box10({
     className: "themes-box",
     vertical: true,
     children: [row1, row2, row3, row4, row5]
@@ -5703,7 +5430,7 @@ var ThemesButtonsRowOne = () => {
 };
 var PowerButtonsRow = () => {
   const powerBtnMargin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
-  const powerOff = Button7({
+  const powerOff = Button8({
     className: "theme-btn",
     css: `
                 min-width: 5rem;
@@ -5711,12 +5438,12 @@ var PowerButtonsRow = () => {
                 border-radius: 1rem;
                 ${powerBtnMargin}
             `,
-    child: Label7({
+    child: Label8({
       label: "\uF011"
     }),
     onClicked: () => execAsync4("poweroff").catch(print)
   });
-  const reboot = Button7({
+  const reboot = Button8({
     className: "theme-btn",
     css: `
                 min-width: 5rem;
@@ -5724,27 +5451,27 @@ var PowerButtonsRow = () => {
                 border-radius: 1rem;
                 ${powerBtnMargin}
             `,
-    child: Label7({
+    child: Label8({
       label: "\uF01E"
     }),
     onClicked: () => execAsync4("reboot").catch(print)
   });
-  const logout = Button7({
+  const logout = Button8({
     className: "theme-btn",
     css: `
                 min-width: 5rem;
                 min-height: 2rem;
                 border-radius: 1rem;
             `,
-    child: Label7({
+    child: Label8({
       label: "\uF08B"
     }),
     onClicked: () => execAsync4("loginctl kill-session self").catch(print)
   });
-  const row1 = Box8({
+  const row1 = Box10({
     children: [powerOff, reboot, logout]
   });
-  return Box8({
+  return Box10({
     className: "power-box unset",
     css: `
             margin-top:0rem;
@@ -5758,7 +5485,7 @@ var SystemMenu = () => Popup({
   anchor: ["bottom", "right"],
   transition: "slide_up",
   margins: [30, 6],
-  child: Box8({
+  child: Box10({
     className: "left-menu-box unset",
     vertical: true,
     children: [
@@ -5769,7 +5496,7 @@ var SystemMenu = () => Popup({
     ]
   })
 });
-var MenuButton = () => Button7({
+var MenuButton = () => Button8({
   className: "menu-button unset",
   label: "\uF043",
   onClicked: () => App.toggleWindow("left_menu")
@@ -5787,7 +5514,7 @@ var hyprctlDevicesPattern = {
   }).select()
 };
 var parseKeymap = (keymap) => keymap.slice(0, 2).toLowerCase();
-var getInitialKeymap = () => N4(JSON.parse(Utils.exec("hyprctl devices -j"))).with(hyprctlDevicesPattern, (keyboards) => pipe(keyboards.find((kb) => kb.name === config_default.keyboard.default.name), P2.map(flow((kb) => kb.active_keymap, parseKeymap)))).otherwise(() => undef) ?? config_default.keyboard.default.keymap;
+var getInitialKeymap = () => N3(JSON.parse(Utils.exec("hyprctl devices -j"))).with(hyprctlDevicesPattern, (keyboards) => pipe(keyboards.find((kb) => kb.name === config_default.keyboard.default.name), P2.map(flow((kb) => kb.active_keymap, parseKeymap)))).otherwise(() => undef) ?? config_default.keyboard.default.keymap;
 
 class KeyboardService extends Service {
   static {
@@ -5806,7 +5533,7 @@ class KeyboardService extends Service {
   }
   constructor() {
     super();
-    hyprland6.connect("keyboard-layout", (_3, ...args) => N4(args).with([_2.string, _2.string], ([kbname, layout]) => {
+    hyprland6.connect("keyboard-layout", (_3, ...args) => N3(args).with([_2.string, _2.string], ([kbname, layout]) => {
       this.#kbname = kbname;
       this.changed("kbname");
       this.#layout = parseKeymap(layout);
@@ -5832,9 +5559,9 @@ var KeyboardLayout2 = () => {
 
 // src/widgets/Bar/index.ts
 import {
-Box as Box9,
+Box as Box11,
 CenterBox,
-Window
+Window as Window2
 } from "resource:///com/github/Aylur/ags/widget.js";
 var Clock = () => Widget.Button({
   className: "clock small-shadow unset",
@@ -5859,12 +5586,12 @@ var DynamicWallpaper = () => Widget.Button({
   else
     btn.label = "\uE3F4";
 });
-var Start = () => Box9({
+var Start = () => Box11({
   spacing: 8,
   children: [Workspaces(), HardwareBox(), DynamicWallpaper()]
 });
-var Center = () => Box9({});
-var End = () => Box9({
+var Center = () => Box11({});
+var End = () => Box11({
   hpack: "end",
   spacing: 8,
   children: [
@@ -5876,7 +5603,7 @@ var End = () => Box9({
     MenuButton()
   ]
 });
-var Bar = ({ monitor } = {}) => Window({
+var Bar = ({ monitor } = {}) => Window2({
   name: `bar${monitor || ""}`,
   className: hyprext.bind("fullscreen").as((f3) => clsx_default("bar-bg", f3 && "bar-bg--fullscreen")),
   monitor,
@@ -5889,6 +5616,152 @@ var Bar = ({ monitor } = {}) => Window({
     endWidget: End()
   })
 });
+
+// src/services/brightness.ts
+if (!dependencies("brightnessctl"))
+  App.quit();
+var get3 = (args) => Number(Utils.exec(`brightnessctl ${args}`));
+var screen = await bash`ls -w1 /sys/class/backlight | head -1`;
+var kbd = await bash`ls -w1 /sys/class/leds | head -1`;
+
+class Brightness extends Service {
+  static {
+    Service.register(this, {}, {
+      screen: ["float", "rw"],
+      kbd: ["int", "rw"]
+    });
+  }
+  #kbdMax = get3(`--device ${kbd} max`);
+  #kbd = get3(`--device ${kbd} get`);
+  #screenMax = get3("max");
+  #screen = get3("get") / get3("max");
+  get kbd() {
+    return this.#kbd;
+  }
+  get screen() {
+    return this.#screen;
+  }
+  set kbd(value) {
+    if (value < 0 || value > this.#kbdMax)
+      return;
+    sh(`brightnessctl -d ${kbd} s ${value} -q`).then(() => {
+      this.#kbd = value;
+      this.changed("kbd");
+    });
+  }
+  set screen(percent) {
+    if (percent < 0)
+      percent = 0;
+    if (percent > 1)
+      percent = 1;
+    sh(`brightnessctl set ${Math.floor(percent * 100)}% -q`).then(() => {
+      this.#screen = percent;
+      this.changed("screen");
+    });
+  }
+  constructor() {
+    super();
+    const screenPath = `/sys/class/backlight/${screen}/brightness`;
+    const kbdPath = `/sys/class/leds/${kbd}/brightness`;
+    Utils.monitorFile(screenPath, async (f3) => {
+      const v3 = await Utils.readFileAsync(f3);
+      this.#screen = Number(v3) / this.#screenMax;
+      this.changed("screen");
+    });
+    Utils.monitorFile(kbdPath, async (f3) => {
+      const v3 = await Utils.readFileAsync(f3);
+      this.#kbd = Number(v3) / this.#kbdMax;
+      this.changed("kbd");
+    });
+  }
+}
+var brightness_default = new Brightness;
+
+// src/widgets/OSD.ts
+import Audio2 from "resource:///com/github/Aylur/ags/service/audio.js";
+import {Icon as Icon3, Window as Window3} from "resource:///com/github/Aylur/ags/widget.js";
+
+// src/utils/ShowWindow.ts
+import App3 from "resource:///com/github/Aylur/ags/app.js";
+var isProcessing = false;
+var timeoutId;
+var ShowWindow_default = (windowName, timeout4 = 1000) => {
+  if (isProcessing) {
+    clearTimeout(timeoutId);
+  } else {
+    App3.openWindow(windowName);
+  }
+  timeoutId = setTimeout(() => {
+    App3.closeWindow(windowName);
+    isProcessing = false;
+  }, timeout4);
+  isProcessing = true;
+};
+
+// src/widgets/OSD.ts
+var OSD = () => {
+  const progress = Variable(Audio2.speaker.volume);
+  const type = Variable("volume");
+  const icon = Utils.derive([type, progress], (type2, progress2) => N3(type2).with("volume", () => getVolumeIcon(progress2)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
+  const show = (value, osdType) => {
+    progress.value = value;
+    type.value = osdType;
+    ShowWindow_default("osd");
+  };
+  return Window3({
+    name: `osd`,
+    focusable: false,
+    margins: [0, 0, 140, 0],
+    layer: "overlay",
+    anchor: ["bottom"],
+    setup: (self) => self.hook(Audio2.speaker, () => show(Audio2.speaker.volume, "volume"), "notify::volume").hook(brightness_default, () => show(brightness_default.screen, "br-screen"), "notify::screen").hook(brightness_default, () => show(brightness_default.kbd, "br-keyboard"), "notify::kbd"),
+    child: Widget.Box({
+      className: "vol-osd shadow",
+      css: "min-width: 140px",
+      children: [
+        Widget.Box({
+          className: "vol-stack",
+          child: Icon3({
+            icon: icon.bind()
+          })
+        }),
+        Widget.Slider({
+          hexpand: true,
+          className: "unset",
+          drawValue: false,
+          value: progress.bind(),
+          onChange: ({ value }) => N3(type.value).with("volume", () => Audio2.speaker.volume = value).with("br-screen", () => brightness_default.screen = value).with("br-keyboard", () => brightness_default.kbd = value).exhaustive()
+        })
+      ]
+    })
+  });
+};
+
+// src/widgets/menus/CalendarMenu.ts
+var CalendarMenu = () => {
+  const date = Variable(new Date);
+  return Popup({
+    transition: "slide_up",
+    anchor: ["bottom", "right"],
+    name: "calendar-menu",
+    margins: [40, 50],
+    child: Widget.Box({
+      className: "menu calendar-menu",
+      child: Widget.Calendar({
+        expand: true,
+        className: "calendar",
+        year: date.bind().as((d2) => d2.getFullYear()),
+        month: date.bind().as((d2) => d2.getMonth()),
+        day: date.bind().as((d2) => d2.getDate())
+      })
+    }),
+    onOpen: () => {
+      const newDate = new Date;
+      if (date.value.getDay() !== newDate.getDay())
+        date.value = newDate;
+    }
+  });
+};
 
 // src/widgets/menus/HardwareMenu.ts
 import Gtk302 from "gi://Gtk";
@@ -6161,383 +6034,6 @@ var HardwareMenu = () => Popup({
     children: [headerBox, tablesBox()]
   })
 });
-
-// src/notifications/OSDNotifications.js
-import Notifications3 from "resource:///com/github/Aylur/ags/service/notifications.js";
-import {timeout as timeout3} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box11,
-Revealer as Revealer2,
-Window as Window2
-} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/notifications/Notification.ts
-import Notifications2 from "resource:///com/github/Aylur/ags/service/notifications.js";
-import {lookUpIcon as lookUpIcon2, timeout as timeout2} from "resource:///com/github/Aylur/ags/utils.js";
-import Variable2 from "resource:///com/github/Aylur/ags/variable.js";
-import {
-Box as Box10,
-Button as Button8,
-EventBox as EventBox2,
-Icon as Icon2,
-Label as Label8,
-Revealer
-} from "resource:///com/github/Aylur/ags/widget.js";
-var { GLib: GLib2 } = imports.gi;
-var rtlMargin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
-var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
-  if (image) {
-    return Box10({
-      vpack: "start",
-      hexpand: false,
-      className: "notification-img",
-      css: `
-              background-image: url("${image}");
-              background-size: contain;
-              background-repeat: no-repeat;
-              background-position: center;
-              min-width: 78px;
-              min-height: 78px;
-              ${rtlMargin}
-              border-radius: 1rem;
-            `
-    });
-  }
-  let icon = "dialog-information-symbolic";
-  if (lookUpIcon2(appIcon))
-    icon = appIcon;
-  if (lookUpIcon2(appEntry))
-    icon = appEntry;
-  return Box10({
-    vpack: "start",
-    hexpand: false,
-    css: `
-            min-width: 78px;
-            min-height: 78px;
-            ${rtlMargin}
-        `,
-    children: [
-      Icon2({
-        icon,
-        size: 58,
-        hpack: "center",
-        hexpand: true,
-        vpack: "center",
-        vexpand: true
-      })
-    ]
-  });
-};
-var Notification_default = (notification) => {
-  const hovered = Variable2(false);
-  let timeoutId;
-  const bodyLabel = Label8({
-    css: `margin-top: 1rem;`,
-    className: "notification-description",
-    hexpand: true,
-    useMarkup: true,
-    xalign: 0,
-    justification: "left",
-    wrap: true
-  });
-  try {
-    bodyLabel.label = notification.body;
-  } catch (error) {
-    bodyLabel.label = "...";
-  }
-  const hover = () => {
-    hovered.value = true;
-    hovered._block = true;
-    clearTimeout(timeoutId);
-    timeout2(100, () => hovered._block = false);
-  };
-  const hoverLost = () => GLib2.idle_add(0, () => {
-    timeoutId = setTimeout(() => {
-      hovered.value = false;
-      notification.dismiss();
-    }, 3000);
-    return GLib2.SOURCE_REMOVE;
-  });
-  const content = Box10({
-    css: `min-width: 400px;`,
-    children: [
-      NotificationIcon2(notification),
-      Box10({
-        hexpand: true,
-        vertical: true,
-        children: [
-          Box10({
-            children: [
-              Label8({
-                className: "notification-title",
-                css: `${rtlMargin}`,
-                xalign: 0,
-                justification: "left",
-                hexpand: true,
-                maxWidthChars: 24,
-                truncate: "end",
-                wrap: true,
-                label: notification.summary,
-                useMarkup: notification.summary.startsWith("<")
-              }),
-              Label8({
-                className: "notification-time",
-                css: `${rtlMargin} margin-top: 0.5rem;`,
-                vpack: "start",
-                label: GLib2.DateTime.new_from_unix_local(notification.time).format("%H:%M")
-              }),
-              Button8({
-                onHover: hover,
-                className: "notification-close-button",
-                vpack: "start",
-                child: Icon2("window-close-symbolic"),
-                onClicked: () => {
-                  notification.close();
-                }
-              })
-            ]
-          }),
-          bodyLabel
-        ]
-      })
-    ]
-  });
-  const actionsbox = Revealer({
-    transition: "slide_up",
-    child: EventBox2({
-      onHover: hover,
-      child: Box10({
-        className: "notification-actions",
-        children: notification.actions.map((action) => Button8({
-          onHover: hover,
-          css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
-          className: "action-button",
-          onClicked: () => Notifications2.InvokeAction(notification.id, action.id),
-          hexpand: true,
-          child: Label8(action.label)
-        }))
-      })
-    })
-  }).bind("revealChild", hovered);
-  const mainbox = EventBox2({
-    className: `notification ${notification.urgency}`,
-    vexpand: false,
-    onPrimaryClick: () => {
-      hovered.value = false;
-      notification.dismiss();
-    },
-    attribute: { hovered },
-    onHover: hover,
-    onHoverLost: hoverLost,
-    child: Box10({
-      vertical: true,
-      children: [
-        content,
-        ...optArr(notification.actions.length > 0, [actionsbox])
-      ]
-    })
-  });
-  return mainbox;
-};
-
-// src/notifications/OSDNotifications.js
-var Popups = () => Box11({
-  className: "notification-popups",
-  vertical: true,
-  attribute: {
-    map: new Map,
-    dismiss: (box, id, force = false) => {
-      if (!id || !box.attribute.map.has(id)) {
-        return;
-      }
-      if (box.attribute.map.get(id).attribute.hovered.value && !force)
-        return;
-      if (box.attribute.map.size - 1 === 0)
-        box.get_parent().revealChild = false;
-      timeout3(400, () => {
-        box.attribute.map.get(id)?.destroy();
-        box.attribute.map.delete(id);
-      });
-    },
-    notify: (box, id) => {
-      if (!id || Notifications3.dnd) {
-        box.get_parent().revealChild = false;
-        return;
-      }
-      box.attribute.map.set(id, Notification_default(Notifications3.getNotification(id)));
-      box.children = Array.from(box.attribute.map.values());
-      box.get_parent().revealChild = true;
-    }
-  }
-}).hook(Notifications3, (box, id) => box.attribute.notify(box, id), "notified").hook(Notifications3, (box, id) => box.attribute.dismiss(box, id), "dismissed").hook(Notifications3, (box, id) => box.attribute.dismiss(box, id, true), "closed");
-var PopupList = ({ transition = "slide_up" } = {}) => Box11({
-  className: "notifications-popup-list",
-  css: `
-        min-height: 1.2px;
-        min-width: 1.2px;
-    `,
-  children: [
-    Revealer2({
-      transition,
-      child: Popups()
-    })
-  ]
-});
-var OSDNotifications_default = (monitor) => Window2({
-  monitor,
-  layer: "overlay",
-  name: `notifications${monitor}`,
-  visible: true,
-  margins: [30, 30],
-  anchor: ["bottom", local === "RTL" ? "left" : "right"],
-  child: PopupList()
-});
-
-// src/services/brightness.ts
-if (!dependencies("brightnessctl"))
-  App.quit();
-var get3 = (args) => Number(Utils.exec(`brightnessctl ${args}`));
-var screen = await bash`ls -w1 /sys/class/backlight | head -1`;
-var kbd = await bash`ls -w1 /sys/class/leds | head -1`;
-
-class Brightness extends Service {
-  static {
-    Service.register(this, {}, {
-      screen: ["float", "rw"],
-      kbd: ["int", "rw"]
-    });
-  }
-  #kbdMax = get3(`--device ${kbd} max`);
-  #kbd = get3(`--device ${kbd} get`);
-  #screenMax = get3("max");
-  #screen = get3("get") / get3("max");
-  get kbd() {
-    return this.#kbd;
-  }
-  get screen() {
-    return this.#screen;
-  }
-  set kbd(value) {
-    if (value < 0 || value > this.#kbdMax)
-      return;
-    sh(`brightnessctl -d ${kbd} s ${value} -q`).then(() => {
-      this.#kbd = value;
-      this.changed("kbd");
-    });
-  }
-  set screen(percent) {
-    if (percent < 0)
-      percent = 0;
-    if (percent > 1)
-      percent = 1;
-    sh(`brightnessctl set ${Math.floor(percent * 100)}% -q`).then(() => {
-      this.#screen = percent;
-      this.changed("screen");
-    });
-  }
-  constructor() {
-    super();
-    const screenPath = `/sys/class/backlight/${screen}/brightness`;
-    const kbdPath = `/sys/class/leds/${kbd}/brightness`;
-    Utils.monitorFile(screenPath, async (f3) => {
-      const v4 = await Utils.readFileAsync(f3);
-      this.#screen = Number(v4) / this.#screenMax;
-      this.changed("screen");
-    });
-    Utils.monitorFile(kbdPath, async (f3) => {
-      const v4 = await Utils.readFileAsync(f3);
-      this.#kbd = Number(v4) / this.#kbdMax;
-      this.changed("kbd");
-    });
-  }
-}
-var brightness_default = new Brightness;
-
-// src/widgets/OSD.ts
-import Audio2 from "resource:///com/github/Aylur/ags/service/audio.js";
-import {Icon as Icon3, Window as Window3} from "resource:///com/github/Aylur/ags/widget.js";
-
-// src/utils/ShowWindow.ts
-import App3 from "resource:///com/github/Aylur/ags/app.js";
-var isProcessing = false;
-var timeoutId;
-var ShowWindow_default = (windowName, timeout4 = 1000) => {
-  if (isProcessing) {
-    clearTimeout(timeoutId);
-  } else {
-    App3.openWindow(windowName);
-  }
-  timeoutId = setTimeout(() => {
-    App3.closeWindow(windowName);
-    isProcessing = false;
-  }, timeout4);
-  isProcessing = true;
-};
-
-// src/widgets/OSD.ts
-var OSD = () => {
-  const progress = Variable(Audio2.speaker.volume);
-  const type = Variable("volume");
-  const icon = Utils.derive([type, progress], (type2, progress2) => N4(type2).with("volume", () => getVolumeIcon(progress2)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
-  const show = (value, osdType) => {
-    progress.value = value;
-    type.value = osdType;
-    ShowWindow_default("osd");
-  };
-  return Window3({
-    name: `osd`,
-    focusable: false,
-    margins: [0, 0, 140, 0],
-    layer: "overlay",
-    anchor: ["bottom"],
-    setup: (self) => self.hook(Audio2.speaker, () => show(Audio2.speaker.volume, "volume"), "notify::volume").hook(brightness_default, () => show(brightness_default.screen, "br-screen"), "notify::screen").hook(brightness_default, () => show(brightness_default.kbd, "br-keyboard"), "notify::kbd"),
-    child: Widget.Box({
-      className: "vol-osd shadow",
-      css: "min-width: 140px",
-      children: [
-        Widget.Box({
-          className: "vol-stack",
-          child: Icon3({
-            icon: icon.bind()
-          })
-        }),
-        Widget.Slider({
-          hexpand: true,
-          className: "unset",
-          drawValue: false,
-          value: progress.bind(),
-          onChange: ({ value }) => N4(type.value).with("volume", () => Audio2.speaker.volume = value).with("br-screen", () => brightness_default.screen = value).with("br-keyboard", () => brightness_default.kbd = value).exhaustive()
-        })
-      ]
-    })
-  });
-};
-
-// src/widgets/menus/CalendarMenu.ts
-var CalendarMenu = () => {
-  const date = Variable(new Date);
-  return Popup({
-    transition: "slide_up",
-    anchor: ["bottom", "right"],
-    name: "calendar-menu",
-    margins: [40, 50],
-    child: Widget.Box({
-      className: "menu calendar-menu",
-      child: Widget.Calendar({
-        expand: true,
-        className: "calendar",
-        year: date.bind().as((d3) => d3.getFullYear()),
-        month: date.bind().as((d3) => d3.getMonth()),
-        day: date.bind().as((d3) => d3.getDate())
-      })
-    }),
-    onOpen: () => {
-      const newDate = new Date;
-      if (date.value.getDay() !== newDate.getDay())
-        date.value = newDate;
-    }
-  });
-};
 
 // src/config.ts
 var scss = App4.configDir + "/scss/main.scss";

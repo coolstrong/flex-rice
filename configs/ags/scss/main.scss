@@ -251,6 +251,10 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
     // font-size: 1rem;
 }
 
+.systray button:active {
+    background: $systray-btn-background;
+}
+
 .systray button:hover {
     background: $systray-btn-hover-background;
 }
