@@ -3317,6 +3317,15 @@ var OSDNotifications_default = (monitor) => Window({
   child: PopupList()
 });
 
+// src/lib/hooks.ts
+var useUpdatableVar = (factory, initial = undef) => {
+  const variable2 = Variable(initial ?? factory());
+  return {
+    variable: variable2,
+    update: () => variable2.value = factory()
+  };
+};
+
 // src/lib/icons.ts
 var icons = {
   missing: "image-missing-symbolic",
@@ -3747,41 +3756,46 @@ class $2 {
 }
 
 // src/utils/shared.ts
-var getVolumeIcon = (volume) => N3(volume * 100).with(_2.number.lte(0), () => icons.audio.volume.muted).with(_2.number.between(0, 34), () => icons.audio.volume.low).with(_2.number.between(34, 67), () => icons.audio.volume.medium).with(_2.number.between(67, 100), () => icons.audio.volume.high).with(_2.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
+var getVolumeIcon = (speaker) => N3(speaker.volume * 100).when(() => speaker.stream?.isMuted, () => icons.audio.volume.muted).with(_2.number.lte(0), () => icons.audio.volume.muted).with(_2.number.between(0, 34), () => icons.audio.volume.low).with(_2.number.between(34, 67), () => icons.audio.volume.medium).with(_2.number.between(67, 100), () => icons.audio.volume.high).with(_2.number.gte(100), () => icons.audio.volume.overamplified).otherwise(() => "");
 
 // src/widgets/NetVolume.ts
-import Network from "resource:///com/github/Aylur/ags/service/network.js";
-import {exec} from "resource:///com/github/Aylur/ags/utils.js";
-import {Box as Box3, Label as Label2} from "resource:///com/github/Aylur/ags/widget.js";
 var { Gravity } = imports.gi.Gdk;
 var Audio = await Service.import("audio");
 var VolumeButton = () => {
-  const icon = Variable(getVolumeIcon(Audio.speaker.volume));
+  const icon = useUpdatableVar(() => getVolumeIcon(Audio.speaker));
   return Widget.Button({
     className: "volume-button",
     child: Widget.Icon({
-      icon: icon.bind()
+      icon: icon.variable.bind()
     }),
-    setup: (self) => self.hook(Audio.speaker, () => icon.value = getVolumeIcon(Audio.speaker.volume), "notify::volume"),
-    onClicked: () => Utils.execAsync("pypr toggle volume")
+    setup: (self) => self.hook(Audio.speaker, () => setTimeout(icon.update, 50), "changed"),
+    onClicked: () => Utils.execAsync("pypr toggle volume"),
+    onSecondaryClick: () => Audio.speaker.is_muted = !Audio.speaker.is_muted,
+    tooltipText: Audio.speaker.bind("volume").as((v3) => `Volume: ${Math.round(v3 * 100)}%`)
   });
 };
 var NetVolumeBox = () => Widget.Box({
   className: "internet-box small-shadow unset",
   children: [VolumeButton()]
 });
+
+// src/widgets/Bar/SystemTray.ts
+import {
+systemTray
+} from "resource:///com/github/Aylur/ags/service/systemtray.js";
 // config.json
 var config_default = {
   popupCloseDelay: 700,
   transitionDuration: 100,
   systray: {
-    ignore: []
+    ignore: ["ulauncher"]
   },
   workspace: {
     ignore: [
       "wofi",
       "kitty-dropterm",
-      "org.kde.polkit-kde-authentication-agent-1"
+      "org.kde.polkit-kde-authentication-agent-1",
+      "ulauncher"
     ],
     perMonitor: 4
   },
@@ -3829,8 +3843,7 @@ var settings = {
 };
 var settings_default = settings;
 
-// src/widgets/SystemTray.ts
-var SystemTray = await Service.import("systemtray");
+// src/widgets/Bar/SystemTray.ts
 var iconSubstites = {
   TelegramDesktop: "telegram",
   breaktimer: `${ASSETS_PATH}/icons/coffee.png`
@@ -3851,12 +3864,17 @@ var SysTrayItem = (item) => PanelButton({
 });
 var SysTrayBox = () => Widget.Box({
   class_name: "systray unset",
-  children: SystemTray.bind("items").as((items) => items.filter(({ status, title }) => status !== "Passive" && !config_default.systray.ignore.includes(title)).map(flow(SysTrayItem)))
+  children: systemTray.bind("items").as((items) => items.filter(({ status, title }) => status !== "Passive" && !config_default.systray.ignore.includes(title)).map(flow(l.tap((item) => print(JSON.stringify({
+    title: item.title,
+    icon: item.icon,
+    isMenu: item.is_menu,
+    status: item.status
+  }))), SysTrayItem)))
 });
 
-// src/widgets/Workspaces/index.ts
+// src/widgets/Bar/Workspaces.ts
 import Gtk30 from "gi://Gtk?version=3.0";
-import {Box as Box4, Button as Button2} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box3, Button as Button2} from "resource:///com/github/Aylur/ags/widget.js";
 import {hyprland as hyprland4} from "resource:///com/github/Aylur/ags/service/hyprland.js";
 
 // src/services/hyprext.ts
@@ -3883,7 +3901,7 @@ class HyprExtensionsService extends Service {
 }
 var hyprext = new HyprExtensionsService;
 
-// src/widgets/Workspaces/index.ts
+// src/widgets/Bar/Workspaces.ts
 var setWorkspace = (num) => hyprland4.messageAsync(`dispatch workspace ${num}`);
 var ClientRenderer = ({ wsId }) => Widget.Box({
   halign: Gtk30.Align.CENTER,
@@ -3896,7 +3914,7 @@ var ClientRenderer = ({ wsId }) => Widget.Box({
 });
 var MonitorWorkspaces = (monitorId = 0) => {
   const firstWsId = config_default.workspace.perMonitor * monitorId + 1;
-  return Box4({
+  return Box3({
     className: "unset workspaces",
     children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i3) => Button2({
       css: "min-width: 30px;",
@@ -3910,7 +3928,7 @@ var MonitorWorkspaces = (monitorId = 0) => {
 };
 var Workspaces = () => {
   const createChildren = () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id));
-  return Box4({
+  return Box3({
     className: "unset workspace-box",
     spacing: 4,
     children: createChildren(),
@@ -3922,17 +3940,17 @@ var Workspaces = () => {
 };
 
 // src/widgets/hardware/all.ts
-import {Box as Box7} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box6} from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/widgets/hardware/battery.ts
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
 import {
 Button as Button3,
 CircularProgress,
-Label as Label3
+Label as Label2
 } from "resource:///com/github/Aylur/ags/widget.js";
 var BatteryWidget = () => {
-  const label = Label3({
+  const label = Label2({
     className: "battery-inner",
     label: "\uF240"
   });
@@ -3960,13 +3978,13 @@ var BatteryWidget = () => {
 // src/widgets/hardware/cpu.ts
 import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
 import {
-Box as Box5,
+Box as Box4,
 Button as Button4,
 CircularProgress as CircularProgress2,
-Label as Label4
+Label as Label3
 } from "resource:///com/github/Aylur/ags/widget.js";
 var CpuWidget = () => {
-  const label = Label4({
+  const label = Label3({
     className: "cpu-inner",
     label: "\uF2DB"
   });
@@ -3981,7 +3999,7 @@ var CpuWidget = () => {
     startAt: 0,
     rounded: false
   });
-  return Box5({
+  return Box4({
     className: "bar-hw-cpu-box"
   }).poll(1000, (box) => {
     execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
@@ -3996,13 +4014,13 @@ var CpuWidget = () => {
 // src/widgets/hardware/ram.ts
 import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
 import {
-Box as Box6,
+Box as Box5,
 Button as Button5,
 CircularProgress as CircularProgress3,
-Label as Label5
+Label as Label4
 } from "resource:///com/github/Aylur/ags/widget.js";
 var RamWidget = () => {
-  const label = Label5({
+  const label = Label4({
     className: "ram-inner",
     label: "\uF538"
   });
@@ -4017,7 +4035,7 @@ var RamWidget = () => {
     rounded: false,
     child: button
   });
-  return Box6({
+  return Box5({
     className: "bar-hw-ram-box"
   }).poll(30000, (box) => {
     execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
@@ -4030,7 +4048,7 @@ var RamWidget = () => {
 };
 
 // src/widgets/hardware/all.ts
-var HardwareBox = () => Box7({
+var HardwareBox = () => Box6({
   className: "hardware-box unset",
   children: [CpuWidget(), RamWidget(), BatteryWidget()]
 });
@@ -4038,26 +4056,26 @@ var showHardwareMenu = () => App.toggleWindow("hardware_menu");
 
 // src/widgets/menus/NotificationCenter.ts
 import {
-Box as Box9,
+Box as Box8,
 Button as Button7,
-Label as Label7,
+Label as Label6,
 Scrollable
 } from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/notifications/MenuNotification.ts
 import {lookUpIcon as lookUpIcon2} from "resource:///com/github/Aylur/ags/utils.js";
 import {
-Box as Box8,
+Box as Box7,
 Button as Button6,
 EventBox as EventBox2,
 Icon as Icon2,
-Label as Label6
+Label as Label5
 } from "resource:///com/github/Aylur/ags/widget.js";
 var { GLib: GLib2 } = imports.gi;
 var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
 var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
   if (image) {
-    return Box8({
+    return Box7({
       vpack: "start",
       hexpand: false,
       className: "notification-img",
@@ -4078,7 +4096,7 @@ var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
     icon = appIcon;
   if (lookUpIcon2(appEntry))
     icon = appEntry;
-  return Box8({
+  return Box7({
     vpack: "start",
     hexpand: false,
     css: `
@@ -4099,7 +4117,7 @@ var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
   });
 };
 var MenuNotification_default = (notification) => {
-  const bodyLabel = Label6({
+  const bodyLabel = Label5({
     css: `margin-top: 1rem;`,
     className: "notification-description",
     hexpand: true,
@@ -4113,17 +4131,17 @@ var MenuNotification_default = (notification) => {
   } catch (error) {
     bodyLabel.label = "...";
   }
-  const content = Box8({
+  const content = Box7({
     css: `min-width: 330px;`,
     children: [
       NotificationIcon2(notification),
-      Box8({
+      Box7({
         hexpand: true,
         vertical: true,
         children: [
-          Box8({
+          Box7({
             children: [
-              Label6({
+              Label5({
                 className: "notification-title",
                 css: margin,
                 xalign: 0,
@@ -4135,7 +4153,7 @@ var MenuNotification_default = (notification) => {
                 label: notification.summary,
                 useMarkup: notification.summary.startsWith("<")
               }),
-              Label6({
+              Label5({
                 className: "notification-time",
                 css: `${margin} margin-top: 0.5rem;`,
                 vpack: "start",
@@ -4156,14 +4174,14 @@ var MenuNotification_default = (notification) => {
       })
     ]
   });
-  const actionsbox = Box8({
+  const actionsbox = Box7({
     className: "notification-actions",
     children: notification.actions.map((action) => Button6({
       css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
       className: "action-button",
       onClicked: () => notification.invoke(action.id),
       hexpand: true,
-      child: Label6(action.label)
+      child: Label5(action.label)
     }))
   });
   const mainbox = EventBox2({
@@ -4171,7 +4189,7 @@ var MenuNotification_default = (notification) => {
     vexpand: false,
     onPrimaryClick: () => {
     },
-    child: Box8({
+    child: Box7({
       vertical: true,
       children: [
         content,
@@ -4235,7 +4253,7 @@ var Popup = ({
 // src/widgets/menus/NotificationCenter.ts
 var Notifications3 = await Service.import("notifications");
 var NotificationsBox = () => {
-  return Box9({
+  return Box8({
     className: "notification-menu-header",
     vertical: true,
     children: []
@@ -4244,20 +4262,20 @@ var NotificationsBox = () => {
     const array = Notifications3.notifications.reverse();
     for (let index = 0;index < array.length; index++) {
       const element = array[index];
-      const line = index !== array.length - 1 ? Box9({
+      const line = index !== array.length - 1 ? Box8({
         class_name: "horizontal-line"
       }) : undef;
       notificationList.push(MenuNotification_default(element), line);
     }
-    let noNotifications = Box9({
+    let noNotifications = Box8({
       vertical: true,
       className: "notification-this-is-all",
       children: [
-        Label7({
+        Label6({
           className: "no-notification-icon",
           label: "\uDB84\uDDE5"
         }),
-        Label7({
+        Label6({
           className: "no-notification-text",
           label: "There are no new notifications"
         })
@@ -4270,7 +4288,7 @@ var NotificationsBox = () => {
   });
 };
 var NotificationHeader = () => {
-  return Box9({
+  return Box8({
     className: "notification-header-box",
     spacing: 70,
     children: [
@@ -4281,7 +4299,7 @@ var NotificationHeader = () => {
           Notifications3.clear();
         }
       }),
-      Label7({
+      Label6({
         className: "notification-center-header-text",
         label: "Notification Center"
       }),
@@ -4310,7 +4328,7 @@ var NotificationCenter = () => Popup({
   margins: [30, 200],
   anchor: ["bottom", "right"],
   transition: "slide_up",
-  child: Box9({
+  child: Box8({
     className: "left-menu-box",
     vertical: true,
     children: [NotificationHeader(), notificationContainer]
@@ -4963,14 +4981,14 @@ class ThemeService extends Service2 {
   changeKvantumTheme(kvantumTheme) {
     execAsync3(["kvantummanager", "--set", kvantumTheme]).catch(print);
   }
-  showDesktopWidget(widget11) {
+  showDesktopWidget(widget10) {
     let oldTheme = themes_default[this.selectedTheme];
-    if (oldTheme.desktop_widget !== widget11 && oldTheme.desktop_widget !== null) {
+    if (oldTheme.desktop_widget !== widget10 && oldTheme.desktop_widget !== null) {
       this.hideWidget(oldTheme.desktop_widget);
     }
-    if (widget11 !== null) {
+    if (widget10 !== null) {
       timeout3(1000, () => {
-        this.showWidget(widget11);
+        this.showWidget(widget10);
       });
     }
   }
@@ -5229,9 +5247,9 @@ globalThis.mp = () => {
 
 // src/widgets/menus/SystemMenu.ts
 import {execAsync as execAsync4} from "resource:///com/github/Aylur/ags/utils.js";
-import {Box as Box10, Button as Button8, Label as Label8} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box9, Button as Button8, Label as Label7} from "resource:///com/github/Aylur/ags/widget.js";
 var Header = () => {
-  return Box10({
+  return Box9({
     className: "left-menu-header",
     css: `
             background-image: url("${settings_default.assets.wallpapers}/black-hole.png");
@@ -5253,18 +5271,18 @@ var ThemeButton = ({
         border-radius: 1rem;
     `
 }) => {
-  const _label = Label8({
+  const _label = Label7({
     className: `unset ${label_css}`,
     hpack: "start",
     label
   });
-  const _icon = Label8({
+  const _icon = Label7({
     className: `unset ${icon_css}`,
     css: `min-width: 1.5rem;`,
     label: icon,
     xalign: 0.5
   });
-  const box = Box10({
+  const box = Box9({
     className: "unset theme-btn-box",
     children: [_label, Widget.Box({ hexpand: true }), _icon]
   });
@@ -5385,12 +5403,12 @@ var ThemesButtonsRowOne = () => {
       })
     ]
   });
-  const row1 = Box10({
+  const row1 = Box9({
     homogeneous: true,
     children: [materialYouTheme, win20Theme],
     spacing: 20
   });
-  const row2 = Box10({
+  const row2 = Box9({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5398,7 +5416,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [siberianTheme, blackHoleTheme]
   });
-  const row3 = Box10({
+  const row3 = Box9({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5406,7 +5424,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [deerTheme, darkTheme]
   });
-  const row4 = Box10({
+  const row4 = Box9({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5414,7 +5432,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [newCatTheme, circlesTheme]
   });
-  const row5 = Box10({
+  const row5 = Box9({
     homogeneous: true,
     css: `
             margin-top: 1rem;
@@ -5422,7 +5440,7 @@ var ThemesButtonsRowOne = () => {
     spacing: 20,
     children: [colorTheme, unicatTheme]
   });
-  return Box10({
+  return Box9({
     className: "themes-box",
     vertical: true,
     children: [row1, row2, row3, row4, row5]
@@ -5438,7 +5456,7 @@ var PowerButtonsRow = () => {
                 border-radius: 1rem;
                 ${powerBtnMargin}
             `,
-    child: Label8({
+    child: Label7({
       label: "\uF011"
     }),
     onClicked: () => execAsync4("poweroff").catch(print)
@@ -5451,7 +5469,7 @@ var PowerButtonsRow = () => {
                 border-radius: 1rem;
                 ${powerBtnMargin}
             `,
-    child: Label8({
+    child: Label7({
       label: "\uF01E"
     }),
     onClicked: () => execAsync4("reboot").catch(print)
@@ -5463,15 +5481,15 @@ var PowerButtonsRow = () => {
                 min-height: 2rem;
                 border-radius: 1rem;
             `,
-    child: Label8({
+    child: Label7({
       label: "\uF08B"
     }),
     onClicked: () => execAsync4("loginctl kill-session self").catch(print)
   });
-  const row1 = Box10({
+  const row1 = Box9({
     children: [powerOff, reboot, logout]
   });
-  return Box10({
+  return Box9({
     className: "power-box unset",
     css: `
             margin-top:0rem;
@@ -5485,7 +5503,7 @@ var SystemMenu = () => Popup({
   anchor: ["bottom", "right"],
   transition: "slide_up",
   margins: [30, 6],
-  child: Box10({
+  child: Box9({
     className: "left-menu-box unset",
     vertical: true,
     children: [
@@ -5502,7 +5520,12 @@ var MenuButton = () => Button8({
   onClicked: () => App.toggleWindow("left_menu")
 });
 
-// src/widgets/Bar/KeyboardLayout.ts
+// src/widgets/Bar/index.ts
+import {
+Box as Box10,
+CenterBox,
+Window as Window2
+} from "resource:///com/github/Aylur/ags/widget.js";
 import Gtk from "gi://Gtk?version=3.0";
 
 // src/services/keyboard.ts
@@ -5546,8 +5569,8 @@ class KeyboardService extends Service {
   }
 }
 var keyboard_default = new KeyboardService;
-// src/widgets/Bar/KeyboardLayout.ts
-var KeyboardLayout2 = () => {
+// src/widgets/Bar/index.ts
+var KeyboardLayout = () => {
   return Widget.Button({
     className: "keyboardLayout",
     label: keyboard_default.bind("layout"),
@@ -5556,13 +5579,6 @@ var KeyboardLayout2 = () => {
     tooltipMarkup: keyboard_default.bind("kbname").as((name) => `Current keyboard: <span weight="bold">${name}</span>`)
   });
 };
-
-// src/widgets/Bar/index.ts
-import {
-Box as Box11,
-CenterBox,
-Window as Window2
-} from "resource:///com/github/Aylur/ags/widget.js";
 var Clock = () => Widget.Button({
   className: "clock small-shadow unset",
   label: Variable("", {
@@ -5570,28 +5586,12 @@ var Clock = () => Widget.Button({
   }).bind(),
   onClicked: () => App.toggleWindow("calendar-menu")
 });
-var DynamicWallpaper = () => Widget.Button({
-  className: "unset dynamic-wallpaper",
-  onClicked: () => {
-    ThemeService_default.toggleDynamicWallpaper();
-  }
-}).hook(ThemeService_default, (btn) => {
-  if (!ThemeService_default.isDynamicTheme) {
-    btn.visible = false;
-    return;
-  }
-  btn.visible = true;
-  if (ThemeService_default.dynamicWallpaperIsOn)
-    btn.label = "\uE413";
-  else
-    btn.label = "\uE3F4";
-});
-var Start = () => Box11({
+var Start = () => Box10({
   spacing: 8,
-  children: [Workspaces(), HardwareBox(), DynamicWallpaper()]
+  children: [Workspaces(), HardwareBox()]
 });
-var Center = () => Box11({});
-var End = () => Box11({
+var Center = () => Box10({});
+var End = () => Box10({
   hpack: "end",
   spacing: 8,
   children: [
@@ -5599,7 +5599,7 @@ var End = () => Box11({
     NetVolumeBox(),
     SysTrayBox(),
     Clock(),
-    KeyboardLayout2(),
+    KeyboardLayout(),
     MenuButton()
   ]
 });
@@ -5702,7 +5702,7 @@ var ShowWindow_default = (windowName, timeout4 = 1000) => {
 var OSD = () => {
   const progress = Variable(Audio2.speaker.volume);
   const type = Variable("volume");
-  const icon = Utils.derive([type, progress], (type2, progress2) => N3(type2).with("volume", () => getVolumeIcon(progress2)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
+  const icon = Utils.derive([type, progress], (type2) => N3(type2).with("volume", () => getVolumeIcon(Audio2.speaker)).with("br-screen", () => icons.brightness.screen).with("br-keyboard", () => icons.brightness.keyboard).exhaustive());
   const show = (value, osdType) => {
     progress.value = value;
     type.value = osdType;
@@ -5714,7 +5714,7 @@ var OSD = () => {
     margins: [0, 0, 140, 0],
     layer: "overlay",
     anchor: ["bottom"],
-    setup: (self) => self.hook(Audio2.speaker, () => show(Audio2.speaker.volume, "volume"), "notify::volume").hook(brightness_default, () => show(brightness_default.screen, "br-screen"), "notify::screen").hook(brightness_default, () => show(brightness_default.kbd, "br-keyboard"), "notify::kbd"),
+    setup: (self) => self.hook(Audio2.speaker, () => setTimeout(() => show(Audio2.speaker.volume, "volume"), 50), "notify::volume").hook(brightness_default, () => show(brightness_default.screen, "br-screen"), "notify::screen").hook(brightness_default, () => show(brightness_default.kbd, "br-keyboard"), "notify::kbd"),
     child: Widget.Box({
       className: "vol-osd shadow",
       css: "min-width: 140px",

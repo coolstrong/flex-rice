@@ -1,15 +1,12 @@
-export const usePressed = () => {
-    const isPressed = Variable(false);
+import { undef } from "@/utils/common";
 
+export const useUpdatableVar = <T>(
+    factory: () => T,
+    initial: T | undef = undef
+) => {
+    const variable = Variable(initial ?? factory());
     return {
-        isPressed,
-        events: {
-            onPrimaryClick: () => isPressed.setValue(true),
-            onPrimaryClickRelease: () => isPressed.setValue(false),
-        },
+        variable,
+        update: () => (variable.value = factory()),
     };
 };
-
-// export const useMemo = () => {
-
-// }

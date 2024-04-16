@@ -1,21 +1,32 @@
 import { NetVolumeBox } from "../NetVolume.js";
-import { SysTrayBox } from "../SystemTray.js";
-import { Workspaces } from "../Workspaces";
+import { SysTrayBox } from "./SystemTray.js";
+import { Workspaces } from "./Workspaces.ts";
 import { HardwareBox } from "../hardware/all.js";
 import { NotificationCenterButton } from "../menus/NotificationCenter.js";
 import { MenuButton } from "../menus/SystemMenu.js";
-
 import { hyprext } from "@/services/hyprext.ts";
-import { KeyboardLayout } from "@/widgets/Bar/KeyboardLayout.ts";
 import {
     Box,
     CenterBox,
     Window,
 } from "resource:///com/github/Aylur/ags/widget.js";
-import themeService from "../../services/ThemeService.js";
-
 import clsx from "clsx";
+import Gtk from "gi://Gtk?version=3.0";
+import keyboard from "@/services/keyboard.ts";
+
 import "./style.sass";
+
+export const KeyboardLayout = () => {
+    return Widget.Button({
+        className: "keyboardLayout",
+        label: keyboard.bind("layout"),
+        valign: Gtk.Align.CENTER,
+        onClicked: () => keyboard.nextLayout(),
+        tooltipMarkup: keyboard
+            .bind("kbname")
+            .as(name => `Current keyboard: <span weight="bold">${name}</span>`),
+    });
+};
 
 const Clock = () =>
     Widget.Button({
@@ -26,28 +37,11 @@ const Clock = () =>
         onClicked: () => App.toggleWindow("calendar-menu"),
     });
 
-const DynamicWallpaper = () =>
-    Widget.Button({
-        className: "unset dynamic-wallpaper",
-        onClicked: () => {
-            themeService.toggleDynamicWallpaper();
-        },
-    }).hook(themeService, btn => {
-        if (!themeService.isDynamicTheme) {
-            btn.visible = false;
-            return;
-        }
-
-        btn.visible = true;
-        if (themeService.dynamicWallpaperIsOn) btn.label = "";
-        else btn.label = "";
-    });
-
 // layout of the bar
 const Start = () =>
     Box({
         spacing: 8,
-        children: [Workspaces(), HardwareBox(), DynamicWallpaper()],
+        children: [Workspaces(), HardwareBox()],
     });
 
 const Center = () => Box({});

@@ -174,7 +174,7 @@ const iconResolvers: Array<(client: Client) => string | undef> = [
     c => Apps.list.find(app => app.match(c.class))?.icon_name,
 ];
 
-const ensureIconExist = (icon: string | undef) =>
+export const ensureIconExist = (icon: string | undef | null) =>
     icon && Utils.lookUpIcon(icon) ? icon : undef;
 
 export const windowIcon = (client: Client): string =>

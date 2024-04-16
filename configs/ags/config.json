@@ -2,13 +2,14 @@
     "popupCloseDelay": 700,
     "transitionDuration": 100,
     "systray": {
-        "ignore": []
+        "ignore": ["ulauncher"]
     },
     "workspace": {
         "ignore": [
             "wofi",
             "kitty-dropterm",
-            "org.kde.polkit-kde-authentication-agent-1"
+            "org.kde.polkit-kde-authentication-agent-1",
+            "ulauncher"
         ],
         "perMonitor": 4
     },

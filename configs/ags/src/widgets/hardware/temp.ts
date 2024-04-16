@@ -34,9 +34,10 @@ export const TempWidget = () => {
                 const temps = val.split("\n");
                 let total = 0;
                 for (let index = 0; index < temps.length; index++) {
-                    const element = temps[index]
-                        .replace("+", "")
-                        .replace("°C", "");
+                    const element = temps[index]!.replace("+", "").replace(
+                        "°C",
+                        ""
+                    );
                     total += parseInt(element);
                 }
                 total = total / temps.length;

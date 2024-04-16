@@ -11,12 +11,12 @@ export const OSD = () => {
     type OSDType = "volume" | "br-screen" | "br-keyboard";
     const type = Variable<OSDType>("volume");
 
-    const icon = Utils.derive([type, progress], (type, progress) =>
+    const icon = Utils.derive([type, progress], type =>
         match(type)
-            .with("volume", () => getVolumeIcon(progress))
+            .with("volume", () => getVolumeIcon(Audio.speaker))
             .with("br-screen", () => icons.brightness.screen)
             .with("br-keyboard", () => icons.brightness.keyboard)
-            .exhaustive(),
+            .exhaustive()
     );
 
     const show = (value: number, osdType: OSDType) => {
@@ -36,18 +36,22 @@ export const OSD = () => {
             self
                 .hook(
                     Audio.speaker,
-                    () => show(Audio.speaker.volume, "volume"),
-                    "notify::volume",
+                    () =>
+                        setTimeout(
+                            () => show(Audio.speaker.volume, "volume"),
+                            50
+                        ),
+                    "notify::volume"
                 )
                 .hook(
                     brightness,
                     () => show(brightness.screen, "br-screen"),
-                    "notify::screen",
+                    "notify::screen"
                 )
                 .hook(
                     brightness,
                     () => show(brightness.kbd, "br-keyboard"),
-                    "notify::kbd",
+                    "notify::kbd"
                 ),
 
         child: Widget.Box({
@@ -69,11 +73,11 @@ export const OSD = () => {
                         match(type.value)
                             .with(
                                 "volume",
-                                () => (Audio.speaker.volume = value),
+                                () => (Audio.speaker.volume = value)
                             )
                             .with(
                                 "br-screen",
-                                () => (brightness.screen = value),
+                                () => (brightness.screen = value)
                             )
                             .with("br-keyboard", () => (brightness.kbd = value))
                             .exhaustive(),
