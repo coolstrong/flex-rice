@@ -6,6 +6,7 @@ import Gtk30 from "gi://Gtk?version=3.0";
 import { Box, Button } from "resource:///com/github/Aylur/ags/widget.js";
 import { hyprland } from "resource:///com/github/Aylur/ags/service/hyprland.js";
 import { hyprext } from "@/services/hyprext.ts";
+import { setupRebuild } from "@/lib/hooks.ts";
 
 const setWorkspace = (num: number) =>
     hyprland.messageAsync(`dispatch workspace ${num}`);
@@ -24,8 +25,8 @@ const ClientRenderer = ({ wsId }: { wsId: number }) =>
                           icon: windowIcon(client),
                           css: "font-size: 12px;",
                       })
-                    : undef
-            )
+                    : undef,
+            ),
         ),
     });
 
@@ -36,7 +37,7 @@ const MonitorWorkspaces = (monitorId = 0) => {
         className: "unset workspaces",
         children: A.range(
             firstWsId,
-            firstWsId + config.workspace.perMonitor - 1
+            firstWsId + config.workspace.perMonitor - 1,
         ).map(i =>
             Button({
                 css: "min-width: 30px;",
@@ -47,31 +48,41 @@ const MonitorWorkspaces = (monitorId = 0) => {
                 child: ClientRenderer({
                     wsId: i,
                 }),
-            })
+            }),
         ),
     });
 };
 
-//todo extract rebuilding on signal logic
 export const Workspaces = () => {
-    const createChildren = () =>
-        hyprland.monitors.map(m => MonitorWorkspaces(m.id));
-
     return Box({
         className: "unset workspace-box",
-
         spacing: 4,
-        children: createChildren(),
-
-        setup: self =>
-            self.hook(
-                hyprext,
-                //when number of monitors changed - rebuild widget
-                () => {
-                    self.children.forEach(c => c.destroy());
-                    self.children = createChildren();
-                },
-                "monitors-changed"
-            ),
+        setup: setupRebuild({
+            builder: () => hyprland.monitors.map(m => MonitorWorkspaces(m.id)),
+            service: hyprext,
+            signal: "monitors-changed",
+        }),
     });
 };
+// export const Workspaces = () => {
+//     const createChildren = () =>
+//         hyprland.monitors.map(m => MonitorWorkspaces(m.id));
+//
+//     return Box({
+//         className: "unset workspace-box",
+//
+//         spacing: 4,
+//         children: createChildren(),
+//
+//         setup: self =>
+//             self.hook(
+//                 hyprext,
+//                 //when number of monitors changed - rebuild widget
+//                 () => {
+//                     self.children.forEach(c => c.destroy());
+//                     self.children = createChildren();
+//                 },
+//                 "monitors-changed"
+//             ),
+//     });
+// };

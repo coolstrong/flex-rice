@@ -31,6 +31,14 @@ export const BatteryWidget = () => {
             label.class_name = "battery-inner";
         }
         batteryProgress.value = Battery.percent / 100;
+
+        if (!Battery.charging && Battery.percent <= 10)
+            Utils.notify(
+                "Battery charge is below 10%",
+                "Battery charge reached critical level. Please put laptop on charge.",
+                "battery-010",
+            );
+
         label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
     });
 };

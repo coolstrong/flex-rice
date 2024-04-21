@@ -15,6 +15,7 @@ import Gtk from "gi://Gtk?version=3.0";
 import keyboard from "@/services/keyboard.ts";
 
 import "./style.sass";
+import { utcClockVar } from "@/services/clock.ts";
 
 export const KeyboardLayout = () => {
     return Widget.Button({
@@ -28,12 +29,14 @@ export const KeyboardLayout = () => {
     });
 };
 
+// export const utcClockVar = Variable("", {
+//     poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]],
+// });
+
 const Clock = () =>
     Widget.Button({
         className: "clock small-shadow unset",
-        label: Variable("", {
-            poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]],
-        }).bind(),
+        label: utcClockVar.bind(),
         onClicked: () => App.toggleWindow("calendar-menu"),
     });
 

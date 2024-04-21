@@ -30,7 +30,14 @@ const SysTrayItem = (item: TrayItem) =>
                     ? iconSubstites[item.title]
                     : item.bind("icon"),
         }),
-        tooltip_markup: item.bind("tooltip_markup"),
+        tooltip_markup: item
+            .bind("tooltip_markup")
+            .as(
+                tm =>
+                    `<span weight="bold">${item.title}</span>${
+                        tm.trim() === "" ? "" : "\n" + tm
+                    }`,
+            ),
         onPrimaryClick: (_, event) => item.activate(event),
         onSecondaryClick: (_, event) => item.openMenu(event),
     });
@@ -38,27 +45,17 @@ const SysTrayItem = (item: TrayItem) =>
 export const SysTrayBox = () =>
     Widget.Box({
         class_name: "systray unset",
-        children: systemTray.bind("items").as(items =>
-            items
-                .filter(
-                    ({ status, title }) =>
-                        status !== "Passive" &&
-                        !(config.systray.ignore as string[]).includes(title)
-                )
-                .map(
-                    flow(
-                        F.tap(item =>
-                            print(
-                                JSON.stringify({
-                                    title: item.title,
-                                    icon: item.icon,
-                                    isMenu: item.is_menu,
-                                    status: item.status,
-                                })
-                            )
-                        ),
-                        SysTrayItem
+        children: systemTray
+            .bind("items")
+            .as(items =>
+                items
+                    .filter(
+                        ({ status, title }) =>
+                            status !== "Passive" &&
+                            !(config.systray.ignore as string[]).includes(
+                                title,
+                            ),
                     )
-                )
-        ),
+                    .map(SysTrayItem),
+            ),
     });

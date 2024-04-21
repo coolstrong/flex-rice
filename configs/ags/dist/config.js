@@ -3325,6 +3325,17 @@ var useUpdatableVar = (factory, initial = undef) => {
     update: () => variable2.value = factory()
   };
 };
+var useRebuild = ({
+  builder,
+  service,
+  signal
+}) => (self) => {
+  self.children = builder();
+  self.hook(service, () => {
+    self.children.forEach((c) => c.destroy());
+    self.children = builder();
+  }, signal);
+};
 
 // src/lib/icons.ts
 var icons = {
@@ -3858,18 +3869,13 @@ var SysTrayItem = (item) => PanelButton({
   content: Widget.Icon({
     icon: item.title in iconSubstites ? iconSubstites[item.title] : item.bind("icon")
   }),
-  tooltip_markup: item.bind("tooltip_markup"),
+  tooltip_markup: item.bind("tooltip_markup").as((tm) => `<span weight="bold">${item.title}</span>${tm.trim() === "" ? "" : "\n" + tm}`),
   onPrimaryClick: (_3, event) => item.activate(event),
   onSecondaryClick: (_3, event) => item.openMenu(event)
 });
 var SysTrayBox = () => Widget.Box({
   class_name: "systray unset",
-  children: systemTray.bind("items").as((items) => items.filter(({ status, title }) => status !== "Passive" && !config_default.systray.ignore.includes(title)).map(flow(l.tap((item) => print(JSON.stringify({
-    title: item.title,
-    icon: item.icon,
-    isMenu: item.is_menu,
-    status: item.status
-  }))), SysTrayItem)))
+  children: systemTray.bind("items").as((items) => items.filter(({ status, title }) => status !== "Passive" && !config_default.systray.ignore.includes(title)).map(SysTrayItem))
 });
 
 // src/widgets/Bar/Workspaces.ts
@@ -3927,15 +3933,14 @@ var MonitorWorkspaces = (monitorId = 0) => {
   });
 };
 var Workspaces = () => {
-  const createChildren = () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id));
   return Box3({
     className: "unset workspace-box",
     spacing: 4,
-    children: createChildren(),
-    setup: (self) => self.hook(hyprext, () => {
-      self.children.forEach((c2) => c2.destroy());
-      self.children = createChildren();
-    }, "monitors-changed")
+    setup: useRebuild({
+      builder: () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id)),
+      service: hyprext,
+      signal: "monitors-changed"
+    })
   });
 };
 
@@ -5569,6 +5574,11 @@ class KeyboardService extends Service {
   }
 }
 var keyboard_default = new KeyboardService;
+// src/services/clock.ts
+var utcClockVar = Variable("", {
+  poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]]
+});
+
 // src/widgets/Bar/index.ts
 var KeyboardLayout = () => {
   return Widget.Button({
@@ -5581,9 +5591,7 @@ var KeyboardLayout = () => {
 };
 var Clock = () => Widget.Button({
   className: "clock small-shadow unset",
-  label: Variable("", {
-    poll: [1000, ["date", "+%Y-%m-%d | %H:%M:%S"]]
-  }).bind(),
+  label: utcClockVar.bind(),
   onClicked: () => App.toggleWindow("calendar-menu")
 });
 var Start = () => Box10({
@@ -5736,7 +5744,6 @@ var OSD = () => {
     })
   });
 };
-
 // src/widgets/menus/CalendarMenu.ts
 var CalendarMenu = () => {
   const date = Variable(new Date);
@@ -5746,14 +5753,22 @@ var CalendarMenu = () => {
     name: "calendar-menu",
     margins: [40, 50],
     child: Widget.Box({
+      vertical: true,
+      spacing: 6,
       className: "menu calendar-menu",
-      child: Widget.Calendar({
-        expand: true,
-        className: "calendar",
-        year: date.bind().as((d2) => d2.getFullYear()),
-        month: date.bind().as((d2) => d2.getMonth()),
-        day: date.bind().as((d2) => d2.getDate())
-      })
+      children: [
+        Widget.Label({
+          className: "calendar-menu__clock",
+          label: utcClockVar.bind()
+        }),
+        Widget.Calendar({
+          expand: true,
+          className: "calendar",
+          year: date.bind().as((d2) => d2.getFullYear()),
+          month: date.bind().as((d2) => d2.getMonth()),
+          day: date.bind().as((d2) => d2.getDate())
+        })
+      ]
     }),
     onOpen: () => {
       const newDate = new Date;
