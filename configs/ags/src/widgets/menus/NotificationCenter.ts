@@ -163,3 +163,6 @@ export const NotificationCenterButton = () =>
             self.label = `${Notifications.notifications.length} `;
         }
     });
+
+globalThis.toggleDoNotDisturb = () => (Notifications.dnd = !Notifications.dnd);
+globalThis.clearNotifications = () => Notifications.Clear();

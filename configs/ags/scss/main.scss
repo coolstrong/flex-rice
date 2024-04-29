@@ -275,7 +275,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
 }
 
 @keyframes colorChange {
-    0% {
+    20% {
         color: $battery-color;
     }
 
@@ -283,7 +283,7 @@ $top-bar-widget-margins: $bar-top-margin + 0.2rem;
         color: $battery-background;
     }
 
-    100% {
+    80% {
         color: $battery-color;
     }
 }

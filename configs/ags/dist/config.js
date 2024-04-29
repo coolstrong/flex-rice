@@ -3325,7 +3325,7 @@ var useUpdatableVar = (factory, initial = undef) => {
     update: () => variable2.value = factory()
   };
 };
-var useRebuild = ({
+var setupRebuild = ({
   builder,
   service,
   signal
@@ -3336,6 +3336,10 @@ var useRebuild = ({
     self.children = builder();
   }, signal);
 };
+
+// /home/deni/dev/flex-rice/configs/ags/@types/@girs/glib-2.0/glib-2.0.js
+import GLib2 from "gi://GLib?version=2.0";
+var glib_2_0_default = GLib2;
 
 // src/lib/icons.ts
 var icons = {
@@ -3480,7 +3484,6 @@ var icons = {
 var Apps = await Service.import("applications");
 var directClassMatch = {
   "code-url-handler": "visual-studio-code",
-  Notion: "notion",
   "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
   "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist"
 };
@@ -3488,9 +3491,9 @@ var iconResolvers = [
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify" : undef,
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify-launcher" : undef,
   (c) => directClassMatch[c.class],
-  (c) => Apps.list.find((app2) => app2.match(c.class))?.icon_name
+  (c) => Apps.list.find((app2) => app2.match(c.class) || app2.wm_class === c.class)?.icon_name
 ];
-var ensureIconExist = (icon) => icon && Utils.lookUpIcon(icon) ? icon : undef;
+var ensureIconExist = (icon) => icon && (Utils.lookUpIcon(icon) || glib_2_0_default.file_test(icon, glib_2_0_default.FileTest.EXISTS)) ? icon : undef;
 var windowIcon = (client) => iconResolvers.reduce((acc, resolver) => acc ?? ensureIconExist(resolver(client)), undef) ?? icons.fallback.executable;
 
 // node_modules/ts-pattern/dist/index.js
@@ -3902,6 +3905,8 @@ class HyprExtensionsService extends Service {
   }
   #handleEvent = (_3, ...args) => N3(args).with([_2.union("monitoraddedv2", "monitorremoved"), ..._2.array(_2.any)], () => setTimeout(this.#onMonitorsChanged, 500));
   #onMonitorsChanged = async () => {
+    if (hyprland2.monitors.length === 0)
+      setTimeout(() => Utils.execAsync("~/scripts/monitsetup"), 400);
     this.emit("monitors-changed");
   };
 }
@@ -3936,7 +3941,7 @@ var Workspaces = () => {
   return Box3({
     className: "unset workspace-box",
     spacing: 4,
-    setup: useRebuild({
+    setup: setupRebuild({
       builder: () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id)),
       service: hyprext,
       signal: "monitors-changed"
@@ -3948,57 +3953,44 @@ var Workspaces = () => {
 import {Box as Box6} from "resource:///com/github/Aylur/ags/widget.js";
 
 // src/widgets/hardware/battery.ts
-import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
+import battery2 from "resource:///com/github/Aylur/ags/service/battery.js";
+var BatteryWidget = () => Widget.Box({
+  spacing: 2,
+  children: [
+    Widget.Icon({
+      className: "BatteryWidget__icon",
+      icon: battery2.bind("icon_name")
+    }),
+    Widget.Label({
+      className: battery2.bind("charging").as((charging) => clsx_default("BatteryWidget__label", charging && "BatteryWidget__label--charging")),
+      label: battery2.bind("percent").as((p2) => p2.toString())
+    })
+  ],
+  tooltip_markup: battery2.bind("percent").as((p2) => `<span weight='bold' foreground='#FF8580'>Battery percentage (${p2}%)</span>`)
+}).hook(battery2, () => {
+  if (!battery2.charging && battery2.percent <= 10)
+    Utils.notify("Battery charge is below 10%", "Battery charge reached critical level. Please put laptop on charge.", "battery-010");
+});
+
+// src/widgets/hardware/cpu.ts
+import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
 import {
+Box as Box4,
 Button as Button3,
 CircularProgress,
 Label as Label2
 } from "resource:///com/github/Aylur/ags/widget.js";
-var BatteryWidget = () => {
+var CpuWidget = () => {
   const label = Label2({
-    className: "battery-inner",
-    label: "\uF240"
+    className: "cpu-inner",
+    label: "\uF2DB"
   });
   const button = Button3({
     className: "unset no-hover",
     child: label,
     onClicked: () => showHardwareMenu()
   });
-  return CircularProgress({
-    className: "battery",
-    child: button,
-    startAt: 0,
-    rounded: false
-  }).hook(Battery, (batteryProgress) => {
-    if (Battery.charging) {
-      label.class_name = "battery-inner-charging";
-    } else {
-      label.class_name = "battery-inner";
-    }
-    batteryProgress.value = Battery.percent / 100;
-    label.tooltipMarkup = `<span weight='bold' foreground='#FF8580'>Battery percentage (${Battery.percent}%)</span>`;
-  });
-};
-
-// src/widgets/hardware/cpu.ts
-import {execAsync} from "resource:///com/github/Aylur/ags/utils.js";
-import {
-Box as Box4,
-Button as Button4,
-CircularProgress as CircularProgress2,
-Label as Label3
-} from "resource:///com/github/Aylur/ags/widget.js";
-var CpuWidget = () => {
-  const label = Label3({
-    className: "cpu-inner",
-    label: "\uF2DB"
-  });
-  const button = Button4({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
-  });
-  const progress = CircularProgress2({
+  const progress = CircularProgress({
     className: "cpu",
     child: button,
     startAt: 0,
@@ -4006,7 +3998,7 @@ var CpuWidget = () => {
   });
   return Box4({
     className: "bar-hw-cpu-box"
-  }).poll(1000, (box) => {
+  }).poll(5000, (box) => {
     execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
       progress.value = Number(val) / 100;
       label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
@@ -4020,38 +4012,42 @@ var CpuWidget = () => {
 import {execAsync as execAsync2} from "resource:///com/github/Aylur/ags/utils.js";
 import {
 Box as Box5,
-Button as Button5,
-CircularProgress as CircularProgress3,
-Label as Label4
+Button as Button4,
+CircularProgress as CircularProgress2,
+Label as Label3
 } from "resource:///com/github/Aylur/ags/widget.js";
 var RamWidget = () => {
-  const label = Label4({
+  const label = Label3({
     className: "ram-inner",
     label: "\uF538"
   });
-  const button = Button5({
-    className: "unset no-hover",
-    child: label,
-    onClicked: () => showHardwareMenu()
+  const values = Label3({
+    className: "RamWidget__values",
+    label: ""
   });
-  const progress = CircularProgress3({
+  const progress = CircularProgress2({
     className: "ram",
     startAt: 0,
     rounded: false,
-    child: button
+    child: Button4({
+      className: "unset no-hover",
+      child: label,
+      onClicked: () => showHardwareMenu()
+    })
   });
   return Box5({
-    className: "bar-hw-ram-box"
-  }).poll(30000, (box) => {
+    className: "bar-hw-ram-box",
+    spacing: 3,
+    children: [progress, values]
+  }).poll(5000, (box) => {
     execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
       progress.value = Number(val) / 100;
       label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
+      values.label = val.toString();
     }).catch(print);
-    box.children = [progress];
     box.show_all();
   });
 };
-
 // src/widgets/hardware/all.ts
 var HardwareBox = () => Box6({
   className: "hardware-box unset",
@@ -4062,8 +4058,8 @@ var showHardwareMenu = () => App.toggleWindow("hardware_menu");
 // src/widgets/menus/NotificationCenter.ts
 import {
 Box as Box8,
-Button as Button7,
-Label as Label6,
+Button as Button6,
+Label as Label5,
 Scrollable
 } from "resource:///com/github/Aylur/ags/widget.js";
 
@@ -4071,12 +4067,12 @@ Scrollable
 import {lookUpIcon as lookUpIcon2} from "resource:///com/github/Aylur/ags/utils.js";
 import {
 Box as Box7,
-Button as Button6,
+Button as Button5,
 EventBox as EventBox2,
 Icon as Icon2,
-Label as Label5
+Label as Label4
 } from "resource:///com/github/Aylur/ags/widget.js";
-var { GLib: GLib2 } = imports.gi;
+var { GLib: GLib3 } = imports.gi;
 var margin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
 var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
   if (image) {
@@ -4122,7 +4118,7 @@ var NotificationIcon2 = ({ appEntry, appIcon, image }) => {
   });
 };
 var MenuNotification_default = (notification) => {
-  const bodyLabel = Label5({
+  const bodyLabel = Label4({
     css: `margin-top: 1rem;`,
     className: "notification-description",
     hexpand: true,
@@ -4146,7 +4142,7 @@ var MenuNotification_default = (notification) => {
         children: [
           Box7({
             children: [
-              Label5({
+              Label4({
                 className: "notification-title",
                 css: margin,
                 xalign: 0,
@@ -4158,13 +4154,13 @@ var MenuNotification_default = (notification) => {
                 label: notification.summary,
                 useMarkup: notification.summary.startsWith("<")
               }),
-              Label5({
+              Label4({
                 className: "notification-time",
                 css: `${margin} margin-top: 0.5rem;`,
                 vpack: "start",
-                label: GLib2.DateTime.new_from_unix_local(notification.time).format("%H:%M")
+                label: GLib3.DateTime.new_from_unix_local(notification.time).format("%H:%M")
               }),
-              Button6({
+              Button5({
                 className: "notification-close-button",
                 vpack: "start",
                 child: Icon2("window-close-symbolic"),
@@ -4181,12 +4177,12 @@ var MenuNotification_default = (notification) => {
   });
   const actionsbox = Box7({
     className: "notification-actions",
-    children: notification.actions.map((action) => Button6({
+    children: notification.actions.map((action) => Button5({
       css: `margin-bottom: 0.5rem; margin-top: 1rem; margin-left: 0.5rem; margin-right: 0.5rem`,
       className: "action-button",
       onClicked: () => notification.invoke(action.id),
       hexpand: true,
-      child: Label5(action.label)
+      child: Label4(action.label)
     }))
   });
   const mainbox = EventBox2({
@@ -4276,11 +4272,11 @@ var NotificationsBox = () => {
       vertical: true,
       className: "notification-this-is-all",
       children: [
-        Label6({
+        Label5({
           className: "no-notification-icon",
           label: "\uDB84\uDDE5"
         }),
-        Label6({
+        Label5({
           className: "no-notification-text",
           label: "There are no new notifications"
         })
@@ -4297,18 +4293,18 @@ var NotificationHeader = () => {
     className: "notification-header-box",
     spacing: 70,
     children: [
-      Button7({
+      Button6({
         className: "unset notification-center-header-clear",
         label: "\uEA81",
         onClicked: () => {
           Notifications3.clear();
         }
       }),
-      Label6({
+      Label5({
         className: "notification-center-header-text",
         label: "Notification Center"
       }),
-      Button7({
+      Button6({
         className: "unset notification-center-header-mute",
         label: "\uDB80\uDC9A",
         onClicked: () => Notifications3.dnd = !Notifications3.dnd
@@ -4339,7 +4335,7 @@ var NotificationCenter = () => Popup({
     children: [NotificationHeader(), notificationContainer]
   })
 });
-var NotificationCenterButton = () => Button7({
+var NotificationCenterButton = () => Button6({
   className: "notification-center-button unset",
   label: "\uF0F3",
   onClicked: () => App.toggleWindow("notification_center"),
@@ -4353,6 +4349,8 @@ var NotificationCenterButton = () => Button7({
     self.label = `${Notifications3.notifications.length} \uEB9A`;
   }
 });
+globalThis.toggleDoNotDisturb = () => Notifications3.dnd = !Notifications3.dnd;
+globalThis.clearNotifications = () => Notifications3.Clear();
 
 // src/theme/themes.js
 var WALLPAPER_PATH = settings_default.assets.wallpapers;
@@ -4986,14 +4984,14 @@ class ThemeService extends Service2 {
   changeKvantumTheme(kvantumTheme) {
     execAsync3(["kvantummanager", "--set", kvantumTheme]).catch(print);
   }
-  showDesktopWidget(widget10) {
+  showDesktopWidget(widget9) {
     let oldTheme = themes_default[this.selectedTheme];
-    if (oldTheme.desktop_widget !== widget10 && oldTheme.desktop_widget !== null) {
+    if (oldTheme.desktop_widget !== widget9 && oldTheme.desktop_widget !== null) {
       this.hideWidget(oldTheme.desktop_widget);
     }
-    if (widget10 !== null) {
+    if (widget9 !== null) {
       timeout3(1000, () => {
-        this.showWidget(widget10);
+        this.showWidget(widget9);
       });
     }
   }
@@ -5252,7 +5250,7 @@ globalThis.mp = () => {
 
 // src/widgets/menus/SystemMenu.ts
 import {execAsync as execAsync4} from "resource:///com/github/Aylur/ags/utils.js";
-import {Box as Box9, Button as Button8, Label as Label7} from "resource:///com/github/Aylur/ags/widget.js";
+import {Box as Box9, Button as Button7, Label as Label6} from "resource:///com/github/Aylur/ags/widget.js";
 var Header = () => {
   return Box9({
     className: "left-menu-header",
@@ -5276,12 +5274,12 @@ var ThemeButton = ({
         border-radius: 1rem;
     `
 }) => {
-  const _label = Label7({
+  const _label = Label6({
     className: `unset ${label_css}`,
     hpack: "start",
     label
   });
-  const _icon = Label7({
+  const _icon = Label6({
     className: `unset ${icon_css}`,
     css: `min-width: 1.5rem;`,
     label: icon,
@@ -5291,7 +5289,7 @@ var ThemeButton = ({
     className: "unset theme-btn-box",
     children: [_label, Widget.Box({ hexpand: true }), _icon]
   });
-  const button = Button8({
+  const button = Button7({
     css,
     child: box,
     onClicked: () => ThemeService_default.changeTheme(theme)
@@ -5453,7 +5451,7 @@ var ThemesButtonsRowOne = () => {
 };
 var PowerButtonsRow = () => {
   const powerBtnMargin = local === "RTL" ? "margin-left: 1rem;" : "margin-right: 1rem;";
-  const powerOff = Button8({
+  const powerOff = Button7({
     className: "theme-btn",
     css: `
                 min-width: 5rem;
@@ -5461,12 +5459,12 @@ var PowerButtonsRow = () => {
                 border-radius: 1rem;
                 ${powerBtnMargin}
             `,
-    child: Label7({
+    child: Label6({
       label: "\uF011"
     }),
     onClicked: () => execAsync4("poweroff").catch(print)
   });
-  const reboot = Button8({
+  const reboot = Button7({
     className: "theme-btn",
     css: `
                 min-width: 5rem;
@@ -5474,19 +5472,19 @@ var PowerButtonsRow = () => {
                 border-radius: 1rem;
                 ${powerBtnMargin}
             `,
-    child: Label7({
+    child: Label6({
       label: "\uF01E"
     }),
     onClicked: () => execAsync4("reboot").catch(print)
   });
-  const logout = Button8({
+  const logout = Button7({
     className: "theme-btn",
     css: `
                 min-width: 5rem;
                 min-height: 2rem;
                 border-radius: 1rem;
             `,
-    child: Label7({
+    child: Label6({
       label: "\uF08B"
     }),
     onClicked: () => execAsync4("loginctl kill-session self").catch(print)
@@ -5519,7 +5517,7 @@ var SystemMenu = () => Popup({
     ]
   })
 });
-var MenuButton = () => Button8({
+var MenuButton = () => Button7({
   className: "menu-button unset",
   label: "\uF043",
   onClicked: () => App.toggleWindow("left_menu")
@@ -5780,7 +5778,7 @@ var CalendarMenu = () => {
 
 // src/widgets/menus/HardwareMenu.ts
 import Gtk302 from "gi://Gtk";
-var Battery2 = await Service.import("battery");
+var Battery = await Service.import("battery");
 var menuIsOpen = null;
 var cpuIsInitialized = false;
 var ramIsInitialized = false;
@@ -5828,11 +5826,11 @@ var batteryProgress = Widget.CircularProgress({
   }),
   startAt: 0,
   rounded: false
-}).hook(Battery2, (self) => {
-  const percentage = Battery2.percent;
+}).hook(Battery, (self) => {
+  const percentage = Battery.percent;
   self.value = percentage / 100;
   var label = "";
-  if (Battery2.charging) {
+  if (Battery.charging) {
     if (percentage <= 55) {
       label = "\uDB84\uDEA4";
     } else if (percentage <= 70) {
@@ -5975,7 +5973,7 @@ var tablesBox = () => {
   let batteryTable = hardwareUsageTable({
     scriptPath: "",
     deviceName: batDeviceName
-  }).hook(Battery2, (self) => {
+  }).hook(Battery, (self) => {
     Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/hardware_info.sh`).then((val) => {
       let data = JSON.parse(val);
       self.children = [
@@ -5988,7 +5986,7 @@ var tablesBox = () => {
         }),
         tableRow({
           appName: "The ratio  ",
-          percentage: `${Battery2.percent}%`,
+          percentage: `${Battery.percent}%`,
           deviceName: batDeviceName
         }),
         tableRow({
@@ -6003,7 +6001,7 @@ var tablesBox = () => {
         }),
         tableRow({
           appName: local === "RTL" ? "energy  \uEA16" : "Energy  \uEA16",
-          percentage: `${Battery2.energy}`,
+          percentage: `${Battery.energy}`,
           deviceName: batDeviceName
         }),
         tableRow({

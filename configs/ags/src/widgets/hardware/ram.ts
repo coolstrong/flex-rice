@@ -13,10 +13,9 @@ export const RamWidget = () => {
         label: "",
     });
 
-    const button = Button({
-        className: "unset no-hover",
-        child: label,
-        onClicked: () => showHardwareMenu(),
+    const values = Label({
+        className: "RamWidget__values",
+        label: "",
     });
 
     const progress = CircularProgress({
@@ -24,20 +23,27 @@ export const RamWidget = () => {
         startAt: 0,
         rounded: false,
         // inverted: true,
-        child: button,
+        child: Button({
+            className: "unset no-hover",
+            child: label,
+            onClicked: () => showHardwareMenu(),
+        }),
     });
 
     return Box({
         className: "bar-hw-ram-box",
-    }).poll(30000, box => {
+        spacing: 3,
+        children: [progress, values],
+    }).poll(5000, box => {
         execAsync(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`)
             .then(val => {
                 progress.value = Number(val) / 100;
                 label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
+                values.label = val.toString();
             })
             .catch(print);
 
-        box.children = [progress];
+        // box.children = [progress];
         box.show_all();
     });
 };

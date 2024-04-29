@@ -1,21 +1,8 @@
 //copied from https://github.com/Aylur/dotfiles/blob/main/ags/lib/icons.ts
 import { undef } from "@/utils/common";
 import type { Client } from "@/types/service/hyprland";
+import GLib from "@/types/@girs/glib-2.0";
 
-export const substitutes = {
-    "transmission-gtk": "transmission",
-    "blueberry.py": "blueberry",
-    Caprine: "facebook-messenger",
-    "com.raggesilver.BlackBox-symbolic": "terminal-symbolic",
-    "org.wezfurlong.wezterm-symbolic": "terminal-symbolic",
-    "audio-headset-bluetooth": "audio-headphones-symbolic",
-    "audio-card-analog-usb": "audio-speakers-symbolic",
-    "audio-card-analog-pci": "audio-card-symbolic",
-    "preferences-system": "emblem-system-symbolic",
-    "com.github.Aylur.ags-symbolic": "controls-symbolic",
-    "com.github.Aylur.ags": "controls-symbolic",
-    "code-url-handler": "code",
-};
 export const icons = {
     missing: "image-missing-symbolic",
     fallback: {
@@ -160,8 +147,6 @@ const Apps = await Service.import("applications");
 
 const directClassMatch = {
     "code-url-handler": "visual-studio-code",
-    Notion: "notion",
-    //whatsapp PWA
     "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
     "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist",
 };
@@ -169,16 +154,20 @@ const directClassMatch = {
 const iconResolvers: Array<(client: Client) => string | undef> = [
     c => (c.initialTitle.startsWith("Spotify") ? "spotify" : undef),
     c => (c.initialTitle.startsWith("Spotify") ? "spotify-launcher" : undef),
-
     c => directClassMatch[c.class],
-    c => Apps.list.find(app => app.match(c.class))?.icon_name,
+    c =>
+        Apps.list.find(app => app.match(c.class) || app.wm_class === c.class)
+            ?.icon_name,
 ];
 
 export const ensureIconExist = (icon: string | undef | null) =>
-    icon && Utils.lookUpIcon(icon) ? icon : undef;
+    icon &&
+    (Utils.lookUpIcon(icon) || GLib.file_test(icon, GLib.FileTest.EXISTS))
+        ? icon
+        : undef;
 
 export const windowIcon = (client: Client): string =>
     iconResolvers.reduce(
         (acc, resolver) => acc ?? ensureIconExist(resolver(client)),
-        undef as string | undef
+        undef as string | undef,
     ) ?? icons.fallback.executable;

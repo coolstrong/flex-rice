@@ -29,7 +29,7 @@ export const CpuWidget = () => {
 
     return Box({
         className: "bar-hw-cpu-box",
-    }).poll(1000, box => {
+    }).poll(5000, box => {
         execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`)
             .then(val => {
                 progress.value = Number(val) / 100;

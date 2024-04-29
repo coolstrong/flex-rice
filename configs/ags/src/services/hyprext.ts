@@ -13,7 +13,7 @@ class HyprExtensionsService extends Service {
             },
             {
                 fullscreen: ["boolean", "r"],
-            },
+            }
         );
     }
 
@@ -31,10 +31,13 @@ class HyprExtensionsService extends Service {
             [P.union("monitoraddedv2", "monitorremoved"), ...P.array(P.any)],
             //when sending without timeout hyprland.monitors sometimes
             //dont have time to update
-            () => setTimeout(this.#onMonitorsChanged, 500),
+            () => setTimeout(this.#onMonitorsChanged, 500)
         );
 
     #onMonitorsChanged = async () => {
+        if (hyprland.monitors.length === 0)
+            setTimeout(() => Utils.execAsync("~/scripts/monitsetup"), 400);
+
         this.emit("monitors-changed");
     };
 }
