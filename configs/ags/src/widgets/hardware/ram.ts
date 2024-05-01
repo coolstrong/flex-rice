@@ -34,7 +34,7 @@ export const RamWidget = () => {
         className: "bar-hw-ram-box",
         spacing: 3,
         children: [progress, values],
-    }).poll(5000, box => {
+    }).poll(3000, box => {
         execAsync(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`)
             .then(val => {
                 progress.value = Number(val) / 100;

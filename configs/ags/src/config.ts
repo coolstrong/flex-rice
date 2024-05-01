@@ -4,7 +4,7 @@ import MyNotifications from "./notifications/OSDNotifications.js";
 import { Bar } from "./widgets/Bar";
 import { OSD } from "./widgets/OSD.js";
 import { CalendarMenu } from "./widgets/menus/CalendarMenu.js";
-import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
+// import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
 import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import { SystemMenu } from "./widgets/menus/SystemMenu.js";
 
@@ -28,7 +28,7 @@ App.config({
         OSD(),
         MyNotifications(),
         NotificationCenter(),
-        HardwareMenu(),
+        // HardwareMenu(),
         CalendarMenu(),
         Bar({ monitor: 0 }),
         SystemMenu(),

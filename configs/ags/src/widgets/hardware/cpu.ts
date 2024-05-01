@@ -19,6 +19,11 @@ export const CpuWidget = () => {
         onClicked: () => showHardwareMenu(),
     });
 
+    // const values = Label({
+    //     className: "CpuWidget__values",
+    //     label: "",
+    // });
+
     const progress = CircularProgress({
         className: "cpu",
         child: button,
@@ -29,14 +34,16 @@ export const CpuWidget = () => {
 
     return Box({
         className: "bar-hw-cpu-box",
-    }).poll(5000, box => {
+        spacing: 3,
+        children: [progress],
+    }).poll(3000, box => {
         execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`)
             .then(val => {
                 progress.value = Number(val) / 100;
                 label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
+                // values.label = Math.round(parseFloat(val)).toString();
             })
             .catch(print);
-        box.children = [progress];
         box.show_all();
     });
 };

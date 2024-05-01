@@ -1,5 +1,22 @@
-.calendar-menu__clock
-    font-family: "Mulish"
-    font-size: 21px
-    font-weight: 600
-    color: $text-color
+.calendar-menu
+    padding: 5
+    
+    &__clock
+        padding: 0 5
+        font-family: "Mulish"
+
+        &__time
+            font-size: 21px
+            font-weight: 600
+
+    calendar 
+        background: $menu-box-background
+        border: none
+
+.menu
+    background: $menu-box-background
+    border-radius: $border-radius
+    border: $border-size solid $menu-box-borders
+    transition-property: background
+    transition-duration: 0.2s
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3)

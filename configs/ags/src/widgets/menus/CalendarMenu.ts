@@ -2,29 +2,47 @@ import { Popup } from "./Popup";
 import { utcClockVar } from "@/services/clock.ts";
 
 import "./style.sass";
+import { D } from "@mobily/ts-belt";
 
 export const CalendarMenu = () => {
     const date = Variable(new Date());
+    const clock = Utils.derive([utcClockVar], cl => {
+        const [date, time] = cl.split(" | ");
+        return { date: date ?? "", time: time ?? "" };
+    });
 
     return Popup({
         transition: "slide_up",
         anchor: ["bottom", "right"],
         name: "calendar-menu",
         margins: [40, 50],
+
+        onOpen: () => {
+            const newDate = new Date();
+            if (date.value.getDay() !== newDate.getDay()) date.value = newDate;
+        },
+
         child: Widget.Box({
             vertical: true,
-            spacing: 6,
+            spacing: 4,
             className: "menu calendar-menu",
             children: [
-                Widget.Label({
+                Widget.Box({
                     className: "calendar-menu__clock",
-                    label: utcClockVar.bind(),
-                    /*.as(
-                            flow(
-                                S.split(" | "),
-                                ([date, time]) => `${time}\n${date}`,
-                            ),
-                        )*/
+                    spacing: 4,
+                    children: [
+                        Widget.Label({
+                            className: "calendar-menu__clock__time",
+                            label: clock.bind().as(D.getUnsafe("time")),
+                        }),
+                        Widget.Box({
+                            hexpand: true,
+                        }),
+                        Widget.Label({
+                            className: "calendar-menu__clock__date",
+                            label: clock.bind().as(D.getUnsafe("date")),
+                        }),
+                    ],
                 }),
                 Widget.Calendar({
                     expand: true,
@@ -44,9 +62,5 @@ export const CalendarMenu = () => {
                 }),
             ],
         }),
-        onOpen: () => {
-            const newDate = new Date();
-            if (date.value.getDay() !== newDate.getDay()) date.value = newDate;
-        },
     });
 };

@@ -409,24 +409,23 @@ class ThemeService extends Service {
 // the singleton instance
 const themeService = new ThemeService();
 
+const dictionary = {
+    "Black hole": BLACK_HOLE_THEME,
+    Deer: DEER_THEME,
+    Color: COLOR_THEME,
+    Gradient: SIBERIAN_THEME,
+    Pastel: MATERIAL_YOU,
+    Windows: WIN_20,
+    Dark: DARK_THEME,
+    Unicat: UNICAT_THEME,
+    "New cat": NEW_CAT_THEME,
+    Circles: CIRCLES_THEME,
+};
 //hook for changing themes with external scripts
 /**
  * @param {string} theme
  */
 globalThis.changeTheme = theme => {
-    const dictionary = {
-        "Black hole": BLACK_HOLE_THEME,
-        Deer: DEER_THEME,
-        Color: COLOR_THEME,
-        Gradient: SIBERIAN_THEME,
-        Pastel: MATERIAL_YOU,
-        Windows: WIN_20,
-        Dark: DARK_THEME,
-        Unicat: UNICAT_THEME,
-        "New cat": NEW_CAT_THEME,
-        Circles: CIRCLES_THEME,
-    };
-
     if (theme in dictionary) themeService.changeTheme(dictionary[theme]);
 };
 

@@ -1558,6 +1558,24 @@ var get$12 = function(t, r) {
     return some(t[r]);
   }
 };
+var values = function(n2) {
+  var t = Object.keys(n2);
+  var r = t.length;
+  var e = new Array(r);
+  for (var u = 0;u < r; ++u) {
+    e[u] = n2[t[u]];
+  }
+  return e;
+};
+var fromArray = function(n2) {
+  var t = {};
+  var r = n2.length;
+  for (var e = 0;e < r; ++e) {
+    var u = n2[e];
+    t[u[0]] = u[1];
+  }
+  return t;
+};
 var placeholder2 = function(n2) {
 };
 var makeEmpty = function(n2) {
@@ -2561,6 +2579,9 @@ var flatMap2 = function() {
   }
   return _flatMap(arguments[0], arguments[1]);
 };
+var unsafeDeleteKey = function(n2, t) {
+  delete n2[t];
+};
 var z = makeByU;
 var S = make;
 var O = make;
@@ -3068,6 +3089,277 @@ var P2 = {
   fold,
   all: all2
 };
+// node_modules/@mobily/ts-belt/dist/index-514c1a6c.mjs
+var placeholder4 = function(e) {
+};
+var makeEmpty2 = function(e) {
+  return {};
+};
+var _getUnsafe2 = function(e, t2) {
+  return e[t2];
+};
+var getUnsafe2 = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _getUnsafe2(t2, e[0]);
+    };
+  }
+  return _getUnsafe2(arguments[0], arguments[1]);
+};
+var get3 = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return o(t2, e[0]);
+    };
+  }
+  return o(arguments[0], arguments[1]);
+};
+var _prop = function(e, t2) {
+  return e[t2];
+};
+var prop = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _prop(t2, e[0]);
+    };
+  }
+  return _prop(arguments[0], arguments[1]);
+};
+var toPairs = function(e) {
+  return Object.entries(e);
+};
+var keys = function(e) {
+  return Object.keys(e);
+};
+var _merge = function(e, t2) {
+  return Object.assign({}, e, t2);
+};
+var merge2 = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _merge(t2, e[0]);
+    };
+  }
+  return _merge(arguments[0], arguments[1]);
+};
+var _set = function(e, t2, n2) {
+  var r = merge2({}, e);
+  r[t2] = n2;
+  return r;
+};
+var set2 = function() {
+  if (arguments.length === 2) {
+    const e = arguments;
+    return function fn(t2) {
+      return _set(t2, e[0], e[1]);
+    };
+  }
+  return _set(arguments[0], arguments[1], arguments[2]);
+};
+var _update = function(e, t2, r) {
+  return set2(e, t2, r(get$12(e, t2)));
+};
+var update = function() {
+  if (arguments.length === 2) {
+    const e = arguments;
+    return function fn(t2) {
+      return _update(t2, e[0], e[1]);
+    };
+  }
+  return _update(arguments[0], arguments[1], arguments[2]);
+};
+var _updateUnsafe = function(e, t2, n2) {
+  return set2(e, t2, n2(e[t2]));
+};
+var updateUnsafe = function() {
+  if (arguments.length === 2) {
+    const e = arguments;
+    return function fn(t2) {
+      return _updateUnsafe(t2, e[0], e[1]);
+    };
+  }
+  return _updateUnsafe(arguments[0], arguments[1], arguments[2]);
+};
+var _deleteKey = function(e, t2) {
+  var n2 = merge2({}, e);
+  unsafeDeleteKey(n2, t2);
+  return n2;
+};
+var deleteKey = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _deleteKey(t2, e[0]);
+    };
+  }
+  return _deleteKey(arguments[0], arguments[1]);
+};
+var _deleteKeys = function(e, t2) {
+  var n2 = merge2({}, e);
+  forEachU(t2, function(e2) {
+    unsafeDeleteKey(n2, e2);
+  });
+  return n2;
+};
+var deleteKeys = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _deleteKeys(t2, e[0]);
+    };
+  }
+  return _deleteKeys(arguments[0], arguments[1]);
+};
+var _map2 = function(e, n2) {
+  return fromArray(mapU(Object.keys(e), function(t2) {
+    return [t2, n2(e[t2])];
+  }));
+};
+var map3 = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _map2(t2, e[0]);
+    };
+  }
+  return _map2(arguments[0], arguments[1]);
+};
+var _mapWithKey = function(e, n2) {
+  return fromArray(mapU(Object.keys(e), function(t2) {
+    return [t2, n2(t2, e[t2])];
+  }));
+};
+var mapWithKey = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _mapWithKey(t2, e[0]);
+    };
+  }
+  return _mapWithKey(arguments[0], arguments[1]);
+};
+var _filter3 = function(e, n2) {
+  return fromArray(reduceU(Object.keys(e), [], function(t2, r) {
+    var i2 = e[r];
+    if (n2(i2)) {
+      return append(t2, [r, i2]);
+    } else {
+      return t2;
+    }
+  }));
+};
+var filter3 = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _filter3(t2, e[0]);
+    };
+  }
+  return _filter3(arguments[0], arguments[1]);
+};
+var _filterWithKey = function(e, n2) {
+  return fromArray(reduceU(Object.keys(e), [], function(t2, r) {
+    var i2 = e[r];
+    if (n2(r, i2)) {
+      return append(t2, [r, i2]);
+    } else {
+      return t2;
+    }
+  }));
+};
+var filterWithKey = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _filterWithKey(t2, e[0]);
+    };
+  }
+  return _filterWithKey(arguments[0], arguments[1]);
+};
+var _reject2 = function(e, t2) {
+  return filter3(e, function(e2) {
+    return !t2(e2);
+  });
+};
+var reject2 = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _reject2(t2, e[0]);
+    };
+  }
+  return _reject2(arguments[0], arguments[1]);
+};
+var _rejectWithKey = function(e, t2) {
+  return filterWithKey(e, function(e2, n2) {
+    return !t2(e2, n2);
+  });
+};
+var rejectWithKey = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _rejectWithKey(t2, e[0]);
+    };
+  }
+  return _rejectWithKey(arguments[0], arguments[1]);
+};
+var _selectKeys = function(e, t2) {
+  return filterWithKey(e, function(e2, n2) {
+    return function includes(e3, t3) {
+      return t3.includes(e3);
+    }(e2, t2);
+  });
+};
+var selectKeys = function() {
+  if (arguments.length === 1) {
+    const e = arguments;
+    return function fn(t2) {
+      return _selectKeys(t2, e[0]);
+    };
+  }
+  return _selectKeys(arguments[0], arguments[1]);
+};
+var isEmpty2 = function(e) {
+  return equal(e, {});
+};
+var isNotEmpty2 = function(e) {
+  return !equal(e, {});
+};
+var o = get$12;
+var a2 = values;
+var l2 = fromArray;
+var y = {
+  __proto__: null,
+  placeholder: placeholder4,
+  makeEmpty: makeEmpty2,
+  getUnsafe: getUnsafe2,
+  get: get3,
+  prop,
+  toPairs,
+  values: a2,
+  keys,
+  fromPairs: l2,
+  merge: merge2,
+  set: set2,
+  update,
+  updateUnsafe,
+  deleteKey,
+  deleteKeys,
+  map: map3,
+  mapWithKey,
+  filter: filter3,
+  filterWithKey,
+  reject: reject2,
+  rejectWithKey,
+  selectKeys,
+  isEmpty: isEmpty2,
+  isNotEmpty: isNotEmpty2
+};
 // node_modules/clsx/dist/clsx.mjs
 var r = function(e) {
   var t2, f2, n2 = "";
@@ -3075,8 +3367,8 @@ var r = function(e) {
     n2 += e;
   else if (typeof e == "object")
     if (Array.isArray(e)) {
-      var o = e.length;
-      for (t2 = 0;t2 < o; t2++)
+      var o2 = e.length;
+      for (t2 = 0;t2 < o2; t2++)
         e[t2] && (f2 = r(e[t2])) && (n2 && (n2 += " "), n2 += f2);
     } else
       for (f2 in e)
@@ -3084,7 +3376,7 @@ var r = function(e) {
   return n2;
 };
 function clsx() {
-  for (var e, t2, f2 = 0, n2 = "", o = arguments.length;f2 < o; f2++)
+  for (var e, t2, f2 = 0, n2 = "", o2 = arguments.length;f2 < o2; f2++)
     (e = arguments[f2]) && (t2 = r(e)) && (n2 && (n2 += " "), n2 += t2);
   return n2;
 }
@@ -3497,7 +3789,7 @@ var ensureIconExist = (icon) => icon && (Utils.lookUpIcon(icon) || glib_2_0_defa
 var windowIcon = (client) => iconResolvers.reduce((acc, resolver) => acc ?? ensureIconExist(resolver(client)), undef) ?? icons.fallback.executable;
 
 // node_modules/ts-pattern/dist/index.js
-var a2 = function(...t2) {
+var a3 = function(...t2) {
   if (t2.length === 1) {
     const [e] = t2;
     return (t3) => s2(e, t3, () => {
@@ -3511,7 +3803,7 @@ var a2 = function(...t2) {
   throw new Error(`isMatching wasn't given the right number of arguments: expected 1 or 2, received ${t2.length}.`);
 };
 var u = function(t2) {
-  return Object.assign(t2, { optional: () => l2(t2), and: (e) => m(t2, e), or: (e) => d(t2, e), select: (e) => e === undefined ? p(t2) : p(e, t2) });
+  return Object.assign(t2, { optional: () => l3(t2), and: (e) => m(t2, e), or: (e) => d(t2, e), select: (e) => e === undefined ? p(t2) : p(e, t2) });
 };
 var h2 = function(t2) {
   return Object.assign(((t3) => Object.assign(t3, { [Symbol.iterator]() {
@@ -3521,16 +3813,16 @@ var h2 = function(t2) {
       var t4;
       return (t4 = r2[n2++]) != null ? t4 : r2.at(-1);
     } };
-  } }))(t2), { optional: () => h2(l2(t2)), select: (e) => h2(e === undefined ? p(t2) : p(e, t2)) });
+  } }))(t2), { optional: () => h2(l3(t2)), select: (e) => h2(e === undefined ? p(t2) : p(e, t2)) });
 };
-var l2 = function(e) {
+var l3 = function(e) {
   return u({ [t2]: () => ({ match: (t2) => {
     let n2 = {};
     const r2 = (t3, e2) => {
       n2[t3] = e2;
     };
-    return t2 === undefined ? (o(e).forEach((t3) => r2(t3, undefined)), { matched: true, selections: n2 }) : { matched: s2(e, t2, r2), selections: n2 };
-  }, getSelectionKeys: () => o(e), matcherType: "optional" }) });
+    return t2 === undefined ? (o2(e).forEach((t3) => r2(t3, undefined)), { matched: true, selections: n2 }) : { matched: s2(e, t2, r2), selections: n2 };
+  }, getSelectionKeys: () => o2(e), matcherType: "optional" }) });
 };
 var m = function(...e) {
   return u({ [t2]: () => ({ match: (t2) => {
@@ -3539,7 +3831,7 @@ var m = function(...e) {
       n2[t3] = e2;
     };
     return { matched: e.every((e2) => s2(e2, t2, r2)), selections: n2 };
-  }, getSelectionKeys: () => c(e, o), matcherType: "and" }) });
+  }, getSelectionKeys: () => c(e, o2), matcherType: "and" }) });
 };
 var d = function(...e) {
   return u({ [t2]: () => ({ match: (t2) => {
@@ -3547,10 +3839,10 @@ var d = function(...e) {
     const r2 = (t3, e2) => {
       n2[t3] = e2;
     };
-    return c(e, o).forEach((t3) => r2(t3, undefined)), { matched: e.some((e2) => s2(e2, t2, r2)), selections: n2 };
-  }, getSelectionKeys: () => c(e, o), matcherType: "or" }) });
+    return c(e, o2).forEach((t3) => r2(t3, undefined)), { matched: e.some((e2) => s2(e2, t2, r2)), selections: n2 };
+  }, getSelectionKeys: () => c(e, o2), matcherType: "or" }) });
 };
-var y = function(e) {
+var y2 = function(e) {
   return { [t2]: () => ({ match: (t2) => ({ matched: Boolean(e(t2)) }) }) };
 };
 var p = function(...e) {
@@ -3560,7 +3852,7 @@ var p = function(...e) {
     return { matched: i2 === undefined || s2(i2, t2, (t3, n2) => {
       e2[t3] = n2;
     }), selections: e2 };
-  }, getSelectionKeys: () => [r2 != null ? r2 : n2].concat(i2 === undefined ? [] : o(i2)) }) });
+  }, getSelectionKeys: () => [r2 != null ? r2 : n2].concat(i2 === undefined ? [] : o2(i2)) }) });
 };
 var v2 = function(t2) {
   return typeof t2 == "number";
@@ -3579,43 +3871,43 @@ var e = Symbol.for("@ts-pattern/isVariadic");
 var n2 = "@ts-pattern/anonymous-select-key";
 var r2 = (t3) => Boolean(t3 && typeof t3 == "object");
 var i2 = (e2) => e2 && !!e2[t2];
-var s2 = (n3, o, c) => {
+var s2 = (n3, o2, c) => {
   if (i2(n3)) {
-    const e2 = n3[t2](), { matched: r3, selections: i3 } = e2.match(o);
+    const e2 = n3[t2](), { matched: r3, selections: i3 } = e2.match(o2);
     return r3 && i3 && Object.keys(i3).forEach((t3) => c(t3, i3[t3])), r3;
   }
   if (r2(n3)) {
-    if (!r2(o))
+    if (!r2(o2))
       return false;
     if (Array.isArray(n3)) {
-      if (!Array.isArray(o))
+      if (!Array.isArray(o2))
         return false;
-      let t3 = [], r3 = [], a3 = [];
+      let t3 = [], r3 = [], a4 = [];
       for (const s3 of n3.keys()) {
-        const o2 = n3[s3];
-        i2(o2) && o2[e] ? a3.push(o2) : a3.length ? r3.push(o2) : t3.push(o2);
+        const o3 = n3[s3];
+        i2(o3) && o3[e] ? a4.push(o3) : a4.length ? r3.push(o3) : t3.push(o3);
       }
-      if (a3.length) {
-        if (a3.length > 1)
+      if (a4.length) {
+        if (a4.length > 1)
           throw new Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
-        if (o.length < t3.length + r3.length)
+        if (o2.length < t3.length + r3.length)
           return false;
-        const e2 = o.slice(0, t3.length), n4 = r3.length === 0 ? [] : o.slice(-r3.length), i3 = o.slice(t3.length, r3.length === 0 ? Infinity : -r3.length);
-        return t3.every((t4, n5) => s2(t4, e2[n5], c)) && r3.every((t4, e3) => s2(t4, n4[e3], c)) && (a3.length === 0 || s2(a3[0], i3, c));
+        const e2 = o2.slice(0, t3.length), n4 = r3.length === 0 ? [] : o2.slice(-r3.length), i3 = o2.slice(t3.length, r3.length === 0 ? Infinity : -r3.length);
+        return t3.every((t4, n5) => s2(t4, e2[n5], c)) && r3.every((t4, e3) => s2(t4, n4[e3], c)) && (a4.length === 0 || s2(a4[0], i3, c));
       }
-      return n3.length === o.length && n3.every((t4, e2) => s2(t4, o[e2], c));
+      return n3.length === o2.length && n3.every((t4, e2) => s2(t4, o2[e2], c));
     }
     return Object.keys(n3).every((e2) => {
       const r3 = n3[e2];
-      return ((e2 in o) || i2(a3 = r3) && a3[t2]().matcherType === "optional") && s2(r3, o[e2], c);
-      var a3;
+      return ((e2 in o2) || i2(a4 = r3) && a4[t2]().matcherType === "optional") && s2(r3, o2[e2], c);
+      var a4;
     });
   }
-  return Object.is(o, n3);
+  return Object.is(o2, n3);
 };
-var o = (e2) => {
-  var n3, s3, a3;
-  return r2(e2) ? i2(e2) ? (n3 = (s3 = (a3 = e2[t2]()).getSelectionKeys) == null ? undefined : s3.call(a3)) != null ? n3 : [] : Array.isArray(e2) ? c(e2, o) : c(Object.values(e2), o) : [];
+var o2 = (e2) => {
+  var n3, s3, a4;
+  return r2(e2) ? i2(e2) ? (n3 = (s3 = (a4 = e2[t2]()).getSelectionKeys) == null ? undefined : s3.call(a4)) != null ? n3 : [] : Array.isArray(e2) ? c(e2, o2) : c(Object.values(e2), o2) : [];
 };
 var c = (t3, e2) => t3.reduce((t4, n3) => t4.concat(e2(n3)), []);
 var f2 = (t3, e2) => {
@@ -3630,38 +3922,38 @@ var g2 = (t3, e2) => {
       return false;
   return true;
 };
-var S2 = u(y(function(t3) {
+var S2 = u(y2(function(t3) {
   return true;
 }));
 var O2 = S2;
 var j = (t3) => Object.assign(u(t3), { startsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.startsWith(n3)))));
+  return j(m(t3, (n3 = e2, y2((t4) => b2(t4) && t4.startsWith(n3)))));
   var n3;
 }, endsWith: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.endsWith(n3)))));
+  return j(m(t3, (n3 = e2, y2((t4) => b2(t4) && t4.endsWith(n3)))));
   var n3;
-}, minLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length >= t4))(e2))), maxLength: (e2) => j(m(t3, ((t4) => y((e3) => b2(e3) && e3.length <= t4))(e2))), includes: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && t4.includes(n3)))));
+}, minLength: (e2) => j(m(t3, ((t4) => y2((e3) => b2(e3) && e3.length >= t4))(e2))), maxLength: (e2) => j(m(t3, ((t4) => y2((e3) => b2(e3) && e3.length <= t4))(e2))), includes: (e2) => {
+  return j(m(t3, (n3 = e2, y2((t4) => b2(t4) && t4.includes(n3)))));
   var n3;
 }, regex: (e2) => {
-  return j(m(t3, (n3 = e2, y((t4) => b2(t4) && Boolean(t4.match(n3))))));
+  return j(m(t3, (n3 = e2, y2((t4) => b2(t4) && Boolean(t4.match(n3))))));
   var n3;
 } });
-var E2 = j(y(b2));
-var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y((n4) => v2(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y((e3) => v2(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y((t4) => v2(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y((t4) => v2(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y((t4) => v2(t4) && t4 > 0))), negative: () => K2(m(t3, y((t4) => v2(t4) && t4 < 0))) });
-var x = K2(y(v2));
-var A = (t3) => Object.assign(u(t3), { between: (e2, n3) => A(m(t3, ((t4, e3) => y((n4) => w(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 < t4))(e2))), gt: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 > t4))(e2))), lte: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 <= t4))(e2))), gte: (e2) => A(m(t3, ((t4) => y((e3) => w(e3) && e3 >= t4))(e2))), positive: () => A(m(t3, y((t4) => w(t4) && t4 > 0))), negative: () => A(m(t3, y((t4) => w(t4) && t4 < 0))) });
-var P3 = A(y(w));
-var T = u(y(function(t3) {
+var E2 = j(y2(b2));
+var K2 = (t3) => Object.assign(u(t3), { between: (e2, n3) => K2(m(t3, ((t4, e3) => y2((n4) => v2(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => K2(m(t3, ((t4) => y2((e3) => v2(e3) && e3 < t4))(e2))), gt: (e2) => K2(m(t3, ((t4) => y2((e3) => v2(e3) && e3 > t4))(e2))), lte: (e2) => K2(m(t3, ((t4) => y2((e3) => v2(e3) && e3 <= t4))(e2))), gte: (e2) => K2(m(t3, ((t4) => y2((e3) => v2(e3) && e3 >= t4))(e2))), int: () => K2(m(t3, y2((t4) => v2(t4) && Number.isInteger(t4)))), finite: () => K2(m(t3, y2((t4) => v2(t4) && Number.isFinite(t4)))), positive: () => K2(m(t3, y2((t4) => v2(t4) && t4 > 0))), negative: () => K2(m(t3, y2((t4) => v2(t4) && t4 < 0))) });
+var x = K2(y2(v2));
+var A = (t3) => Object.assign(u(t3), { between: (e2, n3) => A(m(t3, ((t4, e3) => y2((n4) => w(n4) && t4 <= n4 && e3 >= n4))(e2, n3))), lt: (e2) => A(m(t3, ((t4) => y2((e3) => w(e3) && e3 < t4))(e2))), gt: (e2) => A(m(t3, ((t4) => y2((e3) => w(e3) && e3 > t4))(e2))), lte: (e2) => A(m(t3, ((t4) => y2((e3) => w(e3) && e3 <= t4))(e2))), gte: (e2) => A(m(t3, ((t4) => y2((e3) => w(e3) && e3 >= t4))(e2))), positive: () => A(m(t3, y2((t4) => w(t4) && t4 > 0))), negative: () => A(m(t3, y2((t4) => w(t4) && t4 < 0))) });
+var P3 = A(y2(w));
+var T = u(y2(function(t3) {
   return typeof t3 == "boolean";
 }));
-var k = u(y(function(t3) {
+var k = u(y2(function(t3) {
   return typeof t3 == "symbol";
 }));
-var B = u(y(function(t3) {
+var B = u(y2(function(t3) {
   return t3 == null;
 }));
-var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
+var _2 = { __proto__: null, matcher: t2, optional: l3, array: function(...e2) {
   return h2({ [t2]: () => ({ match: (t3) => {
     if (!Array.isArray(t3))
       return { matched: false };
@@ -3670,14 +3962,14 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     const n3 = e2[0];
     let r3 = {};
     if (t3.length === 0)
-      return o(n3).forEach((t4) => {
+      return o2(n3).forEach((t4) => {
         r3[t4] = [];
       }), { matched: true, selections: r3 };
     const i3 = (t4, e3) => {
       r3[t4] = (r3[t4] || []).concat([e3]);
     };
     return { matched: t3.every((t4) => s2(n3, t4, i3)), selections: r3 };
-  }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
+  }, getSelectionKeys: () => e2.length === 0 ? [] : o2(e2[0]) }) });
 }, set: function(...e2) {
   return u({ [t2]: () => ({ match: (t3) => {
     if (!(t3 instanceof Set))
@@ -3691,7 +3983,7 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
       n3[t4] = (n3[t4] || []).concat([e3]);
     }, i3 = e2[0];
     return { matched: f2(t3, (t4) => s2(i3, t4, r3)), selections: n3 };
-  }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
+  }, getSelectionKeys: () => e2.length === 0 ? [] : o2(e2[0]) }) });
 }, map: function(...e2) {
   return u({ [t2]: () => ({ match: (t3) => {
     if (!(t3 instanceof Map))
@@ -3707,21 +3999,21 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     var i3;
     if (e2.length === 1)
       throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
-    const [o2, c2] = e2;
+    const [o3, c2] = e2;
     return { matched: g2(t3, (t4, e3) => {
-      const n4 = s2(o2, e3, r3), i4 = s2(c2, t4, r3);
+      const n4 = s2(o3, e3, r3), i4 = s2(c2, t4, r3);
       return n4 && i4;
     }), selections: n3 };
-  }, getSelectionKeys: () => e2.length === 0 ? [] : [...o(e2[0]), ...o(e2[1])] }) });
+  }, getSelectionKeys: () => e2.length === 0 ? [] : [...o2(e2[0]), ...o2(e2[1])] }) });
 }, intersection: m, union: d, not: function(e2) {
   return u({ [t2]: () => ({ match: (t3) => ({ matched: !s2(e2, t3, () => {
   }) }), getSelectionKeys: () => [], matcherType: "not" }) });
-}, when: y, select: p, any: S2, _: O2, string: E2, number: x, bigint: P3, boolean: T, symbol: k, nullish: B, instanceOf: function(t3) {
-  return u(y(function(t4) {
+}, when: y2, select: p, any: S2, _: O2, string: E2, number: x, bigint: P3, boolean: T, symbol: k, nullish: B, instanceOf: function(t3) {
+  return u(y2(function(t4) {
     return (e2) => e2 instanceof t4;
   }(t3)));
 }, shape: function(t3) {
-  return u(y(a2(t3)));
+  return u(y2(a3(t3)));
 } };
 var W = { matched: false, value: undefined };
 
@@ -3735,10 +4027,10 @@ class $2 {
     const e2 = t3[t3.length - 1], r3 = [t3[0]];
     let i3;
     t3.length === 3 && typeof t3[1] == "function" ? i3 = t3[1] : t3.length > 2 && r3.push(...t3.slice(1, t3.length - 1));
-    let o2 = false, c2 = {};
-    const a3 = (t4, e3) => {
-      o2 = true, c2[t4] = e3;
-    }, u2 = !r3.some((t4) => s2(t4, this.input, a3)) || i3 && !Boolean(i3(this.input)) ? W : { matched: true, value: e2(o2 ? n2 in c2 ? c2[n2] : c2 : this.input, this.input) };
+    let o3 = false, c2 = {};
+    const a4 = (t4, e3) => {
+      o3 = true, c2[t4] = e3;
+    }, u2 = !r3.some((t4) => s2(t4, this.input, a4)) || i3 && !Boolean(i3(this.input)) ? W : { matched: true, value: e2(o3 ? n2 in c2 ? c2[n2] : c2 : this.input, this.input) };
     return new $2(this.input, u2);
   }
   when(t3, e2) {
@@ -3997,13 +4289,14 @@ var CpuWidget = () => {
     rounded: false
   });
   return Box4({
-    className: "bar-hw-cpu-box"
-  }).poll(5000, (box) => {
+    className: "bar-hw-cpu-box",
+    spacing: 3,
+    children: [progress]
+  }).poll(3000, (box) => {
     execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then((val) => {
       progress.value = Number(val) / 100;
       label.tooltipMarkup = `<span weight='bold' foreground='#FDC227'>(${val}%) of CPU is used</span>`;
     }).catch(print);
-    box.children = [progress];
     box.show_all();
   });
 };
@@ -4021,7 +4314,7 @@ var RamWidget = () => {
     className: "ram-inner",
     label: "\uF538"
   });
-  const values = Label3({
+  const values2 = Label3({
     className: "RamWidget__values",
     label: ""
   });
@@ -4038,12 +4331,12 @@ var RamWidget = () => {
   return Box5({
     className: "bar-hw-ram-box",
     spacing: 3,
-    children: [progress, values]
-  }).poll(5000, (box) => {
+    children: [progress, values2]
+  }).poll(3000, (box) => {
     execAsync2(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then((val) => {
       progress.value = Number(val) / 100;
       label.tooltipMarkup = `<span weight='bold' foreground='#79A7EC'>(${val}%) RAM used</span>`;
-      values.label = val.toString();
+      values2.label = val.toString();
     }).catch(print);
     box.show_all();
   });
@@ -5026,19 +5319,19 @@ class ThemeService extends Service2 {
   }
 }
 var themeService = new ThemeService;
+var dictionary = {
+  "Black hole": BLACK_HOLE_THEME,
+  Deer: DEER_THEME,
+  Color: COLOR_THEME,
+  Gradient: SIBERIAN_THEME,
+  Pastel: MATERIAL_YOU,
+  Windows: WIN_20,
+  Dark: DARK_THEME,
+  Unicat: UNICAT_THEME,
+  "New cat": NEW_CAT_THEME,
+  Circles: CIRCLES_THEME
+};
 globalThis.changeTheme = (theme) => {
-  const dictionary = {
-    "Black hole": BLACK_HOLE_THEME,
-    Deer: DEER_THEME,
-    Color: COLOR_THEME,
-    Gradient: SIBERIAN_THEME,
-    Pastel: MATERIAL_YOU,
-    Windows: WIN_20,
-    Dark: DARK_THEME,
-    Unicat: UNICAT_THEME,
-    "New cat": NEW_CAT_THEME,
-    Circles: CIRCLES_THEME
-  };
   if (theme in dictionary)
     themeService.changeTheme(dictionary[theme]);
 };
@@ -5626,7 +5919,7 @@ var Bar = ({ monitor } = {}) => Window2({
 // src/services/brightness.ts
 if (!dependencies("brightnessctl"))
   App.quit();
-var get3 = (args) => Number(Utils.exec(`brightnessctl ${args}`));
+var get4 = (args) => Number(Utils.exec(`brightnessctl ${args}`));
 var screen = await bash`ls -w1 /sys/class/backlight | head -1`;
 var kbd = await bash`ls -w1 /sys/class/leds | head -1`;
 
@@ -5637,10 +5930,10 @@ class Brightness extends Service {
       kbd: ["int", "rw"]
     });
   }
-  #kbdMax = get3(`--device ${kbd} max`);
-  #kbd = get3(`--device ${kbd} get`);
-  #screenMax = get3("max");
-  #screen = get3("get") / get3("max");
+  #kbdMax = get4(`--device ${kbd} max`);
+  #kbd = get4(`--device ${kbd} get`);
+  #screenMax = get4("max");
+  #screen = get4("get") / get4("max");
   get kbd() {
     return this.#kbd;
   }
@@ -5745,19 +6038,41 @@ var OSD = () => {
 // src/widgets/menus/CalendarMenu.ts
 var CalendarMenu = () => {
   const date = Variable(new Date);
+  const clock3 = Utils.derive([utcClockVar], (cl) => {
+    const [date2, time] = cl.split(" | ");
+    return { date: date2 ?? "", time: time ?? "" };
+  });
   return Popup({
     transition: "slide_up",
     anchor: ["bottom", "right"],
     name: "calendar-menu",
     margins: [40, 50],
+    onOpen: () => {
+      const newDate = new Date;
+      if (date.value.getDay() !== newDate.getDay())
+        date.value = newDate;
+    },
     child: Widget.Box({
       vertical: true,
-      spacing: 6,
+      spacing: 4,
       className: "menu calendar-menu",
       children: [
-        Widget.Label({
+        Widget.Box({
           className: "calendar-menu__clock",
-          label: utcClockVar.bind()
+          spacing: 4,
+          children: [
+            Widget.Label({
+              className: "calendar-menu__clock__time",
+              label: clock3.bind().as(y.getUnsafe("time"))
+            }),
+            Widget.Box({
+              hexpand: true
+            }),
+            Widget.Label({
+              className: "calendar-menu__clock__date",
+              label: clock3.bind().as(y.getUnsafe("date"))
+            })
+          ]
         }),
         Widget.Calendar({
           expand: true,
@@ -5767,286 +6082,9 @@ var CalendarMenu = () => {
           day: date.bind().as((d2) => d2.getDate())
         })
       ]
-    }),
-    onOpen: () => {
-      const newDate = new Date;
-      if (date.value.getDay() !== newDate.getDay())
-        date.value = newDate;
-    }
-  });
-};
-
-// src/widgets/menus/HardwareMenu.ts
-import Gtk302 from "gi://Gtk";
-var Battery = await Service.import("battery");
-var menuIsOpen = null;
-var cpuIsInitialized = false;
-var ramIsInitialized = false;
-var ramUsage = 0;
-var cpuUsage = 0;
-var cpuProgress = Widget.CircularProgress({
-  className: "menu-cpu",
-  child: Widget.Label({
-    className: "menu-cpu-icon",
-    label: "\uF2DB"
-  }),
-  startAt: 0,
-  rounded: false
-}).poll(1000, (self) => {
-  if (menuIsOpen) {
-    Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/cpu.sh`).then(parseFloat).then((val) => {
-      cpuProgress.value = val / 100;
-      self.child.tooltipMarkup = `<span weight='bold'>CPU usage (${val}%)</span>`;
-      cpuUsage = val;
-    }).catch(print);
-  }
-});
-var ramProgress = Widget.CircularProgress({
-  className: "menu-ram",
-  child: Widget.Label({
-    className: "menu-ram-icon",
-    label: "\uF538"
-  }),
-  startAt: 0,
-  rounded: false
-}).poll(1000, (self) => {
-  if (menuIsOpen) {
-    Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/ram.sh`).then(parseFloat).then((val) => {
-      self.value = val / 100;
-      self.child.tooltipMarkup = `<span weight='bold'>RAM usage (${val}%)</span>`;
-      ramUsage = val;
-    }).catch(print);
-  }
-});
-var batteryProgress = Widget.CircularProgress({
-  className: "menu-battery",
-  child: Widget.Label({
-    className: "menu-battery-icon",
-    label: "\uF240"
-  }),
-  startAt: 0,
-  rounded: false
-}).hook(Battery, (self) => {
-  const percentage = Battery.percent;
-  self.value = percentage / 100;
-  var label = "";
-  if (Battery.charging) {
-    if (percentage <= 55) {
-      label = "\uDB84\uDEA4";
-    } else if (percentage <= 70) {
-      label = "\uDB84\uDEA5";
-    } else if (percentage > 70) {
-      label = "\uDB84\uDEA6";
-    }
-    self.child.class_name = "menu-battery-icon-charging";
-  } else {
-    if (percentage <= 55) {
-      label = "\uDB84\uDEA1";
-    } else if (percentage <= 70) {
-      label = "\uDB84\uDEA2";
-    } else if (percentage > 70) {
-      label = "\uDB84\uDEA3";
-    }
-    self.child.label = "\uF240";
-    self.child.class_name = "menu-battery-icon";
-  }
-  self.child.label = label;
-  self.child.tooltipMarkup = `<span weight='bold'>Battery percentage (${percentage}%)</span>`;
-});
-var tempProgress = Widget.CircularProgress({
-  className: "menu-temp",
-  child: Widget.Label({
-    className: "menu-temp-icon",
-    label: "\uF769"
-  }),
-  startAt: 0,
-  rounded: false
-}).poll(30000, (self) => {
-  Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/temp.sh`).then((val) => {
-    const temps = val.split("\n");
-    let total = 0;
-    for (let index = 0;index < temps.length; index++) {
-      const element = temps[index]?.replace("+", "").replace("\xB0C", "");
-      total += parseInt(element ?? "0");
-    }
-    total = total / temps.length;
-    self.value = total / 100;
-    self.child.tooltipMarkup = `<span weight='bold'>Total temperature of the devices (${total}%)</span>`;
-  }).catch(print);
-});
-var headerBox = Widget.Box({
-  className: "hardware-menu-header-box",
-  spacing: 32,
-  hexpand: true,
-  halign: Gtk302.Align.FILL,
-  homogeneous: true,
-  children: [cpuProgress, ramProgress, batteryProgress]
-});
-var tableRow = ({
-  appName = "",
-  percentage = "",
-  header = false,
-  deviceName,
-  rightTextMaxWidthChars = 9,
-  rightTextXalign = 0,
-  leftTextMaxWidthChars = 5,
-  leftTextXalign = 1
-}) => Widget.Box({
-  className: header ? `hardware-${deviceName}-table-row-header` : `hardware-${deviceName}-table-row`,
-  children: [
-    Widget.Label({
-      className: header ? "table-row-app-name-header" : "table-row-app-name",
-      label: appName,
-      justification: "center",
-      truncate: "end",
-      xalign: rightTextXalign,
-      maxWidthChars: rightTextMaxWidthChars,
-      wrap: true,
-      useMarkup: true
-    }),
-    Widget.Label({
-      className: header ? "table-row-app-percentage-header" : "table-row-app-percentage",
-      label: percentage,
-      justification: "center",
-      truncate: "end",
-      xalign: leftTextXalign,
-      maxWidthChars: leftTextMaxWidthChars,
-      wrap: true,
-      useMarkup: true
     })
-  ]
-});
-var hardwareUsageTable = ({
-  scriptPath,
-  deviceName,
-  interval = 2000,
-  headerRightText = "Operation",
-  headerLeftText = "%"
-}) => {
-  const table = Widget.Box({
-    className: `hardware-${deviceName}-box`,
-    vertical: true,
-    children: []
-  });
-  if (scriptPath) {
-    table.poll(interval, (self) => {
-      if (deviceName === "cpu") {
-        headerLeftText = `${cpuUsage}%`;
-      }
-      if (deviceName === "ram") {
-        headerLeftText = `${ramUsage}%`;
-      }
-      if (!cpuIsInitialized || !ramIsInitialized || menuIsOpen) {
-        Utils.execAsync(scriptPath).then((val) => {
-          let data = JSON.parse(val);
-          let children = [
-            tableRow({
-              appName: headerRightText,
-              percentage: headerLeftText,
-              header: true,
-              deviceName
-            })
-          ];
-          for (let index = 0;index < data.length; index++) {
-            const element = data[index];
-            children.push(tableRow({
-              appName: element["process"],
-              percentage: element["%"],
-              deviceName
-            }));
-          }
-          self.children = children;
-        }).catch(print);
-        if (deviceName === "cpu" && !cpuIsInitialized) {
-          cpuIsInitialized = true;
-        }
-        if (deviceName === "ram" && !ramIsInitialized) {
-          ramIsInitialized = true;
-        }
-      }
-    });
-  }
-  return table;
-};
-var tablesBox = () => {
-  let batDeviceName = "bat";
-  let batteryTable = hardwareUsageTable({
-    scriptPath: "",
-    deviceName: batDeviceName
-  }).hook(Battery, (self) => {
-    Utils.execAsync(`/home/${Utils.USER}/.config/ags/scripts/hardware_info.sh`).then((val) => {
-      let data = JSON.parse(val);
-      self.children = [
-        tableRow({
-          appName: "the battery",
-          percentage: "",
-          header: true,
-          deviceName: batDeviceName,
-          rightTextXalign: 1
-        }),
-        tableRow({
-          appName: "The ratio  ",
-          percentage: `${Battery.percent}%`,
-          deviceName: batDeviceName
-        }),
-        tableRow({
-          appName: local === "RTL" ? "the health   \uE793" : "Health   \uE793",
-          percentage: data["Capacity"] + "%",
-          deviceName: batDeviceName
-        }),
-        tableRow({
-          appName: local === "RTL" ? "Voltages  \uEB2D" : "Voltage  \uEB2D",
-          percentage: data["Voltage"],
-          deviceName: batDeviceName
-        }),
-        tableRow({
-          appName: local === "RTL" ? "energy  \uEA16" : "Energy  \uEA16",
-          percentage: `${Battery.energy}`,
-          deviceName: batDeviceName
-        }),
-        tableRow({
-          appName: local === "RTL" ? "Courses  \uED3E" : "Cycles  \uED3E",
-          percentage: data["Charge_Cycles"],
-          deviceName: batDeviceName
-        })
-      ];
-    }).catch(print);
-  });
-  let osClassName = "os";
-  return Widget.Box({
-    className: "hardware-menu-tables-box",
-    spacing: 13,
-    children: [
-      hardwareUsageTable({
-        scriptPath: `/home/${Utils.USER}/.config/ags/scripts/cpu_usage.sh`,
-        deviceName: "cpu",
-        headerRightText: "CPU"
-      }),
-      hardwareUsageTable({
-        scriptPath: `/home/${Utils.USER}/.config/ags/scripts/ram_usage.sh`,
-        deviceName: "ram",
-        headerRightText: "RAM"
-      }),
-      Widget.Box({
-        vertical: true,
-        children: [batteryTable]
-      })
-    ]
   });
 };
-var HardwareMenu = () => Popup({
-  className: "hardware-menu-box",
-  name: "hardware_menu",
-  anchor: ["bottom", "left"],
-  transition: "slide_up",
-  margins: [50, 250],
-  child: Widget.Box({
-    className: "left-menu-window",
-    css: "padding: 12px;",
-    vertical: true,
-    children: [headerBox, tablesBox()]
-  })
-});
 
 // src/config.ts
 var scss = App4.configDir + "/scss/main.scss";
@@ -6065,7 +6103,6 @@ App4.config({
     OSD(),
     OSDNotifications_default(),
     NotificationCenter(),
-    HardwareMenu(),
     CalendarMenu(),
     Bar({ monitor: 0 }),
     SystemMenu()
