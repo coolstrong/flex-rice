@@ -25,8 +25,8 @@ const ClientRenderer = ({ wsId }: { wsId: number }) =>
                           icon: windowIcon(client),
                           css: "font-size: 12px;",
                       })
-                    : undef,
-            ),
+                    : undef
+            )
         ),
     });
 
@@ -37,7 +37,7 @@ const MonitorWorkspaces = (monitorId = 0) => {
         className: "unset workspaces",
         children: A.range(
             firstWsId,
-            firstWsId + config.workspace.perMonitor - 1,
+            firstWsId + config.workspace.perMonitor - 1
         ).map(i =>
             Button({
                 css: "min-width: 30px;",
@@ -48,13 +48,13 @@ const MonitorWorkspaces = (monitorId = 0) => {
                 child: ClientRenderer({
                     wsId: i,
                 }),
-            }),
+            })
         ),
     });
 };
 
-export const Workspaces = () => {
-    return Box({
+export const Workspaces = () =>
+    Box({
         className: "unset workspace-box",
         spacing: 4,
         setup: setupRebuild({
@@ -63,26 +63,3 @@ export const Workspaces = () => {
             signal: "monitors-changed",
         }),
     });
-};
-// export const Workspaces = () => {
-//     const createChildren = () =>
-//         hyprland.monitors.map(m => MonitorWorkspaces(m.id));
-//
-//     return Box({
-//         className: "unset workspace-box",
-//
-//         spacing: 4,
-//         children: createChildren(),
-//
-//         setup: self =>
-//             self.hook(
-//                 hyprext,
-//                 //when number of monitors changed - rebuild widget
-//                 () => {
-//                     self.children.forEach(c => c.destroy());
-//                     self.children = createChildren();
-//                 },
-//                 "monitors-changed"
-//             ),
-//     });
-// };

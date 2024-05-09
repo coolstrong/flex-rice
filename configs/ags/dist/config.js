@@ -4150,7 +4150,7 @@ var settings = {
 var settings_default = settings;
 
 // src/widgets/Bar/SystemTray.ts
-var iconSubstites = {
+var iconSubstitutes = {
   TelegramDesktop: "telegram",
   breaktimer: `${ASSETS_PATH}/icons/coffee.png`
 };
@@ -4162,7 +4162,7 @@ var PanelButton = ({ className, content, ...rest }) => Widget.Button({
 var SysTrayItem = (item) => PanelButton({
   className: "tray-btn unset",
   content: Widget.Icon({
-    icon: item.title in iconSubstites ? iconSubstites[item.title] : item.bind("icon")
+    icon: item.title in iconSubstitutes ? iconSubstitutes[item.title] : item.bind("icon")
   }),
   tooltip_markup: item.bind("tooltip_markup").as((tm) => `<span weight="bold">${item.title}</span>${tm.trim() === "" ? "" : "\n" + tm}`),
   onPrimaryClick: (_3, event) => item.activate(event),
@@ -4180,6 +4180,7 @@ import {hyprland as hyprland4} from "resource:///com/github/Aylur/ags/service/hy
 
 // src/services/hyprext.ts
 import {hyprland as hyprland2} from "resource:///com/github/Aylur/ags/service/hyprland.js";
+
 class HyprExtensionsService extends Service {
   static {
     Service.register(this, {
@@ -4229,17 +4230,15 @@ var MonitorWorkspaces = (monitorId = 0) => {
     }))
   });
 };
-var Workspaces = () => {
-  return Box3({
-    className: "unset workspace-box",
-    spacing: 4,
-    setup: setupRebuild({
-      builder: () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id)),
-      service: hyprext,
-      signal: "monitors-changed"
-    })
-  });
-};
+var Workspaces = () => Box3({
+  className: "unset workspace-box",
+  spacing: 4,
+  setup: setupRebuild({
+    builder: () => hyprland4.monitors.map((m2) => MonitorWorkspaces(m2.id)),
+    service: hyprext,
+    signal: "monitors-changed"
+  })
+});
 
 // src/widgets/hardware/all.ts
 import {Box as Box6} from "resource:///com/github/Aylur/ags/widget.js";

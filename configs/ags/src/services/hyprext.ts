@@ -1,9 +1,6 @@
 import { match, P } from "ts-pattern";
 import { hyprland } from "resource:///com/github/Aylur/ags/service/hyprland.js";
 
-const isCurrentWindowFullscreen = () =>
-    hyprland.getClient(hyprland.active.client.address)?.fullscreen ?? false;
-
 class HyprExtensionsService extends Service {
     static {
         Service.register(

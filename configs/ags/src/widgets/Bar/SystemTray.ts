@@ -9,7 +9,7 @@ import { D, F, flow } from "@mobily/ts-belt";
 
 // const SystemTray = await Service.import("systemtray");
 
-const iconSubstites = {
+const iconSubstitutes = {
     TelegramDesktop: "telegram",
     breaktimer: `${ASSETS_PATH}/icons/coffee.png`,
 };
@@ -26,8 +26,8 @@ const SysTrayItem = (item: TrayItem) =>
         className: "tray-btn unset",
         content: Widget.Icon({
             icon:
-                item.title in iconSubstites
-                    ? iconSubstites[item.title]
+                item.title in iconSubstitutes
+                    ? iconSubstitutes[item.title]
                     : item.bind("icon"),
         }),
         tooltip_markup: item

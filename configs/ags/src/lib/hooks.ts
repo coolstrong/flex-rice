@@ -5,7 +5,7 @@ import Gtk from "@/types/@girs/gtk-3.0";
 
 export const useUpdatableVar = <T>(
     factory: () => T,
-    initial: T | undef = undef,
+    initial: T | undef = undef
 ) => {
     const variable = Variable(initial ?? factory());
     return {
@@ -15,16 +15,16 @@ export const useUpdatableVar = <T>(
 };
 
 export const setupRebuild =
-    <const T extends Gtk.Widget[]>({
+    <const T extends Widget<unknown> & { destroy: () => void }>({
         builder,
         service,
         signal,
     }: {
-        builder: () => T;
+        builder: () => T[];
         service: Service;
         signal: string | undef;
     }) =>
-    (self: Widget<unknown> & { children: T }) => {
+    (self: Widget<unknown> & { children: T[] }) => {
         self.children = builder();
         self.hook(
             service,
@@ -32,6 +32,6 @@ export const setupRebuild =
                 self.children.forEach(c => c.destroy());
                 self.children = builder();
             },
-            signal,
+            signal
         );
     };
