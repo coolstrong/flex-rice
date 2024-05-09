@@ -19,5 +19,8 @@
             "keymap": "en"
         }
     },
-    "gapsOut": 6
+    "time": {
+        "locale": "lt",
+        "timezones": ["Asia/Dubai", "Europe/Moscow", "Europe/Berlin"]
+    }
 }

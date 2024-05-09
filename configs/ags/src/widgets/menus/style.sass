@@ -1,17 +1,37 @@
 .calendar-menu
-    padding: 5
+    padding: 10px 12px
     
-    &__clock
-        padding: 0 5
-        font-family: "Mulish"
+    &__worldtime
+        font-size: 14px
+        opacity: 0.75
+        font-family: "MesloLGS"
 
         &__time
-            font-size: 21px
+            letter-spacing: 0.1em
+
+        &__city
+            letter-spacing: 0.05em
+
+    &__clock
+        color: $text-color
+        
+        &__time
+            font-size: 22px
             font-weight: 600
 
+        &__date
+            // font-size: 14px
+            font-weight: 600
+
+    &__separator
+        background: $clock-background
+        min-height: 2px
+        margin-top: 10px
+        margin-bottom: 4px
+
     calendar 
-        background: $menu-box-background
         border: none
+        background: $menu-box-background
 
 .menu
     background: $menu-box-background

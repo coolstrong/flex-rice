@@ -1,7 +1,7 @@
 import { undef } from "@/utils/common";
 import Service from "@/types/service";
 import { Widget } from "@/types/widgets/widget";
-import Gtk from "@/types/@girs/gtk-3.0";
+import GLib20 from "gi://GLib?version=2.0";
 
 export const useUpdatableVar = <T>(
     factory: () => T,
@@ -11,6 +11,35 @@ export const useUpdatableVar = <T>(
     return {
         variable,
         update: () => (variable.value = factory()),
+    };
+};
+
+export const useIntervalVar = <T>({
+    factory,
+    interval,
+    initialState = true,
+}: {
+    factory: () => T;
+    interval: number;
+    initialState?: boolean;
+}) => {
+    const { update, variable } = useUpdatableVar(factory);
+    let timerid: number | null = initialState
+        ? Utils.interval(interval, update)
+        : null;
+
+    return {
+        variable,
+        update,
+        stop: () => {
+            if (timerid) {
+                GLib20.source_remove(timerid);
+                timerid = null;
+            }
+        },
+        start: () => {
+            if (!timerid) timerid = Utils.interval(interval, update);
+        },
     };
 };
 

@@ -15,7 +15,8 @@ import Gtk from "gi://Gtk?version=3.0";
 import keyboard from "@/services/keyboard.ts";
 
 import "./style.sass";
-import { utcClockVar } from "@/services/clock.ts";
+import { useIntervalVar } from "@/lib/hooks.ts";
+import config from "config.json";
 
 export const KeyboardLayout = () => {
     return Widget.Button({
@@ -29,12 +30,22 @@ export const KeyboardLayout = () => {
     });
 };
 
-const Clock = () =>
-    Widget.Button({
+const Clock = () => {
+    const { variable: date } = useIntervalVar({
+        factory: () => new Date(),
+        interval: 1000,
+    });
+    const locale = config.time.locale;
+
+    return Widget.Button({
         className: "clock small-shadow unset",
-        label: utcClockVar.bind(),
+        label: date.bind().as(
+            // prettier-ignore
+            d => `${d.toLocaleDateString(locale)}   ${d.toLocaleTimeString(locale)}`
+        ),
         onClicked: () => App.toggleWindow("calendar-menu"),
     });
+};
 
 // layout of the bar
 const Start = () =>
@@ -70,7 +81,6 @@ export const Bar = ({ monitor }: { monitor?: number } | undef = {}) =>
         anchor: ["bottom", "left", "right"],
         exclusivity: "exclusive",
         child: CenterBox({
-            // className: "bar shadow",
             className: hyprext
                 .bind("fullscreen")
                 .as(f => clsx("bar", !f && "shadow")),
