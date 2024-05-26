@@ -1,6 +1,6 @@
 {
     "popupCloseDelay": 700,
-    "transitionDuration": 100,
+    "transitionDuration": 150,
     "systray": {
         "ignore": ["ulauncher"]
     },

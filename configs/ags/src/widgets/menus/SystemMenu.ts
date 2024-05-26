@@ -319,10 +319,9 @@ export const SystemMenu = () =>
     Popup({
         name: "left_menu",
         anchor: ["bottom", "right"],
-        transition: "slide_up",
         margins: [30, 6],
         child: Box({
-            className: "left-menu-box unset",
+            className: "left-menu-box menu unset",
             vertical: true,
             children: [
                 Header(),

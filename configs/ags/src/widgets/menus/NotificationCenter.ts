@@ -8,6 +8,7 @@ import {
 } from "resource:///com/github/Aylur/ags/widget.js";
 import Notification from "../../notifications/MenuNotification";
 import { Popup } from "./Popup";
+import { O } from "@mobily/ts-belt";
 
 const Notifications = await Service.import("notifications");
 
@@ -87,13 +88,11 @@ const NotificationHeader = () => {
                 // label: "",
             }),
         ],
-    }).hook(Notifications, self => {
-        if (Notifications.dnd) {
-            self.children[2].label = "󰂛";
-        } else {
-            self.children[2].label = "󰂚";
-        }
-    });
+    }).hook(Notifications, self =>
+        O.tap(self.children[2], child => {
+            child.label = Notifications.dnd ? "󰂛" : "󰂚";
+        })
+    );
 };
 
 const notificationContainer = Scrollable({
@@ -117,9 +116,8 @@ export const NotificationCenter = () =>
         name: "notification_center",
         margins: [30, 200],
         anchor: ["bottom", "right"],
-        transition: "slide_up",
         child: Box({
-            className: "left-menu-box",
+            className: "menu left-menu-box",
             vertical: true,
             children: [NotificationHeader(), notificationContainer],
         }),

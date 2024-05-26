@@ -6,19 +6,12 @@ import { match, P } from "ts-pattern";
 type PopupRevealerProps = {
     name: string;
     child: WindowProps["child"];
-    transition: Transition;
     onOpen?: () => void;
     onClose?: () => void;
 };
-const PopupRevealer = ({
-    child,
-    name,
-    transition,
-    onOpen,
-    onClose,
-}: PopupRevealerProps) =>
+const PopupRevealer = ({ child, name, onOpen, onClose }: PopupRevealerProps) =>
     Widget.Revealer({
-        transition,
+        transition: "crossfade",
         child,
         transitionDuration: config.transitionDuration,
 
@@ -35,7 +28,6 @@ const PopupRevealer = ({
     });
 
 export const Popup = ({
-    transition,
     name,
     child,
     onOpen,
@@ -43,7 +35,6 @@ export const Popup = ({
     ...props
 }: WindowProps & {
     name: string;
-    transition: Transition;
     onOpen?: () => void;
     onClose?: () => void;
 }) => {
@@ -66,7 +57,6 @@ export const Popup = ({
             child: Widget.EventBox({
                 onHover: closing.cancel,
                 child: PopupRevealer({
-                    transition,
                     name,
                     child,
                     onOpen,

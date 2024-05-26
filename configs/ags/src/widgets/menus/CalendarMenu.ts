@@ -44,7 +44,6 @@ export const CalendarMenu = () => {
     });
 
     return Popup({
-        transition: "slide_up",
         anchor: ["bottom", "right"],
         name: "calendar-menu",
         margins: [40, 50],

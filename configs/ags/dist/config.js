@@ -3823,7 +3823,7 @@ systemTray
 // config.json
 var config_default = {
   popupCloseDelay: 700,
-  transitionDuration: 100,
+  transitionDuration: 150,
   systray: {
     ignore: ["ulauncher"]
   },
@@ -4228,14 +4228,8 @@ var MenuNotification_default = (notification) => {
 };
 
 // src/widgets/menus/Popup.ts
-var PopupRevealer = ({
-  child,
-  name,
-  transition,
-  onOpen,
-  onClose
-}) => Widget.Revealer({
-  transition,
+var PopupRevealer = ({ child, name, onOpen, onClose }) => Widget.Revealer({
+  transition: "crossfade",
   child,
   transitionDuration: config_default.transitionDuration,
   setup: (self) => self.hook(App, (_3, ...args) => N3(args).with([name, _2.boolean], ([_4, visible]) => {
@@ -4244,7 +4238,6 @@ var PopupRevealer = ({
   }), "window-toggled")
 });
 var Popup = ({
-  transition,
   name,
   child,
   onOpen,
@@ -4269,7 +4262,6 @@ var Popup = ({
       child: Widget.EventBox({
         onHover: closing.cancel,
         child: PopupRevealer({
-          transition,
           name,
           child,
           onOpen,
@@ -4339,13 +4331,9 @@ var NotificationHeader = () => {
         onClicked: () => Notifications3.dnd = !Notifications3.dnd
       })
     ]
-  }).hook(Notifications3, (self) => {
-    if (Notifications3.dnd) {
-      self.children[2].label = "\uDB80\uDC9B";
-    } else {
-      self.children[2].label = "\uDB80\uDC9A";
-    }
-  });
+  }).hook(Notifications3, (self) => P2.tap(self.children[2], (child) => {
+    child.label = Notifications3.dnd ? "\uDB80\uDC9B" : "\uDB80\uDC9A";
+  }));
 };
 var notificationContainer = Scrollable({
   hscroll: "never",
@@ -4357,9 +4345,8 @@ var NotificationCenter = () => Popup({
   name: "notification_center",
   margins: [30, 200],
   anchor: ["bottom", "right"],
-  transition: "slide_up",
   child: Box8({
-    className: "left-menu-box",
+    className: "menu left-menu-box",
     vertical: true,
     children: [NotificationHeader(), notificationContainer]
   })
@@ -5533,10 +5520,9 @@ var PowerButtonsRow = () => {
 var SystemMenu = () => Popup({
   name: "left_menu",
   anchor: ["bottom", "right"],
-  transition: "slide_up",
   margins: [30, 6],
   child: Box9({
-    className: "left-menu-box unset",
+    className: "left-menu-box menu unset",
     vertical: true,
     children: [
       Header(),
@@ -5805,7 +5791,6 @@ var CalendarMenu = () => {
     initialState: false
   });
   return Popup({
-    transition: "slide_up",
     anchor: ["bottom", "right"],
     name: "calendar-menu",
     margins: [40, 50],

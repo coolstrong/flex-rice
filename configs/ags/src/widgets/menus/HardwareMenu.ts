@@ -358,7 +358,6 @@ export const HardwareMenu = () =>
         className: "hardware-menu-box",
         name: "hardware_menu",
         anchor: ["bottom", "left"],
-        transition: "slide_up",
         margins: [50, 250],
         child: Widget.Box({
             className: "left-menu-window",
