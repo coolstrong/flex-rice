@@ -18,7 +18,7 @@ import {
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Service from "resource:///com/github/Aylur/ags/service.js";
 import settings from "../settings.js";
-import { bash } from "@/utils/helpers.js";
+import { bash, hyprBatch } from "@/utils/helpers.js";
 
 class ThemeService extends Service {
     static {
@@ -280,31 +280,15 @@ class ThemeService extends Service {
         kittyConfig,
         konsoleTheme
     ) {
-        //todo It should be batched ofk
-        Promise.resolve()
-            .then(() => {
-                timeout(1000, () => {
-                    execAsync(
-                        `hyprctl keyword general:border_size ${border_width}`
-                    );
-                    execAsync(
-                        `hyprctl keyword general:col.active_border ${active_border}`
-                    );
-                    execAsync(
-                        `hyprctl keyword general:col.inactive_border ${inactive_border}`
-                    );
-                    execAsync(
-                        `hyprctl keyword decoration:drop_shadow ${
-                            drop_shadow ? "yes" : "no"
-                        }`
-                    );
-                    execAsync(
-                        `hyprctl keyword decoration:rounding ${rounding}`
-                    );
-                    // execAsync(`hyprctl setcursor Bibata-Rainbow-Modern 24 `);
-                });
-            })
-            .catch(print);
+        timeout(1000, () => {
+            hyprBatch(
+                `keyword general:border_size ${border_width}`,
+                `keyword general:col.active_border ${active_border}`,
+                `keyword general:col.inactive_border ${inactive_border}`,
+                `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`,
+                `keyword decoration:rounding ${rounding}`
+            );
+        });
     }
 
     changeQtStyle(qt5Style, qt6Style) {

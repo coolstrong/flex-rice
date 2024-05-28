@@ -2,6 +2,7 @@
 import { undef } from "@/utils/common";
 import type { Client } from "@/types/service/hyprland";
 import GLib from "@/types/@girs/glib-2.0";
+import { O, pipe } from "@mobily/ts-belt";
 
 export const icons = {
     missing: "image-missing-symbolic",
@@ -151,9 +152,15 @@ const directClassMatch = {
     "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist",
 };
 
+const terminalApps: [RegExp, string][] = [[/^helix.*$/g, "helix"]];
+
 const iconResolvers: Array<(client: Client) => string | undef> = [
     c => (c.initialTitle.startsWith("Spotify") ? "spotify" : undef),
     c => (c.initialTitle.startsWith("Spotify") ? "spotify-launcher" : undef),
+    c =>
+        c.class === "kitty"
+            ? terminalApps.find(([re]) => re.test(c.title))?.[1]
+            : undef,
     c => directClassMatch[c.class],
     c =>
         Apps.list.find(app => app.match(c.class) || app.wm_class === c.class)
@@ -169,5 +176,5 @@ export const ensureIconExist = (icon: string | undef | null) =>
 export const windowIcon = (client: Client): string =>
     iconResolvers.reduce(
         (acc, resolver) => acc ?? ensureIconExist(resolver(client)),
-        undef as string | undef,
+        undef as string | undef
     ) ?? icons.fallback.executable;

@@ -25,6 +25,9 @@ export async function sh(cmd: string | string[]) {
     });
 }
 
+export const hyprBatch = (...hyprctlCmds: string[]) =>
+    sh(`hyprctl --batch '${hyprctlCmds.join(";")}'`);
+
 export function dependencies(...bins: string[]) {
     const missing = bins.filter(bin => {
         return !Utils.exec(`which ${bin}`);

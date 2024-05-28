@@ -36,6 +36,7 @@ function dependencies(...bins) {
   return missing.length === 0;
 }
 var local = "LTR";
+var hyprBatch = (...hyprctlCmds) => sh(`hyprctl --batch '${hyprctlCmds.join(";")}'`);
 
 // node_modules/@mobily/ts-belt/dist/pipe.mjs
 var pipe = function() {
@@ -3510,9 +3511,11 @@ var directClassMatch = {
   "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
   "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist"
 };
+var terminalApps = [[/^helix.*$/g, "helix"]];
 var iconResolvers = [
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify" : undef,
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify-launcher" : undef,
+  (c) => c.class === "kitty" ? terminalApps.find(([re]) => re.test(c.title))?.[1] : undef,
   (c) => directClassMatch[c.class],
   (c) => Apps.list.find((app2) => app2.match(c.class) || app2.wm_class === c.class)?.icon_name
 ];
@@ -4463,7 +4466,7 @@ var colors = {
   dynamic: false
 };
 var siberian = {
-  wallpaper: `${WALLPAPER_PATH}/tapet_Siberian.png`,
+  wallpaper: `${WALLPAPER_PATH}/OnePiece-Water7.jpg`,
   css_theme: "siberian.scss",
   plasma_color: "BlueDeer.colors",
   qt_5_style_theme: "Breeze",
@@ -4950,15 +4953,9 @@ class ThemeService extends Service2 {
     ]).catch(print);
   }
   steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow, kittyConfig, konsoleTheme) {
-    Promise.resolve().then(() => {
-      timeout3(1000, () => {
-        execAsync3(`hyprctl keyword general:border_size ${border_width}`);
-        execAsync3(`hyprctl keyword general:col.active_border ${active_border}`);
-        execAsync3(`hyprctl keyword general:col.inactive_border ${inactive_border}`);
-        execAsync3(`hyprctl keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`);
-        execAsync3(`hyprctl keyword decoration:rounding ${rounding}`);
-      });
-    }).catch(print);
+    timeout3(1000, () => {
+      hyprBatch(`keyword general:border_size ${border_width}`, `keyword general:col.active_border ${active_border}`, `keyword general:col.inactive_border ${inactive_border}`, `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`, `keyword decoration:rounding ${rounding}`);
+    });
   }
   changeQtStyle(qt5Style, qt6Style) {
     execAsync3([
@@ -5334,8 +5331,8 @@ var ThemesButtonsRowOne = () => {
     theme: COLOR_THEME
   });
   const siberianTheme = ThemeButton({
-    label: "Gradient",
-    icon: "\uF550",
+    label: "Water",
+    icon: "\uF773",
     theme: SIBERIAN_THEME
   });
   const materialYouTheme = ThemeButton({
