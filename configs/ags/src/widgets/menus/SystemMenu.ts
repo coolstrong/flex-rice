@@ -107,8 +107,8 @@ const ThemesButtonsRowOne = () => {
     });
 
     const siberianTheme = ThemeButton({
-        label: "Gradient",
-        icon: "",
+        label: "Water",
+        icon: "",
         theme: SIBERIAN_THEME,
     });
 

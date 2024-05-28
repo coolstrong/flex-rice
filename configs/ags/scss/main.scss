@@ -501,6 +501,7 @@ window {
 /* --------------------------------------- */
 .left-menu-box {
     background: $menu-box-background;
+    opacity: 0.9;
     border-radius: $border-radius;
     border: $border-size solid $menu-box-borders;
     margin-top: 0.45rem;
@@ -676,8 +677,8 @@ window {
 }
 
 .notification-header-box {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
     background: $notifications-header-bg;
     color: $notifications-header-fg;
     border-top-right-radius: $border-radius;
@@ -707,7 +708,7 @@ window {
 .notification-center-header-clear {
     font-family: $icon-font-family;
     border-radius: $border-radius;
-    padding: 0.5rem 1.2rem 0.5rem 1rem;
+    padding: 0.5rem 1rem;
 }
 
 .notification-center-header-clear:dir(rtl) {

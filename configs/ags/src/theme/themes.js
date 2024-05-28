@@ -104,7 +104,7 @@ const colors = {
 };
 
 const siberian = {
-    wallpaper: `${WALLPAPER_PATH}/tapet_Siberian.png`,
+    wallpaper: `${WALLPAPER_PATH}/OnePiece-Water7.jpg`,
     css_theme: "siberian.scss",
     plasma_color: "BlueDeer.colors",
     qt_5_style_theme: "Breeze",
