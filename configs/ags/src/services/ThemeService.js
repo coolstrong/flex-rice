@@ -17,7 +17,6 @@ import {
 } from "resource:///com/github/Aylur/ags/utils.js";
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Service from "resource:///com/github/Aylur/ags/service.js";
-import settings from "../settings.js";
 import { bash, hyprBatch } from "@/utils/helpers.js";
 
 class ThemeService extends Service {
@@ -36,39 +35,24 @@ class ThemeService extends Service {
     qt6FilePath = `/home/${USER}/.config/qt6ct/qt6ct.conf`;
     plasmaColorChanger = App.configDir + "/modules/theme/bin/plasma-theme";
     plasmaColorsPath = App.configDir + "/modules/theme/plasma-colors/";
-    selectedTheme = UNICAT_THEME;
-    rofiFilePath = `/home/${USER}/.config/rofi/config.rasi`;
-    wallpapersList = [];
+    selectedTheme = BLACK_HOLE_THEME;
 
     CACHE_FILE_PATH = `/home/${USER}/.cache/ahmed-hyprland-conf.temp`;
-    wallpaperIntervalId;
-    selectedLightWallpaper = 0;
-    selectedDarkWallpaper = 0;
-    dynamicWallpaperStatus = true;
 
     constructor() {
         super();
-        // exec("swww init");
-
         this.getCachedVariables();
         this.changeTheme(this.selectedTheme);
     }
 
+    /**
+     * @param {number} selectedTheme
+     */
     changeTheme(selectedTheme) {
         let theme = ThemesDictionary[selectedTheme];
 
-        this.clearDynamicWallpaperInterval();
-
-        if (theme.dynamic) {
-            this.setDynamicWallpapers(
-                theme.wallpaper_path,
-                theme.gtk_mode,
-                theme.interval,
-            );
-        } else {
-            this.changeCss(theme.css_theme);
-            this.changeWallpaper(theme.wallpaper);
-        }
+        this.changeCss(theme.css_theme);
+        this.changeWallpaper(theme.wallpaper);
 
         this.changePlasmaColor(theme.plasma_color);
 
@@ -81,8 +65,6 @@ class ThemeService extends Service {
         this.changeQtStyle(theme.qt_5_style_theme, theme.qt_6_style_theme);
         this.changeIcons(theme.qt_icon_theme);
         this.changeKvantumTheme(theme.kvantum_theme);
-        // this.changeRofiTheme(theme.rofi_theme);
-        // this.showDesktopWidget(theme.desktop_widget);
 
         let hypr = theme.hypr;
         this.steHyprland(
@@ -91,8 +73,6 @@ class ThemeService extends Service {
             hypr.inactive_border,
             hypr.rounding,
             hypr.drop_shadow,
-            hypr.kitty,
-            hypr.konsole,
         );
 
         //TODO: add dynamic change via @kitten set-colors
@@ -106,115 +86,12 @@ class ThemeService extends Service {
 
     async changeWallpaper(wallpaper) {
         await execAsync("pkill swaybg").catch(print);
-        // const cmd = `bash -c "swaybg --mode fill --image '${wallpaper}' &"`;
-        // print(cmd);
         await bash`swaybg --mode fill --image '${wallpaper}' &`.catch(print);
     }
 
     changeCss(cssTheme) {
         const newTh = `@import './themes/${cssTheme}';`;
         Utils.writeFile(newTh, `${App.configDir}/scss/theme.scss`).catch(print);
-    }
-
-    get dynamicWallpaperIsOn() {
-        return this.dynamicWallpaperStatus;
-    }
-
-    get isDynamicTheme() {
-        return ThemesDictionary[this.selectedTheme].dynamic;
-    }
-
-    setDynamicWallpapers(path, themeMode, interval) {
-        Utils.execAsync([settings.scripts.get_wallpapers, path])
-            .then(out => {
-                this.wallpapersList = JSON.parse(out);
-
-                // First call
-                this.callNextWallpaper(themeMode);
-
-                // Loop on wallpapers
-                if (this.dynamicWallpaperIsOn) {
-                    this.wallpaperIntervalId = setInterval(() => {
-                        this.callNextWallpaper(themeMode);
-                    }, interval);
-                } else {
-                    this.clearDynamicWallpaperInterval();
-                }
-            })
-            .catch(print);
-    }
-
-    toggleDynamicWallpaper() {
-        if (this.isDynamicTheme && this.dynamicWallpaperIsOn)
-            this.stopDynamicWallpaper();
-        else this.startDynamicWallpaper();
-    }
-
-    clearDynamicWallpaperInterval() {
-        if (this.wallpaperIntervalId) {
-            clearInterval(this.wallpaperIntervalId);
-        }
-    }
-
-    stopDynamicWallpaper() {
-        this.dynamicWallpaperStatus = false;
-        this.clearDynamicWallpaperInterval();
-        this.cacheVariables();
-        this.emit("changed");
-    }
-
-    startDynamicWallpaper() {
-        let theme = ThemesDictionary[this.selectedTheme];
-        this.dynamicWallpaperStatus = true;
-        if (this.wallpaperIntervalId) {
-            clearInterval(this.wallpaperIntervalId);
-        }
-        this.setDynamicWallpapers(
-            theme.wallpaper_path,
-            theme.gtk_mode,
-            theme.interval,
-        );
-        this.cacheVariables();
-        this.emit("changed");
-    }
-
-    callNextWallpaper(themeMode) {
-        // const randomIndex = Math.floor(Math.random() * this.wallpapers_list.length);
-        let selectedWallpaperIndex = 0;
-
-        if (themeMode == "dark") {
-            selectedWallpaperIndex = this.selectedDarkWallpaper;
-            if (this.dynamicWallpaperIsOn)
-                this.selectedDarkWallpaper =
-                    (this.selectedDarkWallpaper + 1) %
-                    this.wallpapersList.length;
-        } else {
-            selectedWallpaperIndex = this.selectedLightWallpaper;
-            if (this.dynamicWallpaperIsOn)
-                this.selectedLightWallpaper =
-                    (this.selectedLightWallpaper + 1) %
-                    this.wallpapersList.length;
-        }
-
-        const wallpaper = this.wallpapersList[selectedWallpaperIndex];
-
-        this.changeWallpaper(wallpaper);
-        this.createM3ColorSchema(wallpaper, themeMode);
-        this.cacheVariables();
-    }
-
-    createM3ColorSchema(wallpaper, mode) {
-        execAsync([
-            "python",
-            settings.scripts.dynamicM3Py,
-            wallpaper,
-            "-m",
-            mode,
-        ])
-            .then(() => {
-                this.changeCss("m3/dynamic.scss");
-            })
-            .catch(print);
     }
 
     changePlasmaColor(plasmaColor) {
@@ -264,14 +141,6 @@ class ThemeService extends Service {
             `icon-theme`,
             iconTheme,
         ]).catch(print);
-
-        // execAsync([
-        //     `gsettings`,
-        //     `set`,
-        //     `org.gnome.desktop.interface`,
-        //     `font-name`,
-        //     fontName,
-        // ]).catch(print);
     }
 
     /**
@@ -290,8 +159,6 @@ class ThemeService extends Service {
         inactive_border,
         rounding,
         drop_shadow,
-        kittyConfig,
-        konsoleTheme,
     ) {
         timeout(1000, () => {
             hyprBatch(
@@ -343,41 +210,8 @@ class ThemeService extends Service {
         ]).catch(print);
     }
 
-    changeRofiTheme(rofiTheme) {
-        const newTheme = `@import "${App.configDir}/modules/theme/rofi/${rofiTheme}"`;
-        execAsync([
-            "sed",
-            "-i",
-            `11s|.*|${newTheme}|`,
-            this.rofiFilePath,
-        ]).catch(print);
-    }
-
     changeKvantumTheme(kvantumTheme) {
         execAsync(["kvantummanager", "--set", kvantumTheme]).catch(print);
-    }
-
-    showDesktopWidget(widget) {
-        let oldTheme = ThemesDictionary[this.selectedTheme];
-        if (
-            oldTheme.desktop_widget !== widget &&
-            oldTheme.desktop_widget !== null
-        ) {
-            this.hideWidget(oldTheme.desktop_widget);
-        }
-        if (widget !== null) {
-            timeout(1000, () => {
-                this.showWidget(widget);
-            });
-        }
-    }
-
-    hideWidget(functionName) {
-        execAsync(["ags", "-r", `Hide${functionName}()`]).catch(print);
-    }
-
-    showWidget(functionName) {
-        execAsync(["ags", "-r", `Show${functionName}()`]).catch(print);
     }
 
     cacheVariables() {

@@ -4801,14 +4801,8 @@ class ThemeService extends Service2 {
   qt6FilePath = `/home/${USER}/.config/qt6ct/qt6ct.conf`;
   plasmaColorChanger = App2.configDir + "/modules/theme/bin/plasma-theme";
   plasmaColorsPath = App2.configDir + "/modules/theme/plasma-colors/";
-  selectedTheme = UNICAT_THEME;
-  rofiFilePath = `/home/${USER}/.config/rofi/config.rasi`;
-  wallpapersList = [];
+  selectedTheme = BLACK_HOLE_THEME;
   CACHE_FILE_PATH = `/home/${USER}/.cache/ahmed-hyprland-conf.temp`;
-  wallpaperIntervalId;
-  selectedLightWallpaper = 0;
-  selectedDarkWallpaper = 0;
-  dynamicWallpaperStatus = true;
   constructor() {
     super();
     this.getCachedVariables();
@@ -4816,20 +4810,15 @@ class ThemeService extends Service2 {
   }
   changeTheme(selectedTheme) {
     let theme = themes_default[selectedTheme];
-    this.clearDynamicWallpaperInterval();
-    if (theme.dynamic) {
-      this.setDynamicWallpapers(theme.wallpaper_path, theme.gtk_mode, theme.interval);
-    } else {
-      this.changeCss(theme.css_theme);
-      this.changeWallpaper(theme.wallpaper);
-    }
+    this.changeCss(theme.css_theme);
+    this.changeWallpaper(theme.wallpaper);
     this.changePlasmaColor(theme.plasma_color);
     this.changeGTKTheme(theme.gtk_theme, theme.gtk_mode, theme.gtk_icon_theme);
     this.changeQtStyle(theme.qt_5_style_theme, theme.qt_6_style_theme);
     this.changeIcons(theme.qt_icon_theme);
     this.changeKvantumTheme(theme.kvantum_theme);
     let hypr = theme.hypr;
-    this.steHyprland(hypr.border_width, hypr.active_border, hypr.inactive_border, hypr.rounding, hypr.drop_shadow, hypr.kitty, hypr.konsole);
+    this.steHyprland(hypr.border_width, hypr.active_border, hypr.inactive_border, hypr.rounding, hypr.drop_shadow);
     this.setKitty(hypr.kitty);
     this.selectedTheme = selectedTheme;
     this.emit("changed");
@@ -4842,79 +4831,6 @@ class ThemeService extends Service2 {
   changeCss(cssTheme) {
     const newTh = `@import './themes/${cssTheme}';`;
     Utils.writeFile(newTh, `${App2.configDir}/scss/theme.scss`).catch(print);
-  }
-  get dynamicWallpaperIsOn() {
-    return this.dynamicWallpaperStatus;
-  }
-  get isDynamicTheme() {
-    return themes_default[this.selectedTheme].dynamic;
-  }
-  setDynamicWallpapers(path, themeMode, interval) {
-    Utils.execAsync([settings_default.scripts.get_wallpapers, path]).then((out) => {
-      this.wallpapersList = JSON.parse(out);
-      this.callNextWallpaper(themeMode);
-      if (this.dynamicWallpaperIsOn) {
-        this.wallpaperIntervalId = setInterval(() => {
-          this.callNextWallpaper(themeMode);
-        }, interval);
-      } else {
-        this.clearDynamicWallpaperInterval();
-      }
-    }).catch(print);
-  }
-  toggleDynamicWallpaper() {
-    if (this.isDynamicTheme && this.dynamicWallpaperIsOn)
-      this.stopDynamicWallpaper();
-    else
-      this.startDynamicWallpaper();
-  }
-  clearDynamicWallpaperInterval() {
-    if (this.wallpaperIntervalId) {
-      clearInterval(this.wallpaperIntervalId);
-    }
-  }
-  stopDynamicWallpaper() {
-    this.dynamicWallpaperStatus = false;
-    this.clearDynamicWallpaperInterval();
-    this.cacheVariables();
-    this.emit("changed");
-  }
-  startDynamicWallpaper() {
-    let theme = themes_default[this.selectedTheme];
-    this.dynamicWallpaperStatus = true;
-    if (this.wallpaperIntervalId) {
-      clearInterval(this.wallpaperIntervalId);
-    }
-    this.setDynamicWallpapers(theme.wallpaper_path, theme.gtk_mode, theme.interval);
-    this.cacheVariables();
-    this.emit("changed");
-  }
-  callNextWallpaper(themeMode) {
-    let selectedWallpaperIndex = 0;
-    if (themeMode == "dark") {
-      selectedWallpaperIndex = this.selectedDarkWallpaper;
-      if (this.dynamicWallpaperIsOn)
-        this.selectedDarkWallpaper = (this.selectedDarkWallpaper + 1) % this.wallpapersList.length;
-    } else {
-      selectedWallpaperIndex = this.selectedLightWallpaper;
-      if (this.dynamicWallpaperIsOn)
-        this.selectedLightWallpaper = (this.selectedLightWallpaper + 1) % this.wallpapersList.length;
-    }
-    const wallpaper = this.wallpapersList[selectedWallpaperIndex];
-    this.changeWallpaper(wallpaper);
-    this.createM3ColorSchema(wallpaper, themeMode);
-    this.cacheVariables();
-  }
-  createM3ColorSchema(wallpaper, mode) {
-    execAsync3([
-      "python",
-      settings_default.scripts.dynamicM3Py,
-      wallpaper,
-      "-m",
-      mode
-    ]).then(() => {
-      this.changeCss("m3/dynamic.scss");
-    }).catch(print);
   }
   changePlasmaColor(plasmaColor) {
     const plasmaCmd = `plasma-apply-colorscheme`;
@@ -4962,7 +4878,7 @@ class ThemeService extends Service2 {
   setKitty(kittyTheme) {
     return Utils.writeFile(`include ./themes/${kittyTheme}`, ".config/kitty/colors.conf").catch(print);
   }
-  steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow, kittyConfig, konsoleTheme) {
+  steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow) {
     timeout3(1000, () => {
       hyprBatch(`keyword general:border_size ${border_width}`, `keyword general:col.active_border ${active_border}`, `keyword group:col.border_active ${active_border}`, `keyword general:cdol.inactive_border ${inactive_border}`, `keyword group:col.inactive_border ${inactive_border}`, `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`, `keyword decoration:rounding ${rounding}`);
     });
@@ -4995,34 +4911,8 @@ class ThemeService extends Service2 {
       this.qt6FilePath
     ]).catch(print);
   }
-  changeRofiTheme(rofiTheme) {
-    const newTheme = `@import "${App2.configDir}/modules/theme/rofi/${rofiTheme}"`;
-    execAsync3([
-      "sed",
-      "-i",
-      `11s|.*|${newTheme}|`,
-      this.rofiFilePath
-    ]).catch(print);
-  }
   changeKvantumTheme(kvantumTheme) {
     execAsync3(["kvantummanager", "--set", kvantumTheme]).catch(print);
-  }
-  showDesktopWidget(widget9) {
-    let oldTheme = themes_default[this.selectedTheme];
-    if (oldTheme.desktop_widget !== widget9 && oldTheme.desktop_widget !== null) {
-      this.hideWidget(oldTheme.desktop_widget);
-    }
-    if (widget9 !== null) {
-      timeout3(1000, () => {
-        this.showWidget(widget9);
-      });
-    }
-  }
-  hideWidget(functionName) {
-    execAsync3(["ags", "-r", `Hide${functionName}()`]).catch(print);
-  }
-  showWidget(functionName) {
-    execAsync3(["ags", "-r", `Show${functionName}()`]).catch(print);
   }
   cacheVariables() {
     const newData = {
