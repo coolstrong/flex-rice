@@ -28,7 +28,7 @@ class ThemeService extends Service {
             {
                 dynamicWallpaperIsOn: ["boolean", "r"],
                 isDynamicTheme: ["boolean", "r"],
-            }
+            },
         );
     }
 
@@ -63,7 +63,7 @@ class ThemeService extends Service {
             this.setDynamicWallpapers(
                 theme.wallpaper_path,
                 theme.gtk_mode,
-                theme.interval
+                theme.interval,
             );
         } else {
             this.changeCss(theme.css_theme);
@@ -75,7 +75,7 @@ class ThemeService extends Service {
         this.changeGTKTheme(
             theme.gtk_theme,
             theme.gtk_mode,
-            theme.gtk_icon_theme
+            theme.gtk_icon_theme,
         );
 
         this.changeQtStyle(theme.qt_5_style_theme, theme.qt_6_style_theme);
@@ -92,8 +92,11 @@ class ThemeService extends Service {
             hypr.rounding,
             hypr.drop_shadow,
             hypr.kitty,
-            hypr.konsole
+            hypr.konsole,
         );
+
+        //TODO: add dynamic change via @kitten set-colors
+        this.setKitty(hypr.kitty);
 
         this.selectedTheme = selectedTheme;
         this.emit("changed");
@@ -169,7 +172,7 @@ class ThemeService extends Service {
         this.setDynamicWallpapers(
             theme.wallpaper_path,
             theme.gtk_mode,
-            theme.interval
+            theme.interval,
         );
         this.cacheVariables();
         this.emit("changed");
@@ -271,6 +274,16 @@ class ThemeService extends Service {
         // ]).catch(print);
     }
 
+    /**
+     * @param {string} kittyTheme
+     */
+    setKitty(kittyTheme) {
+        return Utils.writeFile(
+            `include ./themes/${kittyTheme}`,
+            ".config/kitty/colors.conf",
+        ).catch(print);
+    }
+
     steHyprland(
         border_width,
         active_border,
@@ -278,15 +291,22 @@ class ThemeService extends Service {
         rounding,
         drop_shadow,
         kittyConfig,
-        konsoleTheme
+        konsoleTheme,
     ) {
         timeout(1000, () => {
             hyprBatch(
                 `keyword general:border_size ${border_width}`,
+
                 `keyword general:col.active_border ${active_border}`,
-                `keyword general:col.inactive_border ${inactive_border}`,
+                `keyword group:col.border_active ${active_border}`,
+                // `keyword group:groupbar:col.active ${active_border}`,
+
+                `keyword general:cdol.inactive_border ${inactive_border}`,
+                `keyword group:col.inactive_border ${inactive_border}`,
+                // `keyword group:groupbar:col.inactive ${inactive_border}`,
+
                 `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`,
-                `keyword decoration:rounding ${rounding}`
+                `keyword decoration:rounding ${rounding}`,
             );
         });
     }
@@ -369,7 +389,7 @@ class ThemeService extends Service {
         };
         Utils.writeFile(
             JSON.stringify(newData, null, 2),
-            this.CACHE_FILE_PATH
+            this.CACHE_FILE_PATH,
         ).catch(err => print(err));
     }
 
@@ -397,7 +417,7 @@ const dictionary = {
     "Black hole": BLACK_HOLE_THEME,
     Deer: DEER_THEME,
     Color: COLOR_THEME,
-    Gradient: SIBERIAN_THEME,
+    Water: SIBERIAN_THEME,
     Pastel: MATERIAL_YOU,
     Windows: WIN_20,
     Dark: DARK_THEME,

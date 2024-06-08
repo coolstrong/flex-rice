@@ -152,7 +152,13 @@ const directClassMatch = {
     "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist",
 };
 
-const terminalApps: [RegExp, string][] = [[/^helix.*$/g, "helix"]];
+const terminalApps: [RegExp, string][] = [
+    [/^helix/g, "helix"],
+    [/^br(oot)?/g, "/home/deni/Pictures/icons/broot.png"],
+    [/^btm/g, "/home/deni/Pictures/icons/monitoring.png"],
+    [/^yetris/g, "/home/deni/Pictures/icons/tetris.png"],
+    [/^nvim/g, "/home/deni/Pictures/icons/neovim.png"],
+];
 
 const iconResolvers: Array<(client: Client) => string | undef> = [
     c => (c.initialTitle.startsWith("Spotify") ? "spotify" : undef),
@@ -176,5 +182,5 @@ export const ensureIconExist = (icon: string | undef | null) =>
 export const windowIcon = (client: Client): string =>
     iconResolvers.reduce(
         (acc, resolver) => acc ?? ensureIconExist(resolver(client)),
-        undef as string | undef
+        undef as string | undef,
     ) ?? icons.fallback.executable;

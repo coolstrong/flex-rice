@@ -3511,7 +3511,13 @@ var directClassMatch = {
   "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
   "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist"
 };
-var terminalApps = [[/^helix.*$/g, "helix"]];
+var terminalApps = [
+  [/^helix/g, "helix"],
+  [/^br(oot)?/g, "/home/deni/Pictures/icons/broot.png"],
+  [/^btm/g, "/home/deni/Pictures/icons/monitoring.png"],
+  [/^yetris/g, "/home/deni/Pictures/icons/tetris.png"],
+  [/^nvim/g, "/home/deni/Pictures/icons/neovim.png"]
+];
 var iconResolvers = [
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify" : undef,
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify-launcher" : undef,
@@ -4824,6 +4830,7 @@ class ThemeService extends Service2 {
     this.changeKvantumTheme(theme.kvantum_theme);
     let hypr = theme.hypr;
     this.steHyprland(hypr.border_width, hypr.active_border, hypr.inactive_border, hypr.rounding, hypr.drop_shadow, hypr.kitty, hypr.konsole);
+    this.setKitty(hypr.kitty);
     this.selectedTheme = selectedTheme;
     this.emit("changed");
     this.cacheVariables();
@@ -4952,9 +4959,12 @@ class ThemeService extends Service2 {
       iconTheme
     ]).catch(print);
   }
+  setKitty(kittyTheme) {
+    return Utils.writeFile(`include ./themes/${kittyTheme}`, ".config/kitty/colors.conf").catch(print);
+  }
   steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow, kittyConfig, konsoleTheme) {
     timeout3(1000, () => {
-      hyprBatch(`keyword general:border_size ${border_width}`, `keyword general:col.active_border ${active_border}`, `keyword general:col.inactive_border ${inactive_border}`, `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`, `keyword decoration:rounding ${rounding}`);
+      hyprBatch(`keyword general:border_size ${border_width}`, `keyword general:col.active_border ${active_border}`, `keyword group:col.border_active ${active_border}`, `keyword general:cdol.inactive_border ${inactive_border}`, `keyword group:col.inactive_border ${inactive_border}`, `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`, `keyword decoration:rounding ${rounding}`);
     });
   }
   changeQtStyle(qt5Style, qt6Style) {
@@ -5043,7 +5053,7 @@ var dictionary = {
   "Black hole": BLACK_HOLE_THEME,
   Deer: DEER_THEME,
   Color: COLOR_THEME,
-  Gradient: SIBERIAN_THEME,
+  Water: SIBERIAN_THEME,
   Pastel: MATERIAL_YOU,
   Windows: WIN_20,
   Dark: DARK_THEME,
