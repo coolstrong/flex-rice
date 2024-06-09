@@ -4541,7 +4541,7 @@ var game = {
   dynamic: false
 };
 var dark = {
-  wallpaper: `${WALLPAPER_PATH}/dark.jpg`,
+  wallpaper: `${WALLPAPER_PATH}/star.jpg`,
   css_theme: "dark.scss",
   plasma_color: "DarkAGS.colors",
   qt_5_style_theme: "Breeze",
@@ -4946,7 +4946,7 @@ var dictionary = {
   Water: SIBERIAN_THEME,
   Pastel: MATERIAL_YOU,
   Windows: WIN_20,
-  Dark: DARK_THEME,
+  Star: DARK_THEME,
   Unicat: UNICAT_THEME,
   "New cat": NEW_CAT_THEME,
   Circles: CIRCLES_THEME
@@ -5245,14 +5245,9 @@ var ThemesButtonsRowOne = () => {
     icon: "\uF3CA",
     theme: WIN_20
   });
-  const gameTheme = ThemeButton({
-    label: "Game",
-    icon: "\uF11B",
-    theme: GAME_THEME
-  });
   const darkTheme = ThemeButton({
-    label: "Dark",
-    icon: "\uDB84\uDC1D",
+    label: "Star",
+    icon: "\uE22E",
     theme: DARK_THEME
   });
   const unicatTheme = ThemeButton({
@@ -5265,59 +5260,10 @@ var ThemesButtonsRowOne = () => {
     icon: "\uF7E3",
     theme: NEW_CAT_THEME
   });
-  const goldenTheme = ThemeButton({
-    label: "Golden",
-    icon: "\uDB80\uDE4A",
-    theme: GOLDEN_THEME
-  });
-  const harmonyTheme = ThemeButton({
-    label: "Harmony",
-    icon: "\uDB81\uDD09",
-    theme: HARMONY_THEME
-  });
   const circlesTheme = ThemeButton({
     label: "Circles",
     icon: "\uF32E",
     theme: CIRCLES_THEME
-  });
-  const whiteFlower2 = ThemeButton({
-    label: "White",
-    icon: "\uE793",
-    theme: WHITE_FLOWER
-  });
-  const dynamicTheme = Widget.Box({
-    children: [
-      ThemeButton({
-        label: "",
-        icon: "\uF186",
-        theme: DYNAMIC_M3_DARK,
-        label_css: "unset",
-        icon_css: "dynamic-theme-btn-icon",
-        css: `
-              min-height: 2rem;
-              border-top-right-radius: 1rem;
-              border-bottom-right-radius: 1rem;
-
-              border-top-left-radius: 0rem;
-              border-bottom-left-radius: 0rem;
-            `
-      }),
-      ThemeButton({
-        label: "",
-        icon: "\uF185",
-        theme: DYNAMIC_M3_LIGHT,
-        label_css: "unset",
-        icon_css: "dynamic-theme-btn-icon",
-        css: `
-                min-height: 2rem;
-                border-top-left-radius: 1rem;
-                border-bottom-left-radius: 1rem;
-
-                border-top-right-radius: 0rem;
-                border-bottom-right-radius: 0rem;
-            `
-      })
-    ]
   });
   const row1 = Box9({
     homogeneous: true,

@@ -125,15 +125,9 @@ const ThemesButtonsRowOne = () => {
         // end: "",
     });
 
-    const gameTheme = ThemeButton({
-        label: "Game",
-        icon: "",
-        theme: GAME_THEME,
-    });
-
     const darkTheme = ThemeButton({
-        label: "Dark",
-        icon: "󱀝",
+        label: "Star",
+        icon: "",
         theme: DARK_THEME,
     });
 
@@ -149,63 +143,10 @@ const ThemesButtonsRowOne = () => {
         theme: NEW_CAT_THEME,
     });
 
-    const goldenTheme = ThemeButton({
-        label: "Golden",
-        icon: "󰉊",
-        theme: GOLDEN_THEME,
-    });
-
-    const harmonyTheme = ThemeButton({
-        label: "Harmony",
-        icon: "󰔉",
-        theme: HARMONY_THEME,
-    });
-
     const circlesTheme = ThemeButton({
         label: "Circles",
         icon: "",
         theme: CIRCLES_THEME,
-    });
-
-    const whiteFlower = ThemeButton({
-        label: "White",
-        icon: "",
-        theme: WHITE_FLOWER,
-    });
-
-    const dynamicTheme = Widget.Box({
-        children: [
-            ThemeButton({
-                label: "",
-                icon: "",
-                theme: DYNAMIC_M3_DARK,
-                label_css: "unset",
-                icon_css: "dynamic-theme-btn-icon",
-                css: `
-              min-height: 2rem;
-              border-top-right-radius: 1rem;
-              border-bottom-right-radius: 1rem;
-
-              border-top-left-radius: 0rem;
-              border-bottom-left-radius: 0rem;
-            `,
-            }),
-            ThemeButton({
-                label: "",
-                icon: "",
-                theme: DYNAMIC_M3_LIGHT,
-                label_css: "unset",
-                icon_css: "dynamic-theme-btn-icon",
-                css: `
-                min-height: 2rem;
-                border-top-left-radius: 1rem;
-                border-bottom-left-radius: 1rem;
-
-                border-top-right-radius: 0rem;
-                border-bottom-right-radius: 0rem;
-            `,
-            }),
-        ],
     });
 
     // --------------------------

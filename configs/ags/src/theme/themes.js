@@ -179,7 +179,7 @@ const game = {
 };
 
 const dark = {
-    wallpaper: `${WALLPAPER_PATH}/dark.jpg`,
+    wallpaper: `${WALLPAPER_PATH}/star.jpg`,
     css_theme: "dark.scss",
     plasma_color: "DarkAGS.colors",
     qt_5_style_theme: "Breeze",

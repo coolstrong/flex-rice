@@ -254,7 +254,7 @@ const dictionary = {
     Water: SIBERIAN_THEME,
     Pastel: MATERIAL_YOU,
     Windows: WIN_20,
-    Dark: DARK_THEME,
+    Star: DARK_THEME,
     Unicat: UNICAT_THEME,
     "New cat": NEW_CAT_THEME,
     Circles: CIRCLES_THEME,
