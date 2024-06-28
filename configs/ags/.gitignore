@@ -174,4 +174,4 @@ out
 # Finder (MacOS) folder config
 .DS_Store
 /scss/theme.scss
-/scss/widgets.sass
+/scss/widgets.scss

@@ -14,7 +14,8 @@ import clsx from "clsx";
 import Gtk from "gi://Gtk?version=3.0";
 import keyboard from "@/services/keyboard.ts";
 
-import "./style.sass";
+import "./style.scss";
+
 import { useIntervalVar } from "@/lib/hooks.ts";
 import config from "config.json";
 
@@ -41,7 +42,7 @@ const Clock = () => {
         className: "clock small-shadow unset",
         label: date.bind().as(
             // prettier-ignore
-            d => `${d.toLocaleDateString(locale)}   ${d.toLocaleTimeString(locale)}`
+            d => `${d.toLocaleDateString(locale)}   ${d.toLocaleTimeString(locale)}`,
         ),
         onClicked: () => App.toggleWindow("calendar-menu"),
     });

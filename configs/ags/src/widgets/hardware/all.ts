@@ -3,7 +3,7 @@ import { BatteryWidget } from "./battery.ts";
 import { CpuWidget } from "./cpu.ts";
 import { RamWidget } from "./ram.ts";
 
-import "./style.sass";
+import "./style.scss";
 
 export const HardwareBox = () =>
     Box({

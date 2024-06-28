@@ -1,6 +1,6 @@
 import { Popup } from "./Popup";
 
-import "./style.sass";
+import "./style.scss";
 import { D } from "@mobily/ts-belt";
 import { Variable as GtkVar } from "@/types/variable";
 import config from "config.json";
@@ -19,7 +19,7 @@ const WorldTime = ({ date }: { date: GtkVar<Date> }) =>
                         label: date.bind().as(d =>
                             d.toLocaleTimeString(config.time.locale, {
                                 timeZone: tz,
-                            })
+                            }),
                         ),
                     }),
                     Widget.Box({ hexpand: true }),
@@ -28,7 +28,7 @@ const WorldTime = ({ date }: { date: GtkVar<Date> }) =>
                         label: tz.slice(tz.indexOf("/") + 1),
                     }),
                 ],
-            })
+            }),
         ),
     });
 
@@ -65,7 +65,7 @@ export const CalendarMenu = () => {
                             label: date
                                 .bind()
                                 .as(d =>
-                                    d.toLocaleTimeString(config.time.locale)
+                                    d.toLocaleTimeString(config.time.locale),
                                 ),
                         }),
                         Widget.Box({
@@ -76,7 +76,7 @@ export const CalendarMenu = () => {
                             label: date
                                 .bind()
                                 .as(d =>
-                                    d.toLocaleDateString(config.time.locale)
+                                    d.toLocaleDateString(config.time.locale),
                                 ),
                         }),
                     ],
