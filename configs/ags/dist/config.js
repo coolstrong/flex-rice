@@ -37,6 +37,11 @@ function dependencies(...bins) {
 }
 var local = "LTR";
 var hyprBatch = (...hyprctlCmds) => sh(`hyprctl --batch '${hyprctlCmds.join(";")}'`);
+var cssComponent = (name, states = []) => {
+  const baseClass = typeof name === "string" ? name : name.join("__");
+  const stateClasses = states.map((s) => baseClass + "--" + s);
+  return [baseClass, ...stateClasses].join(" ");
+};
 
 // node_modules/@mobily/ts-belt/dist/pipe.mjs
 var pipe = function() {
@@ -6112,6 +6117,611 @@ class CacheContainer {
 // config_private.json
 var todoistToken = "543b5ad437c41825b8f180e699d0643b796167b6";
 
+// node_modules/immer/dist/immer.mjs
+var die = function(error, ...args) {
+  if (true) {
+    const e2 = errors[error];
+    const msg = typeof e2 === "function" ? e2.apply(null, args) : e2;
+    throw new Error(`[Immer] ${msg}`);
+  }
+  throw new Error(`[Immer] minified error nr: ${error}. Full error at: https://bit.ly/3cXEKWf`);
+};
+var isDraft = function(value) {
+  return !!value && !!value[DRAFT_STATE];
+};
+var isDraftable = function(value) {
+  if (!value)
+    return false;
+  return isPlainObject(value) || Array.isArray(value) || !!value[DRAFTABLE] || !!value.constructor?.[DRAFTABLE] || isMap(value) || isSet(value);
+};
+var isPlainObject = function(value) {
+  if (!value || typeof value !== "object")
+    return false;
+  const proto = getPrototypeOf(value);
+  if (proto === null) {
+    return true;
+  }
+  const Ctor = Object.hasOwnProperty.call(proto, "constructor") && proto.constructor;
+  if (Ctor === Object)
+    return true;
+  return typeof Ctor == "function" && Function.toString.call(Ctor) === objectCtorString;
+};
+var each = function(obj, iter) {
+  if (getArchtype(obj) === 0) {
+    Object.entries(obj).forEach(([key, value]) => {
+      iter(key, value, obj);
+    });
+  } else {
+    obj.forEach((entry, index) => iter(index, entry, obj));
+  }
+};
+var getArchtype = function(thing) {
+  const state = thing[DRAFT_STATE];
+  return state ? state.type_ : Array.isArray(thing) ? 1 : isMap(thing) ? 2 : isSet(thing) ? 3 : 0;
+};
+var has = function(thing, prop) {
+  return getArchtype(thing) === 2 ? thing.has(prop) : Object.prototype.hasOwnProperty.call(thing, prop);
+};
+var set2 = function(thing, propOrOldValue, value) {
+  const t3 = getArchtype(thing);
+  if (t3 === 2)
+    thing.set(propOrOldValue, value);
+  else if (t3 === 3) {
+    thing.add(value);
+  } else
+    thing[propOrOldValue] = value;
+};
+var is2 = function(x2, y2) {
+  if (x2 === y2) {
+    return x2 !== 0 || 1 / x2 === 1 / y2;
+  } else {
+    return x2 !== x2 && y2 !== y2;
+  }
+};
+var isMap = function(target) {
+  return target instanceof Map;
+};
+var isSet = function(target) {
+  return target instanceof Set;
+};
+var latest = function(state) {
+  return state.copy_ || state.base_;
+};
+var shallowCopy = function(base, strict) {
+  if (isMap(base)) {
+    return new Map(base);
+  }
+  if (isSet(base)) {
+    return new Set(base);
+  }
+  if (Array.isArray(base))
+    return Array.prototype.slice.call(base);
+  if (!strict && isPlainObject(base)) {
+    if (!getPrototypeOf(base)) {
+      const obj = Object.create(null);
+      return Object.assign(obj, base);
+    }
+    return { ...base };
+  }
+  const descriptors = Object.getOwnPropertyDescriptors(base);
+  delete descriptors[DRAFT_STATE];
+  let keys = Reflect.ownKeys(descriptors);
+  for (let i4 = 0;i4 < keys.length; i4++) {
+    const key = keys[i4];
+    const desc = descriptors[key];
+    if (desc.writable === false) {
+      desc.writable = true;
+      desc.configurable = true;
+    }
+    if (desc.get || desc.set)
+      descriptors[key] = {
+        configurable: true,
+        writable: true,
+        enumerable: desc.enumerable,
+        value: base[key]
+      };
+  }
+  return Object.create(getPrototypeOf(base), descriptors);
+};
+var freeze = function(obj, deep = false) {
+  if (isFrozen(obj) || isDraft(obj) || !isDraftable(obj))
+    return obj;
+  if (getArchtype(obj) > 1) {
+    obj.set = obj.add = obj.clear = obj.delete = dontMutateFrozenCollections;
+  }
+  Object.freeze(obj);
+  if (deep)
+    each(obj, (_key, value) => freeze(value, true), true);
+  return obj;
+};
+var dontMutateFrozenCollections = function() {
+  die(2);
+};
+var isFrozen = function(obj) {
+  return Object.isFrozen(obj);
+};
+var getPlugin = function(pluginKey) {
+  const plugin = plugins[pluginKey];
+  if (!plugin) {
+    die(0, pluginKey);
+  }
+  return plugin;
+};
+var getCurrentScope = function() {
+  return currentScope;
+};
+var createScope = function(parent_, immer_) {
+  return {
+    drafts_: [],
+    parent_,
+    immer_,
+    canAutoFreeze_: true,
+    unfinalizedDrafts_: 0
+  };
+};
+var usePatchesInScope = function(scope, patchListener) {
+  if (patchListener) {
+    getPlugin("Patches");
+    scope.patches_ = [];
+    scope.inversePatches_ = [];
+    scope.patchListener_ = patchListener;
+  }
+};
+var revokeScope = function(scope) {
+  leaveScope(scope);
+  scope.drafts_.forEach(revokeDraft);
+  scope.drafts_ = null;
+};
+var leaveScope = function(scope) {
+  if (scope === currentScope) {
+    currentScope = scope.parent_;
+  }
+};
+var enterScope = function(immer2) {
+  return currentScope = createScope(currentScope, immer2);
+};
+var revokeDraft = function(draft) {
+  const state = draft[DRAFT_STATE];
+  if (state.type_ === 0 || state.type_ === 1)
+    state.revoke_();
+  else
+    state.revoked_ = true;
+};
+var processResult = function(result, scope) {
+  scope.unfinalizedDrafts_ = scope.drafts_.length;
+  const baseDraft = scope.drafts_[0];
+  const isReplaced = result !== undefined && result !== baseDraft;
+  if (isReplaced) {
+    if (baseDraft[DRAFT_STATE].modified_) {
+      revokeScope(scope);
+      die(4);
+    }
+    if (isDraftable(result)) {
+      result = finalize(scope, result);
+      if (!scope.parent_)
+        maybeFreeze(scope, result);
+    }
+    if (scope.patches_) {
+      getPlugin("Patches").generateReplacementPatches_(baseDraft[DRAFT_STATE].base_, result, scope.patches_, scope.inversePatches_);
+    }
+  } else {
+    result = finalize(scope, baseDraft, []);
+  }
+  revokeScope(scope);
+  if (scope.patches_) {
+    scope.patchListener_(scope.patches_, scope.inversePatches_);
+  }
+  return result !== NOTHING ? result : undefined;
+};
+var finalize = function(rootScope, value, path) {
+  if (isFrozen(value))
+    return value;
+  const state = value[DRAFT_STATE];
+  if (!state) {
+    each(value, (key, childValue) => finalizeProperty(rootScope, state, value, key, childValue, path), true);
+    return value;
+  }
+  if (state.scope_ !== rootScope)
+    return value;
+  if (!state.modified_) {
+    maybeFreeze(rootScope, state.base_, true);
+    return state.base_;
+  }
+  if (!state.finalized_) {
+    state.finalized_ = true;
+    state.scope_.unfinalizedDrafts_--;
+    const result = state.copy_;
+    let resultEach = result;
+    let isSet2 = false;
+    if (state.type_ === 3) {
+      resultEach = new Set(result);
+      result.clear();
+      isSet2 = true;
+    }
+    each(resultEach, (key, childValue) => finalizeProperty(rootScope, state, result, key, childValue, path, isSet2));
+    maybeFreeze(rootScope, result, false);
+    if (path && rootScope.patches_) {
+      getPlugin("Patches").generatePatches_(state, path, rootScope.patches_, rootScope.inversePatches_);
+    }
+  }
+  return state.copy_;
+};
+var finalizeProperty = function(rootScope, parentState, targetObject, prop, childValue, rootPath, targetIsSet) {
+  if (childValue === targetObject)
+    die(5);
+  if (isDraft(childValue)) {
+    const path = rootPath && parentState && parentState.type_ !== 3 && !has(parentState.assigned_, prop) ? rootPath.concat(prop) : undefined;
+    const res = finalize(rootScope, childValue, path);
+    set2(targetObject, prop, res);
+    if (isDraft(res)) {
+      rootScope.canAutoFreeze_ = false;
+    } else
+      return;
+  } else if (targetIsSet) {
+    targetObject.add(childValue);
+  }
+  if (isDraftable(childValue) && !isFrozen(childValue)) {
+    if (!rootScope.immer_.autoFreeze_ && rootScope.unfinalizedDrafts_ < 1) {
+      return;
+    }
+    finalize(rootScope, childValue);
+    if (!parentState || !parentState.scope_.parent_)
+      maybeFreeze(rootScope, childValue);
+  }
+};
+var maybeFreeze = function(scope, value, deep = false) {
+  if (!scope.parent_ && scope.immer_.autoFreeze_ && scope.canAutoFreeze_) {
+    freeze(value, deep);
+  }
+};
+var createProxyProxy = function(base, parent) {
+  const isArray2 = Array.isArray(base);
+  const state = {
+    type_: isArray2 ? 1 : 0,
+    scope_: parent ? parent.scope_ : getCurrentScope(),
+    modified_: false,
+    finalized_: false,
+    assigned_: {},
+    parent_: parent,
+    base_: base,
+    draft_: null,
+    copy_: null,
+    revoke_: null,
+    isManual_: false
+  };
+  let target = state;
+  let traps = objectTraps;
+  if (isArray2) {
+    target = [state];
+    traps = arrayTraps;
+  }
+  const { revoke, proxy } = Proxy.revocable(target, traps);
+  state.draft_ = proxy;
+  state.revoke_ = revoke;
+  return proxy;
+};
+var peek = function(draft, prop) {
+  const state = draft[DRAFT_STATE];
+  const source = state ? latest(state) : draft;
+  return source[prop];
+};
+var readPropFromProto = function(state, source, prop) {
+  const desc = getDescriptorFromProto(source, prop);
+  return desc ? `value` in desc ? desc.value : desc.get?.call(state.draft_) : undefined;
+};
+var getDescriptorFromProto = function(source, prop) {
+  if (!(prop in source))
+    return;
+  let proto = getPrototypeOf(source);
+  while (proto) {
+    const desc = Object.getOwnPropertyDescriptor(proto, prop);
+    if (desc)
+      return desc;
+    proto = getPrototypeOf(proto);
+  }
+  return;
+};
+var markChanged = function(state) {
+  if (!state.modified_) {
+    state.modified_ = true;
+    if (state.parent_) {
+      markChanged(state.parent_);
+    }
+  }
+};
+var prepareCopy = function(state) {
+  if (!state.copy_) {
+    state.copy_ = shallowCopy(state.base_, state.scope_.immer_.useStrictShallowCopy_);
+  }
+};
+var createProxy = function(value, parent) {
+  const draft = isMap(value) ? getPlugin("MapSet").proxyMap_(value, parent) : isSet(value) ? getPlugin("MapSet").proxySet_(value, parent) : createProxyProxy(value, parent);
+  const scope = parent ? parent.scope_ : getCurrentScope();
+  scope.drafts_.push(draft);
+  return draft;
+};
+var current = function(value) {
+  if (!isDraft(value))
+    die(10, value);
+  return currentImpl(value);
+};
+var currentImpl = function(value) {
+  if (!isDraftable(value) || isFrozen(value))
+    return value;
+  const state = value[DRAFT_STATE];
+  let copy2;
+  if (state) {
+    if (!state.modified_)
+      return state.base_;
+    state.finalized_ = true;
+    copy2 = shallowCopy(value, state.scope_.immer_.useStrictShallowCopy_);
+  } else {
+    copy2 = shallowCopy(value, true);
+  }
+  each(copy2, (key, childValue) => {
+    set2(copy2, key, currentImpl(childValue));
+  });
+  if (state) {
+    state.finalized_ = false;
+  }
+  return copy2;
+};
+var NOTHING = Symbol.for("immer-nothing");
+var DRAFTABLE = Symbol.for("immer-draftable");
+var DRAFT_STATE = Symbol.for("immer-state");
+var errors = [
+  function(plugin) {
+    return `The plugin for '${plugin}' has not been loaded into Immer. To enable the plugin, import and call \`enable${plugin}()\` when initializing your application.`;
+  },
+  function(thing) {
+    return `produce can only be called on things that are draftable: plain objects, arrays, Map, Set or classes that are marked with '[immerable]: true'. Got '${thing}'`;
+  },
+  "This object has been frozen and should not be mutated",
+  function(data) {
+    return "Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? " + data;
+  },
+  "An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",
+  "Immer forbids circular references",
+  "The first or second argument to `produce` must be a function",
+  "The third argument to `produce` must be a function or undefined",
+  "First argument to `createDraft` must be a plain object, an array, or an immerable object",
+  "First argument to `finishDraft` must be a draft returned by `createDraft`",
+  function(thing) {
+    return `'current' expects a draft, got: ${thing}`;
+  },
+  "Object.defineProperty() cannot be used on an Immer draft",
+  "Object.setPrototypeOf() cannot be used on an Immer draft",
+  "Immer only supports deleting array indices",
+  "Immer only supports setting array indices and the 'length' property",
+  function(thing) {
+    return `'original' expects a draft, got: ${thing}`;
+  }
+];
+var getPrototypeOf = Object.getPrototypeOf;
+var objectCtorString = Object.prototype.constructor.toString();
+var plugins = {};
+var currentScope;
+var objectTraps = {
+  get(state, prop) {
+    if (prop === DRAFT_STATE)
+      return state;
+    const source = latest(state);
+    if (!has(source, prop)) {
+      return readPropFromProto(state, source, prop);
+    }
+    const value = source[prop];
+    if (state.finalized_ || !isDraftable(value)) {
+      return value;
+    }
+    if (value === peek(state.base_, prop)) {
+      prepareCopy(state);
+      return state.copy_[prop] = createProxy(value, state);
+    }
+    return value;
+  },
+  has(state, prop) {
+    return prop in latest(state);
+  },
+  ownKeys(state) {
+    return Reflect.ownKeys(latest(state));
+  },
+  set(state, prop, value) {
+    const desc = getDescriptorFromProto(latest(state), prop);
+    if (desc?.set) {
+      desc.set.call(state.draft_, value);
+      return true;
+    }
+    if (!state.modified_) {
+      const current2 = peek(latest(state), prop);
+      const currentState = current2?.[DRAFT_STATE];
+      if (currentState && currentState.base_ === value) {
+        state.copy_[prop] = value;
+        state.assigned_[prop] = false;
+        return true;
+      }
+      if (is2(value, current2) && (value !== undefined || has(state.base_, prop)))
+        return true;
+      prepareCopy(state);
+      markChanged(state);
+    }
+    if (state.copy_[prop] === value && (value !== undefined || (prop in state.copy_)) || Number.isNaN(value) && Number.isNaN(state.copy_[prop]))
+      return true;
+    state.copy_[prop] = value;
+    state.assigned_[prop] = true;
+    return true;
+  },
+  deleteProperty(state, prop) {
+    if (peek(state.base_, prop) !== undefined || prop in state.base_) {
+      state.assigned_[prop] = false;
+      prepareCopy(state);
+      markChanged(state);
+    } else {
+      delete state.assigned_[prop];
+    }
+    if (state.copy_) {
+      delete state.copy_[prop];
+    }
+    return true;
+  },
+  getOwnPropertyDescriptor(state, prop) {
+    const owner = latest(state);
+    const desc = Reflect.getOwnPropertyDescriptor(owner, prop);
+    if (!desc)
+      return desc;
+    return {
+      writable: true,
+      configurable: state.type_ !== 1 || prop !== "length",
+      enumerable: desc.enumerable,
+      value: owner[prop]
+    };
+  },
+  defineProperty() {
+    die(11);
+  },
+  getPrototypeOf(state) {
+    return getPrototypeOf(state.base_);
+  },
+  setPrototypeOf() {
+    die(12);
+  }
+};
+var arrayTraps = {};
+each(objectTraps, (key, fn) => {
+  arrayTraps[key] = function() {
+    arguments[0] = arguments[0][0];
+    return fn.apply(this, arguments);
+  };
+});
+arrayTraps.deleteProperty = function(state, prop) {
+  if (isNaN(parseInt(prop)))
+    die(13);
+  return arrayTraps.set.call(this, state, prop, undefined);
+};
+arrayTraps.set = function(state, prop, value) {
+  if (prop !== "length" && isNaN(parseInt(prop)))
+    die(14);
+  return objectTraps.set.call(this, state[0], prop, value, state[0]);
+};
+var Immer2 = class {
+  constructor(config) {
+    this.autoFreeze_ = true;
+    this.useStrictShallowCopy_ = false;
+    this.produce = (base, recipe, patchListener) => {
+      if (typeof base === "function" && typeof recipe !== "function") {
+        const defaultBase = recipe;
+        recipe = base;
+        const self = this;
+        return function curriedProduce(base2 = defaultBase, ...args) {
+          return self.produce(base2, (draft) => recipe.call(this, draft, ...args));
+        };
+      }
+      if (typeof recipe !== "function")
+        die(6);
+      if (patchListener !== undefined && typeof patchListener !== "function")
+        die(7);
+      let result;
+      if (isDraftable(base)) {
+        const scope = enterScope(this);
+        const proxy = createProxy(base, undefined);
+        let hasError = true;
+        try {
+          result = recipe(proxy);
+          hasError = false;
+        } finally {
+          if (hasError)
+            revokeScope(scope);
+          else
+            leaveScope(scope);
+        }
+        usePatchesInScope(scope, patchListener);
+        return processResult(result, scope);
+      } else if (!base || typeof base !== "object") {
+        result = recipe(base);
+        if (result === undefined)
+          result = base;
+        if (result === NOTHING)
+          result = undefined;
+        if (this.autoFreeze_)
+          freeze(result, true);
+        if (patchListener) {
+          const p2 = [];
+          const ip = [];
+          getPlugin("Patches").generateReplacementPatches_(base, result, p2, ip);
+          patchListener(p2, ip);
+        }
+        return result;
+      } else
+        die(1, base);
+    };
+    this.produceWithPatches = (base, recipe) => {
+      if (typeof base === "function") {
+        return (state, ...args) => this.produceWithPatches(state, (draft) => base(draft, ...args));
+      }
+      let patches, inversePatches;
+      const result = this.produce(base, recipe, (p2, ip) => {
+        patches = p2;
+        inversePatches = ip;
+      });
+      return [result, patches, inversePatches];
+    };
+    if (typeof config?.autoFreeze === "boolean")
+      this.setAutoFreeze(config.autoFreeze);
+    if (typeof config?.useStrictShallowCopy === "boolean")
+      this.setUseStrictShallowCopy(config.useStrictShallowCopy);
+  }
+  createDraft(base) {
+    if (!isDraftable(base))
+      die(8);
+    if (isDraft(base))
+      base = current(base);
+    const scope = enterScope(this);
+    const proxy = createProxy(base, undefined);
+    proxy[DRAFT_STATE].isManual_ = true;
+    leaveScope(scope);
+    return proxy;
+  }
+  finishDraft(draft, patchListener) {
+    const state = draft && draft[DRAFT_STATE];
+    if (!state || !state.isManual_)
+      die(9);
+    const { scope_: scope } = state;
+    usePatchesInScope(scope, patchListener);
+    return processResult(undefined, scope);
+  }
+  setAutoFreeze(value) {
+    this.autoFreeze_ = value;
+  }
+  setUseStrictShallowCopy(value) {
+    this.useStrictShallowCopy_ = value;
+  }
+  applyPatches(base, patches) {
+    let i4;
+    for (i4 = patches.length - 1;i4 >= 0; i4--) {
+      const patch = patches[i4];
+      if (patch.path.length === 0 && patch.op === "replace") {
+        base = patch.value;
+        break;
+      }
+    }
+    if (i4 > -1) {
+      patches = patches.slice(i4 + 1);
+    }
+    const applyPatchesImpl = getPlugin("Patches").applyPatches_;
+    if (isDraft(base)) {
+      return applyPatchesImpl(base, patches);
+    }
+    return this.produce(base, (draft) => applyPatchesImpl(draft, patches));
+  }
+};
+var immer = new Immer2;
+var produce = immer.produce;
+var produceWithPatches = immer.produceWithPatches.bind(immer);
+var setAutoFreeze = immer.setAutoFreeze.bind(immer);
+var setUseStrictShallowCopy = immer.setUseStrictShallowCopy.bind(immer);
+var applyPatches = immer.applyPatches.bind(immer);
+var createDraft = immer.createDraft.bind(immer);
+var finishDraft = immer.finishDraft.bind(immer);
+
 // src/services/todoist.ts
 var taskPattern = {
   id: _2.string,
@@ -6148,6 +6758,15 @@ class TodoistClient {
       Authorization: `Bearer ${this.userToken}`
     }
   }).then(async (r3) => r3.ok ? r3.json() : raise({ error: "fetch" })).then((json) => a2(pattern, json) ? json : raise({ error: "parse", input: json }));
+  completeTask = async (taskId) => Utils.fetch(`https://api.todoist.com/rest/v2/tasks/${taskId}/close`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${this.userToken}`
+    }
+  }).then((r3) => {
+    if (!r3.ok)
+      throw { error: "fetch" };
+  });
   getTasks = async () => {
     const [projects, sections, tasks] = await Promise.all([
       this.#projects.get(),
@@ -6155,10 +6774,7 @@ class TodoistClient {
       this.#request("GET", "tasks?filter=(today|overdue)", _2.array(taskPattern))
     ]);
     return tasks.sort(({ due: { date: d1 } }, { due: { date: d2 } }) => Date.parse(d1) - Date.parse(d2)).map((t3) => ({
-      due: new Date(t3.due.date).toLocaleDateString(["en"], {
-        month: "short",
-        day: "2-digit"
-      }),
+      due: new Date(t3.due.date),
       content: t3.content,
       id: t3.id,
       project: assert(projects.find((x2) => x2.id === t3.project_id)?.name),
@@ -6185,20 +6801,41 @@ class TodoistService extends Service {
     this.#tasks = await this.#client.getTasks().then((data) => ({ status: "success", data }), (error) => ({ status: "error", error }));
     this.changed("tasks");
   }
+  async closeTask(taskId) {
+    await this.#client.completeTask(taskId);
+    this.#tasks = produce(this.#tasks, (draft) => {
+      if (draft.status === "success")
+        draft.data = draft.data.filter(({ id }) => id !== taskId);
+    });
+    this.changed("tasks");
+  }
   get tasks() {
     return this.#tasks;
   }
 }
 var todoist = new TodoistService;
 // src/widgets/desktop/TodoistWidget.ts
+var TaskCheckbox = ({ taskId }) => {
+  const checked = Variable(false);
+  return Widget.Button({
+    className: checked.bind().as((x2) => cssComponent(["todoist", "task", "checkbox"], [x2 ? "checked" : "unchecked"])),
+    hpack: "center",
+    vpack: "start",
+    label: "\uF00C",
+    onClicked: () => {
+      checked.value = true;
+      todoist.closeTask(taskId).catch(() => checked.value = false);
+    }
+  });
+};
 var TaskDisplay = (task) => Widget.Box({
   className: "todoist__task",
-  spacing: 16,
+  spacing: 10,
   children: [
-    Widget.Box(),
+    TaskCheckbox({ taskId: task.id }),
     Widget.Box({
       vertical: true,
-      spacing: 8,
+      spacing: 6,
       children: [
         Widget.Label({
           className: "todoist__task__content",
@@ -6208,7 +6845,7 @@ var TaskDisplay = (task) => Widget.Box({
         Widget.Box({
           children: [
             Widget.Box({
-              css: `min-width:170px`,
+              css: `min-width:140px`,
               hpack: "start",
               spacing: 10,
               children: [
@@ -6218,7 +6855,10 @@ var TaskDisplay = (task) => Widget.Box({
                 }),
                 Widget.Label({
                   className: "todoist__task__due",
-                  label: task.due
+                  label: task.due.toLocaleDateString(["en"], {
+                    month: "short",
+                    day: "2-digit"
+                  })
                 }),
                 ...optArr(task.reccurent, [
                   Widget.Label({
@@ -6289,7 +6929,7 @@ var TodoistWidget2 = () => {
     margins: [20, 20],
     setup: () => todoist.refresh(),
     child: Widget.Box({
-      css: "min-width:460px",
+      css: "min-width:440px",
       spacing: 16,
       className: "todoist",
       vertical: true,
@@ -6298,11 +6938,11 @@ var TodoistWidget2 = () => {
           vscroll: "automatic",
           visible: visible.bind(),
           hscroll: "never",
-          css: "min-height:400px; min-width:460px;",
+          css: "min-height:400px; min-width:420px;",
           child: Widget.Box({
             className: "todoist__task__container",
             vertical: true,
-            spacing: 16,
+            spacing: 12,
             children: todoist.bind("tasks").as((tasks) => tasks.status === "success" ? tasks.data.map(TaskDisplay) : [
               Widget.CenterBox({
                 expand: true,

@@ -40,3 +40,12 @@ export function dependencies(...bins: string[]) {
 
     return missing.length === 0;
 }
+
+export const cssComponent = (
+    name: string | string[],
+    states: string[] = [],
+) => {
+    const baseClass = typeof name === "string" ? name : name.join("__");
+    const stateClasses = states.map(s => baseClass + "--" + s);
+    return [baseClass, ...stateClasses].join(" ");
+};

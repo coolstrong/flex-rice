@@ -5,19 +5,43 @@ import { O, S } from "@mobily/ts-belt";
 import { optArr } from "@/utils/common";
 import Gtk30 from "gi://Gtk";
 import themeService from "@/services/ThemeService";
-import { bash } from "@/utils/helpers";
+import { bash, cssComponent } from "@/utils/helpers";
 import { Binding } from "@/types/service";
 import type { Variable as VariableType } from "@/types/variable";
+
+type Prop<T> = T | Binding<any, any, T>;
+
+const TaskCheckbox = ({ taskId }: { taskId: string }) => {
+    const checked = Variable(false);
+    return Widget.Button({
+        className: checked
+            .bind()
+            .as(x =>
+                cssComponent(
+                    ["todoist", "task", "checkbox"],
+                    [x ? "checked" : "unchecked"],
+                ),
+            ),
+
+        hpack: "center",
+        vpack: "start",
+        label: "",
+        onClicked: () => {
+            checked.value = true;
+            todoist.closeTask(taskId).catch(() => (checked.value = false));
+        },
+    });
+};
 
 const TaskDisplay = (task: TodoistTask) =>
     Widget.Box({
         className: "todoist__task",
-        spacing: 16,
+        spacing: 10,
         children: [
-            Widget.Box(), //checkbox,
+            TaskCheckbox({ taskId: task.id }),
             Widget.Box({
                 vertical: true,
-                spacing: 8,
+                spacing: 6,
                 children: [
                     Widget.Label({
                         className: "todoist__task__content",
@@ -27,7 +51,7 @@ const TaskDisplay = (task: TodoistTask) =>
                     Widget.Box({
                         children: [
                             Widget.Box({
-                                css: `min-width:170px`,
+                                css: `min-width:140px`,
                                 hpack: "start",
                                 spacing: 10,
                                 children: [
@@ -133,7 +157,7 @@ export const TodoistWidget = () => {
         margins: [20, 20],
         setup: () => todoist.refresh(),
         child: Widget.Box({
-            css: "min-width:460px",
+            css: "min-width:440px",
             spacing: 16,
             className: "todoist",
             vertical: true,
@@ -142,11 +166,11 @@ export const TodoistWidget = () => {
                     vscroll: "automatic",
                     visible: visible.bind(),
                     hscroll: "never",
-                    css: "min-height:400px; min-width:460px;",
+                    css: "min-height:400px; min-width:420px;",
                     child: Widget.Box({
                         className: "todoist__task__container",
                         vertical: true,
-                        spacing: 16,
+                        spacing: 12,
                         children: todoist
                             .bind("tasks")
                             //prettier-ignore

@@ -3,6 +3,7 @@ import { assert, raise, undef } from "@/utils/common";
 import { F, O } from "@mobily/ts-belt";
 import { P, isMatching, match } from "ts-pattern";
 import { todoistToken } from "privateConfig";
+import { produce } from "immer";
 
 const taskPattern = {
     id: P.string,
@@ -69,6 +70,17 @@ class TodoistClient {
                     : raise({ error: "parse", input: json }),
             );
 
+    completeTask = async (taskId: string) =>
+        Utils.fetch(`https://api.todoist.com/rest/v2/tasks/${taskId}/close`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${this.userToken}`,
+            },
+        }).then(r => {
+            if (!r.ok) throw { error: "fetch" };
+        });
+    // this.#request("POST", `tasks/${taskId}/close`, P._);
+
     getTasks = async (): Promise<TodoistTask[]> => {
         const [projects, sections, tasks] = await Promise.all([
             this.#projects.get(),
@@ -129,6 +141,17 @@ class TodoistService extends Service {
             data => ({ status: "success", data }),
             error => ({ status: "error", error }),
         );
+        this.changed("tasks");
+    }
+
+    async closeTask(taskId: string) {
+        await this.#client.completeTask(taskId);
+
+        this.#tasks = produce(this.#tasks, draft => {
+            if (draft.status === "success")
+                draft.data = draft.data.filter(({ id }) => id !== taskId);
+        });
+
         this.changed("tasks");
     }
 

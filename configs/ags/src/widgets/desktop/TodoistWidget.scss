@@ -2,22 +2,51 @@
     border: 1px $border-color solid;
     border-radius: 24px;
     background: $bg-one;
-    padding: 16px;
+    padding: 8px;
 
     &__task {
         border-radius: 24px;
         background: $bg-one;
         min-width: 400px;
-        padding: 8px 14px;
+        padding: 6px 8px;
+
+        &__checkbox {
+            font-size: 18px;
+            padding: 1px 4px;
+            margin-left: 4px;
+            margin-top: 4px;
+            border-radius: 100%;
+            &:hover {
+                border-radius: 100%;
+                background: transparent;
+            }
+
+            &--unchecked {
+                border: 2px $text-color solid;
+                background: transparent;
+                color: transparent;
+
+                &:hover {
+                    color: transparent;
+                }
+            }
+            &--checked {
+                border: 2px $border-color solid;
+                color: $border-color;
+                &:hover {
+                    color: $border-color;
+                }
+            }
+        }
 
         &__container {
             border-radius: 24px;
             background: $bg-three;
-            padding: 16px;
+            padding: 10px;
         }
         &__content {
             color: $text-color;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 500;
         }
         &__due {
@@ -41,14 +70,13 @@
     &__control {
         border-radius: 24px;
         background: $clock-background;
-        padding: 8px 16px;
+        padding: 4px 8px;
 
         &__button {
             background: $bg-three;
             border-radius: 24px;
 
             min-width: 28px;
-            /* color: $internet-box-background; */
             font-size: 20px;
         }
     }
