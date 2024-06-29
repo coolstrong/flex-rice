@@ -18,6 +18,7 @@ import {
 import App from "resource:///com/github/Aylur/ags/app.js";
 import Service from "resource:///com/github/Aylur/ags/service.js";
 import { bash, hyprBatch } from "@/utils/helpers.js";
+import { E } from "@/utils/common.js";
 
 class ThemeService extends Service {
     static {
@@ -166,11 +167,11 @@ class ThemeService extends Service {
 
                 `keyword general:col.active_border ${active_border}`,
                 `keyword group:col.border_active ${active_border}`,
-                // `keyword group:groupbar:col.active ${active_border}`,
+                `keyword group:groupbar:col.active ${active_border}`,
 
-                `keyword general:cdol.inactive_border ${inactive_border}`,
+                `keyword general:col.inactive_border ${inactive_border}`,
                 `keyword group:col.inactive_border ${inactive_border}`,
-                // `keyword group:groupbar:col.inactive ${inactive_border}`,
+                `keyword group:groupbar:col.inactive ${inactive_border}`,
 
                 `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`,
                 `keyword decoration:rounding ${rounding}`,
@@ -235,7 +236,7 @@ class ThemeService extends Service {
             this.selectedLightWallpaper = cachedData.selected_light_wallpaper;
             this.dynamicWallpaperStatus = cachedData.dynamic_wallpaper_status;
 
-            if (!this.selectedTheme) {
+            if (!E(this.selectedTheme)) {
                 this.selectedTheme = UNICAT_THEME;
             }
         } catch (TypeError) {

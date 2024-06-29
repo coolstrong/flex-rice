@@ -546,7 +546,9 @@ window {
     border-radius: $border-radius;
     // padding-left: 0.6rem;
     // padding-right: 0.6rem;
-    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -564,7 +566,9 @@ window {
     border-radius: $border-radius;
     background: $menu-btn-background;
     border-color: $menu-btn-background;
-    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -597,6 +601,10 @@ window {
     background: $menu-btn-background;
     font-family: $icon-font-family;
     padding: 0 0.8rem;
+}
+
+.text-icon {
+    font-family: "Symbols Nerd Font";
 }
 
 .menu-button:dir(rtl) {
@@ -826,7 +834,9 @@ window {
     min-height: 40px;
     background: $music-wd-button-bg;
     color: $music-wd-button-fg;
-    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
 }
 
 .music-wd-button:hover {
@@ -843,7 +853,9 @@ window {
     border-radius: $border-radius;
     min-height: 40px;
     min-width: 80px;
-    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
 }
 
 .music-wd-button-play:hover {
@@ -856,7 +868,9 @@ window {
     border-radius: $border-radius;
     min-height: 40px;
     min-width: 80px;
-    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
 }
 
 /* ------------------------------------------- */
@@ -1065,7 +1079,9 @@ button {
     padding: 4px 14px;
 
     border: none $btn-background;
-    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
 }
 
 /* Shadow when clicking */
@@ -1085,7 +1101,9 @@ button:hover {
         border-radius: $btn-hover-border-radius;
     }
 
-    transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 

@@ -4,9 +4,10 @@ import MyNotifications from "./notifications/OSDNotifications.js";
 import { Bar } from "./widgets/Bar";
 import { OSD } from "./widgets/OSD.js";
 import { CalendarMenu } from "./widgets/menus/CalendarMenu.js";
-// import { HardwareMenu } from "./widgets/menus/HardwareMenu.js";
 import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import { SystemMenu } from "./widgets/menus/SystemMenu.js";
+import { VolumeMenu } from "./widgets/menus/VolumeMenu.ts";
+import { TodoistWidget } from "./widgets/desktop/TodoistWidget.ts";
 
 // in config.js
 const scss = App.configDir + "/scss/main.scss";
@@ -28,10 +29,12 @@ App.config({
         OSD(),
         MyNotifications(),
         NotificationCenter(),
-        // HardwareMenu(),
+        VolumeMenu(),
         CalendarMenu(),
         Bar({ monitor: 0 }),
         SystemMenu(),
+
+        TodoistWidget(),
     ],
 });
 

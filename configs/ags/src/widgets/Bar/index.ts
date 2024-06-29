@@ -18,6 +18,7 @@ import "./style.scss";
 
 import { useIntervalVar } from "@/lib/hooks.ts";
 import config from "config.json";
+import { todoist } from "@/services/todoist.ts";
 
 export const KeyboardLayout = () => {
     return Widget.Button({
@@ -55,7 +56,7 @@ const Start = () =>
         children: [Workspaces(), HardwareBox()],
     });
 
-const Center = () => Box({});
+const Center = () => Widget.Box();
 
 const End = () =>
     Box({

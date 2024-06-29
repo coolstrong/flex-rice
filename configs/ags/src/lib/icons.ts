@@ -158,6 +158,7 @@ const terminalApps: [RegExp, string][] = [
     [/^btm/g, "/home/deni/Pictures/icons/monitoring.png"],
     [/^yetris/g, "/home/deni/Pictures/icons/tetris.png"],
     [/^nvim/g, "/home/deni/Pictures/icons/neovim.png"],
+    [/^Yazi/g, "yazi"],
 ];
 
 const iconResolvers: Array<(client: Client) => string | undef> = [

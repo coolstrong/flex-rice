@@ -1,0 +1,55 @@
+.todoist {
+    border: 1px $border-color solid;
+    border-radius: 24px;
+    background: $bg-one;
+    padding: 16px;
+
+    &__task {
+        border-radius: 24px;
+        background: $bg-one;
+        min-width: 400px;
+        padding: 8px 14px;
+
+        &__container {
+            border-radius: 24px;
+            background: $bg-three;
+            padding: 16px;
+        }
+        &__content {
+            color: $text-color;
+            font-size: 20px;
+            font-weight: 500;
+        }
+        &__due {
+            &__calendarIcon {
+                color: $fg-two;
+            }
+            &__refreshIcon {
+                color: $border-color;
+            }
+            color: $border-color;
+        }
+        &__breadcrumbs {
+            color: $text-color;
+
+            &__hash {
+                color: $fg-two;
+            }
+        }
+    }
+
+    &__control {
+        border-radius: 24px;
+        background: $clock-background;
+        padding: 8px 16px;
+
+        &__button {
+            background: $bg-three;
+            border-radius: 24px;
+
+            min-width: 28px;
+            /* color: $internet-box-background; */
+            font-size: 20px;
+        }
+    }
+}

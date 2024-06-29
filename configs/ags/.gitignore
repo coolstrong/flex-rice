@@ -173,5 +173,7 @@ out
 
 # Finder (MacOS) folder config
 .DS_Store
+
 /scss/theme.scss
 /scss/widgets.scss
+config_private.json

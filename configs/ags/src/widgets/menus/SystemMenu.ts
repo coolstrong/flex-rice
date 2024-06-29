@@ -10,16 +10,10 @@ import ThemesDictionary, {
     COLOR_THEME,
     DARK_THEME,
     DEER_THEME,
-    DYNAMIC_M3_DARK,
-    DYNAMIC_M3_LIGHT,
-    GAME_THEME,
-    GOLDEN_THEME,
-    HARMONY_THEME,
     MATERIAL_YOU,
     NEW_CAT_THEME,
     SIBERIAN_THEME,
     UNICAT_THEME,
-    WHITE_FLOWER,
     WIN_20,
 } from "../../theme/themes.js";
 import { Popup } from "./Popup.js";

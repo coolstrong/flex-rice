@@ -18,7 +18,8 @@
         "paths": {
             "@/*": ["./src/*"],
             "@/types/*": ["./@types/*"],
-            "config": ["./config.json"]
+            "config": ["./config.json"],
+            "privateConfig": ["./config_private.json"]
         }
     },
     "exclude": ["./dist/**/*"]

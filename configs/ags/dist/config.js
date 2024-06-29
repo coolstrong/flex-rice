@@ -402,6 +402,20 @@ var nullable_to_opt = function(_) {
     return some(_);
   }
 };
+var undefined_to_opt = function(_) {
+  if (_ === undefined) {
+    return;
+  } else {
+    return some(_);
+  }
+};
+var null_to_opt = function(_) {
+  if (_ === null) {
+    return;
+  } else {
+    return some(_);
+  }
+};
 var valFromOption = function(_) {
   if (_ === null || _.BS_PRIVATE_NESTED_SOME_NONE === undefined) {
     return _;
@@ -3069,6 +3083,381 @@ var P2 = {
   fold,
   all: all2
 };
+// node_modules/@mobily/ts-belt/dist/index-f9f94373.mjs
+var placeholder4 = function(n2) {
+};
+var make3 = function(n2) {
+  return String(n2);
+};
+var length2 = function(n2) {
+  return n2.length;
+};
+var _concat = function(n2, t2) {
+  return n2.concat(t2);
+};
+var concat3 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _concat(t2, n2[0]);
+    };
+  }
+  return _concat(arguments[0], arguments[1]);
+};
+var _append2 = function(n2, t2) {
+  return n2.concat(t2);
+};
+var append2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _append2(t2, n2[0]);
+    };
+  }
+  return _append2(arguments[0], arguments[1]);
+};
+var _prepend2 = function(n2, t2) {
+  return t2.concat(n2);
+};
+var prepend2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _prepend2(t2, n2[0]);
+    };
+  }
+  return _prepend2(arguments[0], arguments[1]);
+};
+var _slice = function(n2, t2, e) {
+  return n2.slice(t2, e);
+};
+var slice3 = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _slice(t2, n2[0], n2[1]);
+    };
+  }
+  return _slice(arguments[0], arguments[1], arguments[2]);
+};
+var _sliceToEnd = function(n2, t2) {
+  return n2.slice(t2);
+};
+var sliceToEnd3 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _sliceToEnd(t2, n2[0]);
+    };
+  }
+  return _sliceToEnd(arguments[0], arguments[1]);
+};
+var toLowerCase = function(n2) {
+  return n2.toLowerCase();
+};
+var toUpperCase = function(n2) {
+  return n2.toUpperCase();
+};
+var trim = function(n2) {
+  return n2.trim();
+};
+var trimStart = function(n2) {
+  return n2.trimStart();
+};
+var trimEnd = function(n2) {
+  return n2.trimEnd();
+};
+var isEmpty2 = function(n2) {
+  return n2.length === 0;
+};
+var isNotEmpty2 = function(n2) {
+  return n2.length > 0;
+};
+var _split = function(n2, t2) {
+  return n2.split(t2);
+};
+var split = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _split(t2, n2[0]);
+    };
+  }
+  return _split(arguments[0], arguments[1]);
+};
+var _splitByRe = function(n2, t2) {
+  return n2.split(t2);
+};
+var splitByRe = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _splitByRe(t2, n2[0]);
+    };
+  }
+  return _splitByRe(arguments[0], arguments[1]);
+};
+var _splitAt2 = function(n2, t2) {
+  return [n2.slice(0, t2), n2.slice(t2)];
+};
+var splitAt2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _splitAt2(t2, n2[0]);
+    };
+  }
+  return _splitAt2(arguments[0], arguments[1]);
+};
+var _includes2 = function(n2, t2) {
+  return n2.includes(t2);
+};
+var includes2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _includes2(t2, n2[0]);
+    };
+  }
+  return _includes2(arguments[0], arguments[1]);
+};
+var _replace = function(n2, t2, e) {
+  return n2.replace(t2, e);
+};
+var replace = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _replace(t2, n2[0], n2[1]);
+    };
+  }
+  return _replace(arguments[0], arguments[1], arguments[2]);
+};
+var _replaceAll = function(n2, e, r) {
+  var i2 = n2.split(e);
+  return reduceWithIndexU(i2, "", function(n3, t2, e2) {
+    var c = e2 < (i2.length - 1 | 0) ? t2.concat(r) : t2;
+    return n3.concat(c);
+  });
+};
+var replaceAll = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _replaceAll(t2, n2[0], n2[1]);
+    };
+  }
+  return _replaceAll(arguments[0], arguments[1], arguments[2]);
+};
+var _replaceByRe = function(n2, t2, e) {
+  return n2.replace(t2, e);
+};
+var replaceByRe = function() {
+  if (arguments.length === 2) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _replaceByRe(t2, n2[0], n2[1]);
+    };
+  }
+  return _replaceByRe(arguments[0], arguments[1], arguments[2]);
+};
+var _remove = function(n2, t2) {
+  return n2.replace(t2, "");
+};
+var remove = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _remove(t2, n2[0]);
+    };
+  }
+  return _remove(arguments[0], arguments[1]);
+};
+var _removeAll = function(n2, t2) {
+  return replaceAll(n2, t2, "");
+};
+var removeAll = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _removeAll(t2, n2[0]);
+    };
+  }
+  return _removeAll(arguments[0], arguments[1]);
+};
+var _search = function(n2, t2) {
+  var e = n2.search(t2);
+  if (e < 0) {
+    return;
+  } else {
+    return e;
+  }
+};
+var search = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _search(t2, n2[0]);
+    };
+  }
+  return _search(arguments[0], arguments[1]);
+};
+var _match2 = function(n2, t2) {
+  return null_to_opt(n2.match(t2));
+};
+var match2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _match2(t2, n2[0]);
+    };
+  }
+  return _match2(arguments[0], arguments[1]);
+};
+var _repeat = function(n2, t2) {
+  return n2.repeat(t2);
+};
+var repeat2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _repeat(t2, n2[0]);
+    };
+  }
+  return _repeat(arguments[0], arguments[1]);
+};
+var _indexOf = function(n2, t2) {
+  var e = n2.indexOf(t2);
+  if (e < 0) {
+    return;
+  } else {
+    return e;
+  }
+};
+var indexOf = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _indexOf(t2, n2[0]);
+    };
+  }
+  return _indexOf(arguments[0], arguments[1]);
+};
+var _lastIndexOf = function(n2, t2) {
+  var e = n2.lastIndexOf(t2);
+  if (e < 0) {
+    return;
+  } else {
+    return e;
+  }
+};
+var lastIndexOf = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _lastIndexOf(t2, n2[0]);
+    };
+  }
+  return _lastIndexOf(arguments[0], arguments[1]);
+};
+var _endsWith = function(n2, t2) {
+  return n2.endsWith(t2);
+};
+var endsWith = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _endsWith(t2, n2[0]);
+    };
+  }
+  return _endsWith(arguments[0], arguments[1]);
+};
+var _startsWith = function(n2, t2) {
+  return n2.startsWith(t2);
+};
+var startsWith = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _startsWith(t2, n2[0]);
+    };
+  }
+  return _startsWith(arguments[0], arguments[1]);
+};
+var _getUnsafe2 = function(n2, t2) {
+  return n2[t2];
+};
+var getUnsafe2 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _getUnsafe2(t2, n2[0]);
+    };
+  }
+  return _getUnsafe2(arguments[0], arguments[1]);
+};
+var _get = function(n2, t2) {
+  return undefined_to_opt(n2[t2]);
+};
+var get3 = function() {
+  if (arguments.length === 1) {
+    const n2 = arguments;
+    return function fn(t2) {
+      return _get(t2, n2[0]);
+    };
+  }
+  return _get(arguments[0], arguments[1]);
+};
+var toArray = function(t2) {
+  return makeByU(t2.length, function(n2) {
+    return t2[n2];
+  });
+};
+var head2 = function(n2) {
+  return undefined_to_opt(n2[0]);
+};
+var last2 = function(n2) {
+  return undefined_to_opt(n2[n2.length - 1 | 0]);
+};
+var i2 = {
+  __proto__: null,
+  placeholder: placeholder4,
+  make: make3,
+  length: length2,
+  concat: concat3,
+  append: append2,
+  prepend: prepend2,
+  slice: slice3,
+  sliceToEnd: sliceToEnd3,
+  toLowerCase,
+  toUpperCase,
+  trim,
+  trimStart,
+  trimEnd,
+  isEmpty: isEmpty2,
+  isNotEmpty: isNotEmpty2,
+  split,
+  splitByRe,
+  splitAt: splitAt2,
+  includes: includes2,
+  replace,
+  replaceAll,
+  replaceByRe,
+  remove,
+  removeAll,
+  search,
+  match: match2,
+  repeat: repeat2,
+  indexOf,
+  lastIndexOf,
+  endsWith,
+  startsWith,
+  getUnsafe: getUnsafe2,
+  get: get3,
+  toArray,
+  head: head2,
+  last: last2
+};
 // node_modules/clsx/dist/clsx.mjs
 var r = function(e) {
   var t2, f2, n2 = "";
@@ -3095,6 +3484,10 @@ var clsx_default = clsx;
 var undef = undefined;
 var optArr = (condition, arr) => condition ? arr : [];
 var E = i.isNotNullable;
+var raise = (e) => {
+  throw e;
+};
+var assert = (value, message = "Value was null or undefined") => E(value) ? value : raise(new Error(message));
 
 // src/notifications/Notification.ts
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
@@ -3516,7 +3909,8 @@ var terminalApps = [
   [/^br(oot)?/g, "/home/deni/Pictures/icons/broot.png"],
   [/^btm/g, "/home/deni/Pictures/icons/monitoring.png"],
   [/^yetris/g, "/home/deni/Pictures/icons/tetris.png"],
-  [/^nvim/g, "/home/deni/Pictures/icons/neovim.png"]
+  [/^nvim/g, "/home/deni/Pictures/icons/neovim.png"],
+  [/^Yazi/g, "yazi"]
 ];
 var iconResolvers = [
   (c) => c.initialTitle.startsWith("Spotify") ? "spotify" : undef,
@@ -3586,13 +3980,13 @@ var y = function(e) {
   return { [t2]: () => ({ match: (t2) => ({ matched: Boolean(e(t2)) }) }) };
 };
 var p = function(...e) {
-  const r2 = typeof e[0] == "string" ? e[0] : undefined, i2 = e.length === 2 ? e[1] : typeof e[0] == "string" ? undefined : e[0];
+  const r2 = typeof e[0] == "string" ? e[0] : undefined, i3 = e.length === 2 ? e[1] : typeof e[0] == "string" ? undefined : e[0];
   return u({ [t2]: () => ({ match: (t2) => {
     let e2 = { [r2 != null ? r2 : n2]: t2 };
-    return { matched: i2 === undefined || s2(i2, t2, (t3, n2) => {
+    return { matched: i3 === undefined || s2(i3, t2, (t3, n2) => {
       e2[t3] = n2;
     }), selections: e2 };
-  }, getSelectionKeys: () => [r2 != null ? r2 : n2].concat(i2 === undefined ? [] : o(i2)) }) });
+  }, getSelectionKeys: () => [r2 != null ? r2 : n2].concat(i3 === undefined ? [] : o(i3)) }) });
 };
 var v2 = function(t2) {
   return typeof t2 == "number";
@@ -3610,11 +4004,11 @@ var t2 = Symbol.for("@ts-pattern/matcher");
 var e = Symbol.for("@ts-pattern/isVariadic");
 var n2 = "@ts-pattern/anonymous-select-key";
 var r2 = (t3) => Boolean(t3 && typeof t3 == "object");
-var i2 = (e2) => e2 && !!e2[t2];
+var i3 = (e2) => e2 && !!e2[t2];
 var s2 = (n3, o, c) => {
-  if (i2(n3)) {
-    const e2 = n3[t2](), { matched: r3, selections: i3 } = e2.match(o);
-    return r3 && i3 && Object.keys(i3).forEach((t3) => c(t3, i3[t3])), r3;
+  if (i3(n3)) {
+    const e2 = n3[t2](), { matched: r3, selections: i4 } = e2.match(o);
+    return r3 && i4 && Object.keys(i4).forEach((t3) => c(t3, i4[t3])), r3;
   }
   if (r2(n3)) {
     if (!r2(o))
@@ -3625,21 +4019,21 @@ var s2 = (n3, o, c) => {
       let t3 = [], r3 = [], a3 = [];
       for (const s3 of n3.keys()) {
         const o2 = n3[s3];
-        i2(o2) && o2[e] ? a3.push(o2) : a3.length ? r3.push(o2) : t3.push(o2);
+        i3(o2) && o2[e] ? a3.push(o2) : a3.length ? r3.push(o2) : t3.push(o2);
       }
       if (a3.length) {
         if (a3.length > 1)
           throw new Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
         if (o.length < t3.length + r3.length)
           return false;
-        const e2 = o.slice(0, t3.length), n4 = r3.length === 0 ? [] : o.slice(-r3.length), i3 = o.slice(t3.length, r3.length === 0 ? Infinity : -r3.length);
-        return t3.every((t4, n5) => s2(t4, e2[n5], c)) && r3.every((t4, e3) => s2(t4, n4[e3], c)) && (a3.length === 0 || s2(a3[0], i3, c));
+        const e2 = o.slice(0, t3.length), n4 = r3.length === 0 ? [] : o.slice(-r3.length), i4 = o.slice(t3.length, r3.length === 0 ? Infinity : -r3.length);
+        return t3.every((t4, n5) => s2(t4, e2[n5], c)) && r3.every((t4, e3) => s2(t4, n4[e3], c)) && (a3.length === 0 || s2(a3[0], i4, c));
       }
       return n3.length === o.length && n3.every((t4, e2) => s2(t4, o[e2], c));
     }
     return Object.keys(n3).every((e2) => {
       const r3 = n3[e2];
-      return ((e2 in o) || i2(a3 = r3) && a3[t2]().matcherType === "optional") && s2(r3, o[e2], c);
+      return ((e2 in o) || i3(a3 = r3) && a3[t2]().matcherType === "optional") && s2(r3, o[e2], c);
       var a3;
     });
   }
@@ -3647,7 +4041,7 @@ var s2 = (n3, o, c) => {
 };
 var o = (e2) => {
   var n3, s3, a3;
-  return r2(e2) ? i2(e2) ? (n3 = (s3 = (a3 = e2[t2]()).getSelectionKeys) == null ? undefined : s3.call(a3)) != null ? n3 : [] : Array.isArray(e2) ? c(e2, o) : c(Object.values(e2), o) : [];
+  return r2(e2) ? i3(e2) ? (n3 = (s3 = (a3 = e2[t2]()).getSelectionKeys) == null ? undefined : s3.call(a3)) != null ? n3 : [] : Array.isArray(e2) ? c(e2, o) : c(Object.values(e2), o) : [];
 };
 var c = (t3, e2) => t3.reduce((t4, n3) => t4.concat(e2(n3)), []);
 var f2 = (t3, e2) => {
@@ -3705,10 +4099,10 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
       return o(n3).forEach((t4) => {
         r3[t4] = [];
       }), { matched: true, selections: r3 };
-    const i3 = (t4, e3) => {
+    const i4 = (t4, e3) => {
       r3[t4] = (r3[t4] || []).concat([e3]);
     };
-    return { matched: t3.every((t4) => s2(n3, t4, i3)), selections: r3 };
+    return { matched: t3.every((t4) => s2(n3, t4, i4)), selections: r3 };
   }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
 }, set: function(...e2) {
   return u({ [t2]: () => ({ match: (t3) => {
@@ -3721,8 +4115,8 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
       return { matched: true };
     const r3 = (t4, e3) => {
       n3[t4] = (n3[t4] || []).concat([e3]);
-    }, i3 = e2[0];
-    return { matched: f2(t3, (t4) => s2(i3, t4, r3)), selections: n3 };
+    }, i4 = e2[0];
+    return { matched: f2(t3, (t4) => s2(i4, t4, r3)), selections: n3 };
   }, getSelectionKeys: () => e2.length === 0 ? [] : o(e2[0]) }) });
 }, map: function(...e2) {
   return u({ [t2]: () => ({ match: (t3) => {
@@ -3736,13 +4130,13 @@ var _2 = { __proto__: null, matcher: t2, optional: l2, array: function(...e2) {
     };
     if (e2.length === 0)
       return { matched: true };
-    var i3;
+    var i4;
     if (e2.length === 1)
-      throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i3 = e2[0]) == null ? undefined : i3.toString()}`);
+      throw new Error(`\`P.map\` wasn't given enough arguments. Expected (key, value), received ${(i4 = e2[0]) == null ? undefined : i4.toString()}`);
     const [o2, c2] = e2;
     return { matched: g2(t3, (t4, e3) => {
-      const n4 = s2(o2, e3, r3), i4 = s2(c2, t4, r3);
-      return n4 && i4;
+      const n4 = s2(o2, e3, r3), i5 = s2(c2, t4, r3);
+      return n4 && i5;
     }), selections: n3 };
   }, getSelectionKeys: () => e2.length === 0 ? [] : [...o(e2[0]), ...o(e2[1])] }) });
 }, intersection: m, union: d, not: function(e2) {
@@ -3765,12 +4159,12 @@ class $2 {
     if (this.state.matched)
       return this;
     const e2 = t3[t3.length - 1], r3 = [t3[0]];
-    let i3;
-    t3.length === 3 && typeof t3[1] == "function" ? i3 = t3[1] : t3.length > 2 && r3.push(...t3.slice(1, t3.length - 1));
+    let i4;
+    t3.length === 3 && typeof t3[1] == "function" ? i4 = t3[1] : t3.length > 2 && r3.push(...t3.slice(1, t3.length - 1));
     let o2 = false, c2 = {};
     const a3 = (t4, e3) => {
       o2 = true, c2[t4] = e3;
-    }, u2 = !r3.some((t4) => s2(t4, this.input, a3)) || i3 && !Boolean(i3(this.input)) ? W : { matched: true, value: e2(o2 ? n2 in c2 ? c2[n2] : c2 : this.input, this.input) };
+    }, u2 = !r3.some((t4) => s2(t4, this.input, a3)) || i4 && !Boolean(i4(this.input)) ? W : { matched: true, value: e2(o2 ? n2 in c2 ? c2[n2] : c2 : this.input, this.input) };
     return new $2(this.input, u2);
   }
   when(t3, e2) {
@@ -3963,12 +4357,12 @@ var MonitorWorkspaces = (monitorId = 0) => {
   const firstWsId = config_default.workspace.perMonitor * monitorId + 1;
   return Box3({
     className: "unset workspaces",
-    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i3) => Button2({
+    children: Ra.range(firstWsId, firstWsId + config_default.workspace.perMonitor - 1).map((i4) => Button2({
       css: "min-width: 30px;",
-      onClicked: () => setWorkspace(i3),
-      className: hyprland4.active.workspace.bind("id").as((id) => id === i3 ? "unset focused" : "unset unfocused"),
+      onClicked: () => setWorkspace(i4),
+      className: hyprland4.active.workspace.bind("id").as((id) => id === i4 ? "unset focused" : "unset unfocused"),
       child: ClientRenderer({
-        wsId: i3
+        wsId: i4
       })
     }))
   });
@@ -3986,21 +4380,85 @@ var Workspaces = () => Box3({
 // src/widgets/hardware/all.ts
 import {Box as Box6} from "resource:///com/github/Aylur/ags/widget.js";
 
+// src/services/brightness.ts
+if (!dependencies("brightnessctl"))
+  App.quit();
+var get4 = (args) => Number(Utils.exec(`brightnessctl ${args}`));
+var screen = await bash`ls -w1 /sys/class/backlight | head -1`;
+var kbd = await bash`ls -w1 /sys/class/leds | head -1`;
+
+class Brightness extends Service {
+  static {
+    Service.register(this, {}, {
+      screen: ["float", "rw"],
+      kbd: ["int", "rw"]
+    });
+  }
+  #kbdMax = get4(`--device ${kbd} max`);
+  #kbd = get4(`--device ${kbd} get`);
+  #screenMax = get4("max");
+  #screen = get4("get") / get4("max");
+  get kbd() {
+    return this.#kbd;
+  }
+  get screen() {
+    return this.#screen;
+  }
+  set kbd(value) {
+    if (value < 0 || value > this.#kbdMax)
+      return;
+    sh(`brightnessctl -d ${kbd} s ${value} -q`).then(() => {
+      this.#kbd = value;
+      this.changed("kbd");
+    });
+  }
+  set screen(percent) {
+    if (percent < 0)
+      percent = 0;
+    if (percent > 1)
+      percent = 1;
+    sh(`brightnessctl set ${Math.floor(percent * 100)}% -q`).then(() => {
+      this.#screen = percent;
+      this.changed("screen");
+    });
+  }
+  constructor() {
+    super();
+    const screenPath = `/sys/class/backlight/${screen}/brightness`;
+    const kbdPath = `/sys/class/leds/${kbd}/brightness`;
+    Utils.monitorFile(screenPath, async (f3) => {
+      const v3 = await Utils.readFileAsync(f3);
+      this.#screen = Number(v3) / this.#screenMax;
+      this.changed("screen");
+    });
+    Utils.monitorFile(kbdPath, async (f3) => {
+      const v3 = await Utils.readFileAsync(f3);
+      this.#kbd = Number(v3) / this.#kbdMax;
+      this.changed("kbd");
+    });
+  }
+}
+var brightness_default = new Brightness;
+
 // src/widgets/hardware/battery.ts
 import battery2 from "resource:///com/github/Aylur/ags/service/battery.js";
-var BatteryWidget = () => Widget.Box({
-  spacing: 2,
-  children: [
-    Widget.Icon({
-      className: "BatteryWidget__icon",
-      icon: battery2.bind("icon_name")
-    }),
-    Widget.Label({
-      className: battery2.bind("charging").as((charging) => clsx_default("BatteryWidget__label", charging && "BatteryWidget__label--charging")),
-      label: battery2.bind("percent").as((p2) => p2.toString())
-    })
-  ],
-  tooltip_markup: battery2.bind("percent").as((p2) => `<span weight='bold' foreground='#FF8580'>Battery percentage (${p2}%)</span>`)
+var BatteryWidget = () => Widget.EventBox({
+  onScrollUp: () => brightness_default.screen += 0.05,
+  onScrollDown: () => brightness_default.screen -= 0.05,
+  child: Widget.Box({
+    spacing: 2,
+    children: [
+      Widget.Icon({
+        className: "BatteryWidget__icon",
+        icon: battery2.bind("icon_name")
+      }),
+      Widget.Label({
+        className: battery2.bind("charging").as((charging) => clsx_default("BatteryWidget__label", charging && "BatteryWidget__label--charging")),
+        label: battery2.bind("percent").as((p2) => p2.toString())
+      })
+    ],
+    tooltip_markup: battery2.bind("percent").as((p2) => `<span weight='bold' foreground='#FF8580'>Battery percentage (${p2}%)</span>`)
+  })
 }).hook(battery2, () => {
   if (!battery2.charging && battery2.percent <= 10)
     Utils.notify("Battery charge is below 10%", "Battery charge reached critical level. Please put laptop on charge.", "battery-010");
@@ -4880,7 +5338,7 @@ class ThemeService extends Service2 {
   }
   steHyprland(border_width, active_border, inactive_border, rounding, drop_shadow) {
     timeout3(1000, () => {
-      hyprBatch(`keyword general:border_size ${border_width}`, `keyword general:col.active_border ${active_border}`, `keyword group:col.border_active ${active_border}`, `keyword general:cdol.inactive_border ${inactive_border}`, `keyword group:col.inactive_border ${inactive_border}`, `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`, `keyword decoration:rounding ${rounding}`);
+      hyprBatch(`keyword general:border_size ${border_width}`, `keyword general:col.active_border ${active_border}`, `keyword group:col.border_active ${active_border}`, `keyword group:groupbar:col.active ${active_border}`, `keyword general:col.inactive_border ${inactive_border}`, `keyword group:col.inactive_border ${inactive_border}`, `keyword group:groupbar:col.inactive ${inactive_border}`, `keyword decoration:drop_shadow ${drop_shadow ? "yes" : "no"}`, `keyword decoration:rounding ${rounding}`);
     });
   }
   changeQtStyle(qt5Style, qt6Style) {
@@ -4930,7 +5388,7 @@ class ThemeService extends Service2 {
       this.selectedDarkWallpaper = cachedData.selected_dark_wallpaper;
       this.selectedLightWallpaper = cachedData.selected_light_wallpaper;
       this.dynamicWallpaperStatus = cachedData.dynamic_wallpaper_status;
-      if (!this.selectedTheme) {
+      if (!E(this.selectedTheme)) {
         this.selectedTheme = UNICAT_THEME;
       }
     } catch (TypeError) {
@@ -4976,7 +5434,7 @@ class PlayersMenu {
     this.menu.children = children;
   }
 }
-var length2 = () => Widget.Label({
+var length3 = () => Widget.Label({
   css: `
       min-width: 4rem;
     `,
@@ -5009,7 +5467,7 @@ var RowOne = () => {
   return Widget.Box({
     className: "music-wd-row-one",
     spacing: 120,
-    children: [length2(), selectPlayerBtn]
+    children: [length3(), selectPlayerBtn]
   }).hook(Mpris, (self) => {
     let playersList = [];
     for (const player2 in Mpris.players) {
@@ -5456,7 +5914,7 @@ var Start = () => Box10({
   spacing: 8,
   children: [Workspaces(), HardwareBox()]
 });
-var Center = () => Box10({});
+var Center = () => Widget.Box();
 var End = () => Box10({
   hpack: "end",
   spacing: 8,
@@ -5482,66 +5940,6 @@ var Bar = ({ monitor } = {}) => Window2({
     endWidget: End()
   })
 });
-
-// src/services/brightness.ts
-if (!dependencies("brightnessctl"))
-  App.quit();
-var get3 = (args) => Number(Utils.exec(`brightnessctl ${args}`));
-var screen = await bash`ls -w1 /sys/class/backlight | head -1`;
-var kbd = await bash`ls -w1 /sys/class/leds | head -1`;
-
-class Brightness extends Service {
-  static {
-    Service.register(this, {}, {
-      screen: ["float", "rw"],
-      kbd: ["int", "rw"]
-    });
-  }
-  #kbdMax = get3(`--device ${kbd} max`);
-  #kbd = get3(`--device ${kbd} get`);
-  #screenMax = get3("max");
-  #screen = get3("get") / get3("max");
-  get kbd() {
-    return this.#kbd;
-  }
-  get screen() {
-    return this.#screen;
-  }
-  set kbd(value) {
-    if (value < 0 || value > this.#kbdMax)
-      return;
-    sh(`brightnessctl -d ${kbd} s ${value} -q`).then(() => {
-      this.#kbd = value;
-      this.changed("kbd");
-    });
-  }
-  set screen(percent) {
-    if (percent < 0)
-      percent = 0;
-    if (percent > 1)
-      percent = 1;
-    sh(`brightnessctl set ${Math.floor(percent * 100)}% -q`).then(() => {
-      this.#screen = percent;
-      this.changed("screen");
-    });
-  }
-  constructor() {
-    super();
-    const screenPath = `/sys/class/backlight/${screen}/brightness`;
-    const kbdPath = `/sys/class/leds/${kbd}/brightness`;
-    Utils.monitorFile(screenPath, async (f3) => {
-      const v3 = await Utils.readFileAsync(f3);
-      this.#screen = Number(v3) / this.#screenMax;
-      this.changed("screen");
-    });
-    Utils.monitorFile(kbdPath, async (f3) => {
-      const v3 = await Utils.readFileAsync(f3);
-      this.#kbd = Number(v3) / this.#kbdMax;
-      this.changed("kbd");
-    });
-  }
-}
-var brightness_default = new Brightness;
 
 // src/widgets/OSD.ts
 import Audio2 from "resource:///com/github/Aylur/ags/service/audio.js";
@@ -5678,6 +6076,253 @@ var CalendarMenu = () => {
   });
 };
 
+// src/widgets/menus/VolumeMenu.ts
+import audio3 from "resource:///com/github/Aylur/ags/service/audio.js";
+var StreamView = (stream) => Widget.Box({ vertical: true, spacing: 4 }, Widget.Box({ spacing: 4 }, Widget.Icon({
+  icon: stream.bind("icon_name").as((icon) => ensureIconExist(icon) ?? "audio-headset")
+}), Widget.Label({
+  label: stream.bind("description").as((s3) => s3 ?? "")
+}), Widget.Box({ hexpand: true }), Widget.ToggleButton({}).on("toggled", (self) => self.active = !self.active)));
+var VolumeMenu = () => Popup({
+  anchor: ["bottom", "right"],
+  name: "volume-menu",
+  margins: [40, 100],
+  child: Widget.Box({
+    className: "menu volume-menu",
+    vertical: true,
+    children: audio3.speakers.filter((x2) => !x2.stream?.isVirtual).map(StreamView)
+  })
+});
+
+// src/lib/cache.ts
+var emptySymbol = Symbol();
+
+class CacheContainer {
+  factory;
+  constructor(factory) {
+    this.factory = factory;
+  }
+  #value = emptySymbol;
+  get = () => this.#value === emptySymbol ? this.#value = this.factory() : this.#value;
+  invalidate = () => {
+    this.#value = emptySymbol;
+  };
+}
+
+// config_private.json
+var todoistToken = "543b5ad437c41825b8f180e699d0643b796167b6";
+
+// src/services/todoist.ts
+var taskPattern = {
+  id: _2.string,
+  project_id: _2.string,
+  section_id: _2.string.or(null),
+  content: _2.string,
+  due: {
+    date: _2.string,
+    string: _2.string,
+    is_recurring: _2.boolean
+  }
+};
+var projectPattern = {
+  id: _2.string,
+  name: _2.string
+};
+var sectionPattern = {
+  id: _2.string,
+  project_id: _2.string,
+  name: _2.string
+};
+
+class TodoistClient {
+  userToken;
+  constructor(userToken) {
+    this.userToken = userToken;
+  }
+  #projects = new CacheContainer(() => this.#request("GET", "projects", _2.array(projectPattern)));
+  #sections = new CacheContainer(() => this.#request("GET", "sections", _2.array(sectionPattern)));
+  #request = (method, path, pattern, body) => Utils.fetch(`https://api.todoist.com/rest/v2/${path}`, {
+    method,
+    body: P2.map(body, JSON.stringify) ?? undef,
+    headers: {
+      Authorization: `Bearer ${this.userToken}`
+    }
+  }).then(async (r3) => r3.ok ? r3.json() : raise({ error: "fetch" })).then((json) => a2(pattern, json) ? json : raise({ error: "parse", input: json }));
+  getTasks = async () => {
+    const [projects, sections, tasks] = await Promise.all([
+      this.#projects.get(),
+      this.#sections.get(),
+      this.#request("GET", "tasks?filter=(today|overdue)", _2.array(taskPattern))
+    ]);
+    return tasks.sort(({ due: { date: d1 } }, { due: { date: d2 } }) => Date.parse(d1) - Date.parse(d2)).map((t3) => ({
+      due: new Date(t3.due.date).toLocaleDateString(["en"], {
+        month: "short",
+        day: "2-digit"
+      }),
+      content: t3.content,
+      id: t3.id,
+      project: assert(projects.find((x2) => x2.id === t3.project_id)?.name),
+      section: sections.find((x2) => x2.id === t3.section_id)?.name,
+      reccurent: t3.due.is_recurring
+    }));
+  };
+}
+
+class TodoistService extends Service {
+  static {
+    Service.register(this, {}, {
+      tasks: ["jsobject", "r"]
+    });
+  }
+  #client = new TodoistClient(todoistToken);
+  #tasks = { status: "notStarted" };
+  async refresh() {
+    this.#tasks = {
+      status: "loading",
+      data: this.#tasks.status === "success" ? this.#tasks.data : undef
+    };
+    this.changed("tasks");
+    this.#tasks = await this.#client.getTasks().then((data) => ({ status: "success", data }), (error) => ({ status: "error", error }));
+    this.changed("tasks");
+  }
+  get tasks() {
+    return this.#tasks;
+  }
+}
+var todoist = new TodoistService;
+// src/widgets/desktop/TodoistWidget.ts
+var TaskDisplay = (task) => Widget.Box({
+  className: "todoist__task",
+  spacing: 16,
+  children: [
+    Widget.Box(),
+    Widget.Box({
+      vertical: true,
+      spacing: 8,
+      children: [
+        Widget.Label({
+          className: "todoist__task__content",
+          label: task.content,
+          hpack: "start"
+        }),
+        Widget.Box({
+          children: [
+            Widget.Box({
+              css: `min-width:170px`,
+              hpack: "start",
+              spacing: 10,
+              children: [
+                Widget.Label({
+                  className: "text-icon todoist__task__due__calendarIcon",
+                  label: "\uDB80\uDCED"
+                }),
+                Widget.Label({
+                  className: "todoist__task__due",
+                  label: task.due
+                }),
+                ...optArr(task.reccurent, [
+                  Widget.Label({
+                    className: "text-icon todoist__task__due__refreshIcon",
+                    label: "\uF021"
+                  })
+                ])
+              ]
+            }),
+            Widget.Box({
+              spacing: 4,
+              children: [
+                Widget.Label({
+                  className: "todoist__task__breadcrumbs__hash",
+                  label: "#"
+                }),
+                Widget.Label({
+                  className: "todoist__task__breadcrumbs",
+                  label: task.project + (P2.map(task.section, i2.prepend("/")) ?? "")
+                })
+              ]
+            })
+          ]
+        })
+      ]
+    })
+  ]
+});
+var ControlButton = ({
+  icon,
+  onClicked,
+  hpack
+}) => Widget.Button({
+  hpack,
+  className: "text-icon todoist__control__button",
+  onClicked,
+  vpack: "center",
+  label: icon
+});
+var ControlPanel = ({ visible }) => Widget.CenterBox({
+  className: "todoist__control",
+  hexpand: true,
+  startWidget: ControlButton({
+    hpack: "start",
+    icon: "\uDB81\uDC50",
+    onClicked: () => todoist.refresh()
+  }),
+  centerWidget: ControlButton({
+    hpack: "center",
+    icon: "\uF465",
+    onClicked: () => bash`gtk-launch vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default`
+  }),
+  endWidget: ControlButton({
+    hpack: "end",
+    icon: visible.bind().as((v3) => v3 ? "\uF441" : "\uF4C5"),
+    onClicked: () => {
+      visible.value = !visible.value;
+    }
+  })
+});
+var TodoistWidget2 = () => {
+  const visible = Variable(true);
+  return Widget.Window({
+    name: "todoist-desktop",
+    anchor: ["top", "left"],
+    opacity: 0.85,
+    layer: "background",
+    margins: [20, 20],
+    setup: () => todoist.refresh(),
+    child: Widget.Box({
+      css: "min-width:460px",
+      spacing: 16,
+      className: "todoist",
+      vertical: true,
+      children: [
+        Widget.Scrollable({
+          vscroll: "automatic",
+          visible: visible.bind(),
+          hscroll: "never",
+          css: "min-height:400px; min-width:460px;",
+          child: Widget.Box({
+            className: "todoist__task__container",
+            vertical: true,
+            spacing: 16,
+            children: todoist.bind("tasks").as((tasks) => tasks.status === "success" ? tasks.data.map(TaskDisplay) : [
+              Widget.CenterBox({
+                expand: true,
+                centerWidget: tasks.status === "error" ? Widget.Label({
+                  className: "todoist__error",
+                  label: "Error occured while loading tasks. Try refresh"
+                }) : Widget.Spinner({})
+              })
+            ])
+          })
+        }),
+        ControlPanel({ visible })
+      ]
+    })
+  }).hook(ThemeService_default, () => setTimeout(() => {
+    App.ToggleWindow("todoist-desktop");
+    App.ToggleWindow("todoist-desktop");
+  }, 1000), "changed");
+};
+
 // src/config.ts
 var scss = App4.configDir + "/scss/main.scss";
 var css = App4.configDir + "/style.css";
@@ -5695,9 +6340,11 @@ App4.config({
     OSD(),
     OSDNotifications_default(),
     NotificationCenter(),
+    VolumeMenu(),
     CalendarMenu(),
     Bar({ monitor: 0 }),
-    SystemMenu()
+    SystemMenu(),
+    TodoistWidget2()
   ]
 });
 globalThis.getNot = () => Notifications4;

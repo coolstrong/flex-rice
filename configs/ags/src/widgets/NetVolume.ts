@@ -1,11 +1,5 @@
 import { useUpdatableVar } from "@/lib/hooks";
-import { ensureIconExist } from "@/lib/icons";
 import { getVolumeIcon } from "@/utils/shared";
-import { D, O, pipe } from "@mobily/ts-belt";
-import Network from "resource:///com/github/Aylur/ags/service/network.js";
-import { exec } from "resource:///com/github/Aylur/ags/utils.js";
-import { Box, Label } from "resource:///com/github/Aylur/ags/widget.js";
-import { match, P } from "ts-pattern";
 // import { systemTray } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 
 const { Gravity } = imports.gi.Gdk;
@@ -98,7 +92,7 @@ export const VolumeButton = () => {
                 () =>
                     //for some reason is_muted property does not update in time
                     setTimeout(icon.update, 50),
-                "changed"
+                "changed",
             ),
 
         onClicked: () => Utils.execAsync("pypr toggle volume"),
