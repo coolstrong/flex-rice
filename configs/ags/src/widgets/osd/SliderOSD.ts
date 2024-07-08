@@ -4,7 +4,7 @@ import { getVolumeIcon } from "@/utils/shared";
 import Audio from "resource:///com/github/Aylur/ags/service/audio.js";
 import { Icon, Window } from "resource:///com/github/Aylur/ags/widget.js";
 import { match } from "ts-pattern";
-import ShowWindow from "../utils/ShowWindow";
+import ShowWindow from "../../utils/ShowWindow";
 
 export const OSD = () => {
     const progress = Variable(Audio.speaker.volume);

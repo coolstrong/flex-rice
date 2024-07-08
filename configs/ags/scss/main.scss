@@ -1094,7 +1094,7 @@ button:hover {
     background: $btn-hover-background;
     color: $btn-hover-color;
     border-color: $btn-hover-background;
-    border-radius: $border-radius;
+    /* border-radius: $border-radius; */
     // box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 
     @if variable-exists(btn-hover-border-radius) {

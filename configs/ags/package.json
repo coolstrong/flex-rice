@@ -14,9 +14,10 @@
   },
   "dependencies": {
     "@mobily/ts-belt": "next",
+    "arktype": "^2.0.0-dev.26",
     "clsx": "^2.1.0",
+    "effect": "^3.4.6",
     "immer": "^10.0.3",
-    "ts-pattern": "^5.0.8",
-    "type-fest": "^4.14.0"
+    "ts-pattern": "^5.0.8"
   }
 }

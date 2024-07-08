@@ -177,3 +177,4 @@ out
 /scss/theme.scss
 /scss/widgets.scss
 config_private.json
+dist

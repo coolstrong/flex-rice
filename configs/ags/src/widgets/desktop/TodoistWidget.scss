@@ -1,18 +1,24 @@
 .todoist {
     border: 1px $border-color solid;
     border-radius: 24px;
-    background: $bg-one;
+    background: $menu-box-background;
     padding: 8px;
 
     &__task {
         border-radius: 24px;
-        background: $bg-one;
+        background: $menu-box-background;
         min-width: 400px;
         padding: 6px 8px;
 
         &__checkbox {
+            & label {
+                padding-left: 1px;
+            }
+
             font-size: 18px;
-            padding: 1px 4px;
+            padding: 0;
+            min-width: 24px;
+            min-height: 24px;
             margin-left: 4px;
             margin-top: 4px;
             border-radius: 100%;
@@ -40,8 +46,13 @@
         }
 
         &__container {
+            & spinner {
+                min-height: 40px;
+                min-width: 40px;
+            }
+
             border-radius: 24px;
-            background: $bg-three;
+            background: $theme-box-background;
             padding: 10px;
         }
         &__content {
@@ -73,7 +84,7 @@
         padding: 4px 8px;
 
         &__button {
-            background: $bg-three;
+            background: $menu-box-background;
             border-radius: 24px;
 
             min-width: 28px;

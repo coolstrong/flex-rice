@@ -18,7 +18,7 @@ import "./style.scss";
 
 import { useIntervalVar } from "@/lib/hooks.ts";
 import config from "config.json";
-import { todoist } from "@/services/todoist.ts";
+import { Taskbar } from "./Taskbar.ts";
 
 export const KeyboardLayout = () => {
     return Widget.Button({
@@ -49,29 +49,6 @@ const Clock = () => {
     });
 };
 
-// layout of the bar
-const Start = () =>
-    Box({
-        spacing: 8,
-        children: [Workspaces(), HardwareBox()],
-    });
-
-const Center = () => Widget.Box();
-
-const End = () =>
-    Box({
-        hpack: "end",
-        spacing: 8,
-        children: [
-            NotificationCenterButton(),
-            NetVolumeBox(),
-            SysTrayBox(),
-            Clock(),
-            KeyboardLayout(),
-            MenuButton(),
-        ],
-    });
-
 export const Bar = ({ monitor }: { monitor?: number } | undef = {}) =>
     Window({
         name: `bar${monitor || ""}`, // name has to be unique
@@ -83,12 +60,28 @@ export const Bar = ({ monitor }: { monitor?: number } | undef = {}) =>
         anchor: ["bottom", "left", "right"],
         exclusivity: "exclusive",
         child: CenterBox({
-            className: hyprext
+            /* className: hyprext
                 .bind("fullscreen")
-                .as(f => clsx("bar", !f && "shadow")),
+                .as(f => clsx("bar", !f && "shadow")), */
+            className: "bar shadow",
 
-            startWidget: Start(),
-            centerWidget: Center(),
-            endWidget: End(),
+            startWidget: Box({
+                spacing: 8,
+                children: [Workspaces(), HardwareBox(), NetVolumeBox()],
+            }),
+
+            centerWidget: Taskbar(),
+
+            endWidget: Box({
+                hpack: "end",
+                spacing: 8,
+                children: [
+                    NotificationCenterButton(),
+                    SysTrayBox(),
+                    Clock(),
+                    KeyboardLayout(),
+                    MenuButton(),
+                ],
+            }),
         }),
     });

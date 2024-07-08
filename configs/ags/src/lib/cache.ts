@@ -12,5 +12,6 @@ export class CacheContainer<T> {
 
     invalidate = () => {
         this.#value = emptySymbol;
+        return this;
     };
 }

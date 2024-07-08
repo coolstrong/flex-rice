@@ -38,3 +38,33 @@
         box-shadow: unset;
     }
 }
+
+$indicatorSize: 4px;
+
+.taskbar {
+    &__item {
+        border-radius: 2px;
+        padding: 2px 4px;
+        min-width: 36px;
+        &:hover {
+            border-radius: 2px;
+        }
+
+        background: transparent;
+
+        & image {
+            font-size: 18px;
+        }
+
+        &__indicator {
+            min-width: $indicatorSize;
+            min-height: $indicatorSize;
+            background: $fg-one;
+            border-radius: 100%;
+
+            &--focused {
+                border-radius: 2px;
+            }
+        }
+    }
+}

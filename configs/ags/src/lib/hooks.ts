@@ -5,12 +5,16 @@ import GLib20 from "gi://GLib?version=2.0";
 
 export const useUpdatableVar = <T>(
     factory: () => T,
-    initial: T | undef = undef
+    initial: T | undef = undef,
+    isDistinct: (x: T, y: T) => boolean = () => true,
 ) => {
     const variable = Variable(initial ?? factory());
     return {
         variable,
-        update: () => (variable.value = factory()),
+        update: () => {
+            const newVal = factory();
+            if (isDistinct(variable.value, newVal)) variable.value = factory();
+        },
     };
 };
 
@@ -61,6 +65,6 @@ export const setupRebuild =
                 self.children.forEach(c => c.destroy());
                 self.children = builder();
             },
-            signal
+            signal,
         );
     };

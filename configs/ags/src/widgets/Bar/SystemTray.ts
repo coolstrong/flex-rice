@@ -4,10 +4,6 @@ import {
 } from "resource:///com/github/Aylur/ags/service/systemtray.js";
 import config from "config";
 import { ASSETS_PATH } from "@/settings";
-import { D, F, flow } from "@mobily/ts-belt";
-// import { systemTray } from "resource:///com/github/Aylur/ags/service/systemtray.js";
-
-// const SystemTray = await Service.import("systemtray");
 
 const iconSubstitutes = {
     TelegramDesktop: "telegram",

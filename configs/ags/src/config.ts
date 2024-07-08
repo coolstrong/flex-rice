@@ -2,7 +2,7 @@ import App from "resource:///com/github/Aylur/ags/app.js";
 import Notifications from "resource:///com/github/Aylur/ags/service/notifications.js";
 import MyNotifications from "./notifications/OSDNotifications.js";
 import { Bar } from "./widgets/Bar";
-import { OSD } from "./widgets/OSD.js";
+import { OSD } from "./widgets/osd/SliderOSD.js";
 import { CalendarMenu } from "./widgets/menus/CalendarMenu.js";
 import { NotificationCenter } from "./widgets/menus/NotificationCenter.js";
 import { SystemMenu } from "./widgets/menus/SystemMenu.js";

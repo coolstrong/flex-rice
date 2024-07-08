@@ -1,35 +1,33 @@
 import { CacheContainer } from "@/lib/cache";
-import { assert, raise, undef } from "@/utils/common";
-import { F, O } from "@mobily/ts-belt";
-import { P, isMatching, match } from "ts-pattern";
+import { assert, optObj, raise, undef } from "@/utils/common";
+import { P, match } from "ts-pattern";
 import { todoistToken } from "privateConfig";
 import { produce } from "immer";
+import { ArkErrors, type, Type } from "arktype";
+import { identity } from "effect";
 
-const taskPattern = {
-    id: P.string,
-    project_id: P.string,
-    section_id: P.string.or(null),
-    content: P.string,
+const taskSchema = type({
+    id: "string",
+    project_id: "string",
+    section_id: "string|null",
+    content: "string",
     due: {
-        date: P.string,
-        string: P.string,
-        is_recurring: P.boolean,
+        date: "string",
+        string: "string",
+        is_recurring: "boolean",
     },
-};
-type RawTask = P.infer<typeof taskPattern>;
+});
 
-const projectPattern = {
-    id: P.string,
-    name: P.string,
-};
-type Project = P.infer<typeof projectPattern>;
+const projectSchema = type({
+    id: "string",
+    name: "string",
+});
 
-const sectionPattern = {
-    id: P.string,
-    project_id: P.string,
-    name: P.string,
-};
-type Section = P.infer<typeof sectionPattern>;
+const sectionSchema = type({
+    id: "string",
+    project_id: "string",
+    name: "string",
+});
 
 export type TodoistTask = {
     id: string;
@@ -44,51 +42,55 @@ class TodoistClient {
     constructor(private userToken: string) {}
 
     #projects = new CacheContainer(() =>
-        this.#request<Project[]>("GET", "projects", P.array(projectPattern)),
+        this.#request("GET", "projects", type([projectSchema, "[]"])),
     );
     #sections = new CacheContainer(() =>
-        this.#request<Section[]>("GET", "sections", P.array(sectionPattern)),
+        this.#request("GET", "sections", type([sectionSchema, "[]"])),
     );
 
-    #request = <T>(
+    #request = async <TSchema extends undefined | Type<any>>(
         method: "GET" | "POST",
         path: string,
-        pattern: P.Pattern<T>,
+        schema: TSchema,
         body?: unknown,
-    ): Promise<T> =>
-        Utils.fetch(`https://api.todoist.com/rest/v2/${path}`, {
-            method,
-            body: O.map(body, JSON.stringify) ?? undef,
-            headers: {
-                Authorization: `Bearer ${this.userToken}`,
+    ): Promise<TSchema extends Type<infer T> ? T : void> => {
+        const res = await Utils.fetch(
+            `https://api.todoist.com/rest/v2/${path}`,
+            {
+                method,
+                ...optObj(body, { body: JSON.stringify(body!) }),
+                headers: {
+                    Authorization: `Bearer ${this.userToken}`,
+                },
             },
-        })
-            .then(async r => (r.ok ? r.json() : raise({ error: "fetch" })))
-            .then((json: unknown) =>
-                isMatching<P.Pattern<T>>(pattern, json)
-                    ? json
-                    : raise({ error: "parse", input: json }),
-            );
+        );
+
+        if (!res.ok) throw { error: "fetch" };
+
+        if (schema) {
+            const json: unknown = await res.json();
+
+            return match(schema(json))
+                .with(P.instanceOf(type.errors), errors =>
+                    raise({ error: "parse", details: errors }),
+                )
+                .otherwise(identity);
+        }
+
+        return <TSchema extends Type<infer T> ? T : void>undefined;
+    };
 
     completeTask = async (taskId: string) =>
-        Utils.fetch(`https://api.todoist.com/rest/v2/tasks/${taskId}/close`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${this.userToken}`,
-            },
-        }).then(r => {
-            if (!r.ok) throw { error: "fetch" };
-        });
-    // this.#request("POST", `tasks/${taskId}/close`, P._);
+        this.#request("POST", `tasks/${taskId}/close`, undef);
 
     getTasks = async (): Promise<TodoistTask[]> => {
         const [projects, sections, tasks] = await Promise.all([
             this.#projects.get(),
             this.#sections.get(),
-            this.#request<RawTask[]>(
+            this.#request(
                 "GET",
                 "tasks?filter=(today|overdue)",
-                P.array(taskPattern),
+                type([taskSchema, "[]"]),
             ),
         ]);
 
@@ -98,7 +100,6 @@ class TodoistClient {
                     Date.parse(d1) - Date.parse(d2),
             )
             .map(t => ({
-                // due: t.due.string,
                 due: new Date(t.due.date),
                 content: t.content,
                 id: t.id,
