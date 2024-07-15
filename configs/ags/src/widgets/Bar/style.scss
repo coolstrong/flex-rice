@@ -46,11 +46,11 @@ $indicatorSize: 4px;
         border-radius: 2px;
         padding: 2px 4px;
         min-width: 36px;
+        background: transparent;
+
         &:hover {
             border-radius: 2px;
         }
-
-        background: transparent;
 
         & image {
             font-size: 18px;

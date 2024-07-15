@@ -91,7 +91,7 @@ const NotificationHeader = () => {
     }).hook(Notifications, self =>
         O.tap(self.children[2], child => {
             child.label = Notifications.dnd ? "󰂛" : "󰂚";
-        })
+        }),
     );
 };
 

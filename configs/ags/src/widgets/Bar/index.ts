@@ -60,9 +60,6 @@ export const Bar = ({ monitor }: { monitor?: number } | undef = {}) =>
         anchor: ["bottom", "left", "right"],
         exclusivity: "exclusive",
         child: CenterBox({
-            /* className: hyprext
-                .bind("fullscreen")
-                .as(f => clsx("bar", !f && "shadow")), */
             className: "bar shadow",
 
             startWidget: Box({

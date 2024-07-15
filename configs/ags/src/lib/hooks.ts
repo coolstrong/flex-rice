@@ -6,14 +6,15 @@ import GLib20 from "gi://GLib?version=2.0";
 export const useUpdatableVar = <T>(
     factory: () => T,
     initial: T | undef = undef,
-    isDistinct: (x: T, y: T) => boolean = () => true,
+    isDistinct?: (x: T, y: T) => boolean,
 ) => {
     const variable = Variable(initial ?? factory());
     return {
         variable,
         update: () => {
             const newVal = factory();
-            if (isDistinct(variable.value, newVal)) variable.value = factory();
+            if (isDistinct?.(variable.value, newVal) ?? true)
+                variable.value = newVal;
         },
     };
 };
