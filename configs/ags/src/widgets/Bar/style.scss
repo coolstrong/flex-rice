@@ -66,5 +66,15 @@ $indicatorSize: 4px;
                 border-radius: 2px;
             }
         }
+
+        &__number {
+            font-size: 10px;
+            color: transparentize($fg-one, 0.3);
+            font-weight: 600;
+            /* background: transparentize($fg-three, 0.65); */
+            border-radius: 100%;
+            font-family: monospace;
+            padding: 0 4px;
+        }
     }
 }

@@ -80,6 +80,11 @@ class TodoistClient {
         return <TSchema extends Type<infer T> ? T : void>undefined;
     };
 
+    invalidateCache = () => {
+        this.#sections.invalidate();
+        this.#projects.invalidate();
+    };
+
     completeTask = async (taskId: string) =>
         this.#request("POST", `tasks/${taskId}/close`, undef);
 
@@ -132,9 +137,10 @@ class TodoistService extends Service {
         | { status: "notStarted" } = { status: "notStarted" };
 
     async refresh() {
+        if (this.#tasks.status === "error") this.#client.invalidateCache();
+
         this.#tasks = {
             status: "loading",
-            data: this.#tasks.status === "success" ? this.#tasks.data : undef,
         };
         this.changed("tasks");
 

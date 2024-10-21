@@ -4,8 +4,8 @@ import battery from "resource:///com/github/Aylur/ags/service/battery.js";
 
 export const BatteryWidget = () =>
     Widget.EventBox({
-        onScrollUp: () => (brightness.screen += 0.05),
-        onScrollDown: () => (brightness.screen -= 0.05),
+        onScrollUp: () => (brightness.screen += 0.01),
+        onScrollDown: () => (brightness.screen -= 0.01),
         child: Widget.Box({
             spacing: 2,
             children: [

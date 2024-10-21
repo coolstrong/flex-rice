@@ -35,46 +35,63 @@ const transformClients: (clients: Client[]) => TaskbarItemData[] = flow(
     })),
 );
 
-const TaskbarItem = ({ icon, addrs, windowClass }: TaskbarItemData) => {
+const TaskbarItem = (
+    { icon, addrs, windowClass }: TaskbarItemData,
+    i: number,
+) => {
     const isFocused = hyprland.active.client
         .bind("class")
         .as(c => c === windowClass);
 
-    return Widget.Button({
-        className: "taskbar__item",
-        vexpand: true,
-        onClicked: () => focusWindow(addrs),
-        child: Widget.Box({
+    return Widget.Overlay({
+        child: Widget.Button({
+            className: "taskbar__item",
             vexpand: true,
-            vertical: true,
-            spacing: 2,
-            children: [
-                Widget.Icon({
-                    expand: true,
-                    icon: icon,
-                }),
-                Widget.Box({
-                    hexpand: true,
-                    hpack: isFocused.as(f => (f ? "fill" : "center")),
-                    spacing: 3,
-                    children: addrs.map((_, i) => {
-                        const isFocused = hyprland.active.client
-                            .bind("address")
-                            .as(addr => addrs.indexOf(addr) === i);
-
-                        return Widget.Box({
-                            hpack: isFocused.as(f => (f ? "fill" : "center")),
-                            hexpand: isFocused.as(f => f || addrs.length === 1),
-                            className: isFocused.as(f =>
-                                cssComponent(
-                                    ["taskbar", "item", "indicator"],
-                                    optArr(f, ["focused"]),
-                                ),
-                            ),
-                        });
+            onClicked: () => focusWindow(addrs),
+            child: Widget.Box({
+                vexpand: true,
+                vertical: true,
+                spacing: 2,
+                children: [
+                    Widget.Icon({
+                        expand: true,
+                        icon: icon,
                     }),
-                }),
-            ],
+                    Widget.Box({
+                        hexpand: true,
+                        hpack: isFocused.as(f => (f ? "fill" : "center")),
+                        spacing: 3,
+                        children: addrs.map((_, i) => {
+                            const isFocused = hyprland.active.client
+                                .bind("address")
+                                .as(addr => addrs.indexOf(addr) === i);
+
+                            return Widget.Box({
+                                hpack: isFocused.as(f =>
+                                    f ? "fill" : "center",
+                                ),
+                                hexpand: isFocused.as(
+                                    f => f || addrs.length === 1,
+                                ),
+                                className: isFocused.as(f =>
+                                    cssComponent(
+                                        ["taskbar", "item", "indicator"],
+                                        optArr(f, ["focused"]),
+                                    ),
+                                ),
+                            });
+                        }),
+                    }),
+                ],
+            }),
+        }),
+        overlay: Widget.Label({
+            className: "taskbar__item__number",
+            label: (i + 1).toString(),
+            hpack: "end",
+            vpack: "start",
+            yalign: 0,
+            ypad: 0,
         }),
     });
 };

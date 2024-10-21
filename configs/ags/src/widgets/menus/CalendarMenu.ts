@@ -1,10 +1,10 @@
 import { Popup } from "./Popup";
 
 import "./style.scss";
-import { D } from "@mobily/ts-belt";
 import { Variable as GtkVar } from "@/types/variable";
 import config from "config.json";
 import { useIntervalVar } from "@/lib/hooks";
+import Gtk30 from "gi://Gtk?version=3.0";
 
 const WorldTime = ({ date }: { date: GtkVar<Date> }) =>
     Widget.Box({
@@ -43,12 +43,22 @@ export const CalendarMenu = () => {
         initialState: false,
     });
 
+    const calendar = Widget.Calendar({
+        expand: true,
+        className: "calendar",
+    });
+
     return Popup({
         anchor: ["bottom", "right"],
         name: "calendar-menu",
         margins: [40, 50],
 
-        onOpen: start,
+        onOpen: () => {
+            start();
+            calendar.day = date.value.getDate();
+            calendar.month = date.value.getMonth();
+            calendar.year = date.value.getFullYear();
+        },
         onClose: stop,
 
         child: Widget.Box({
@@ -86,13 +96,7 @@ export const CalendarMenu = () => {
                     className: "calendar-menu__separator",
                     hexpand: true,
                 }),
-                Widget.Calendar({
-                    expand: true,
-                    className: "calendar",
-                    year: date.bind().as(d => d.getFullYear()),
-                    month: date.bind().as(d => d.getMonth()),
-                    day: date.bind().as(d => d.getDate()),
-                }),
+                calendar,
             ],
         }),
     });

@@ -2,7 +2,6 @@
 import { undef } from "@/utils/common";
 import type { Client } from "@/types/service/hyprland";
 import GLib from "@/types/@girs/glib-2.0";
-import { O, pipe } from "@mobily/ts-belt";
 
 export const icons = {
     missing: "image-missing-symbolic",
@@ -150,6 +149,7 @@ const directClassMatch = {
     "code-url-handler": "visual-studio-code",
     "vivaldi-hnpfjngllnobngcgfapefoaidbinmjnm-Default": "wazzapp",
     "vivaldi-knaiokfnmjjldlfhlioejgcompgenfhb-Default": "todoist",
+    WebCord: "discord",
 };
 
 const terminalApps: [RegExp, string][] = [
